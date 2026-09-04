@@ -1,13 +1,23 @@
 import React, { useState, useMemo } from 'react';
 import type { CandidateBlock } from '../types';
+import type { Language } from '../i18n/translations';
+import { TRANSLATIONS } from '../i18n/translations';
 
 interface MareyDiagramProps {
   selectedPlan: string;
   blocks?: CandidateBlock[];
   trainSchedules?: any[];
+  onTogglePlan?: (planKey: string) => void;
+  language?: Language;
 }
 
-export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan, blocks, trainSchedules }) => {
+export const MareyDiagram: React.FC<MareyDiagramProps> = ({
+  selectedPlan,
+  blocks,
+  trainSchedules,
+  onTogglePlan,
+  language = 'en'
+}) => {
   const [hoveredEntity, setHoveredEntity] = useState<any>(null);
 
   const stations = [
@@ -83,6 +93,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan, blocks
     }
 
     return [
+      { id: '12582', name: 'BSBS-NDLS Superfast Express', type: 'Superfast', color: '#f43f5e', start: '00:45', end: '03:15', kmStart: 83, kmEnd: 280, priority: 'P1 Superfast' },
       { id: '20104', name: 'Vande Bharat Express', type: 'Vande Bharat', color: '#00e5ff', start: '06:00', end: '09:15', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
       { id: '12302', name: 'Howrah Rajdhani Express', type: 'Rajdhani', color: '#38bdf8', start: '06:45', end: '10:10', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
       { id: '12424', name: 'Dibrugarh Rajdhani Exp', type: 'Rajdhani', color: '#0ea5e9', start: '07:30', end: '10:45', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
@@ -134,6 +145,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan, blocks
     }
 
     return selectedPlan === 'baseline_fcfs' ? [
+      { id: 'BASE-CLASH', name: '⚠ Uncoordinated Civil Block (Clashing with Train 12582)', start: '01:15', end: '02:45', km1: 195, km2: 231, color: '#ef4444', depts: 'Civil Only (Unbundled)', impact: 89, delayedPax: 1, notes: 'Direct clash with Train 12582' },
       { id: 'BASE-1', name: 'Civil Track Disconnection (Separate)', start: '09:00', end: '12:00', km1: 0, km2: 83, color: '#ef4444', depts: 'Engineering', impact: 72, delayedPax: 2, notes: 'Departmental FCFS booking' },
       { id: 'BASE-2', name: 'TRD OHE Inspection (Separate)', start: '13:00', end: '15:30', km1: 44, km2: 139, color: '#ef4444', depts: 'Traction', impact: 75, delayedPax: 1, notes: 'Departmental FCFS booking' },
       { id: 'BASE-3', name: 'S&T Point Disconnection (Separate)', start: '16:00', end: '18:30', km1: 139, km2: 231, color: '#ef4444', depts: 'Signal & Telecom', impact: 70, delayedPax: 1, notes: 'Departmental FCFS booking' }
@@ -145,7 +157,50 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan, blocks
 
   return (
     <div className="bg-[#0b132b] rounded-2xl border border-slate-800 p-5 shadow-xl relative">
-      <div className="flex flex-wrap items-center justify-between pb-4 mb-2 border-b border-slate-800">
+      {/* Permanent Plain-English Caption Banner */}
+      {(() => {
+        const t = TRANSLATIONS[language] || TRANSLATIONS.en;
+        return (
+          <div className="bg-slate-900/95 border-l-4 border-cyan-400 p-3.5 rounded-r-xl mb-4 text-xs flex flex-wrap items-center justify-between gap-3 shadow-md">
+            <div className="flex items-start gap-2.5 max-w-2xl">
+              <span className="font-bold text-cyan-300 flex-shrink-0 text-sm">
+                {language === 'hi' ? '📖 ग्राफ कैसे पढ़ें:' : '📖 How to Read:'}
+              </span>
+              <span className="text-slate-200 leading-relaxed">
+                {t.mareyCaption}
+              </span>
+            </div>
+            {onTogglePlan && (
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  onClick={() => onTogglePlan('baseline_fcfs')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    selectedPlan === 'baseline_fcfs'
+                      ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
+                      : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700'
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-red-400"></span>
+                  <span>{language === 'hi' ? 'पहले: पुरानी अव्यवस्था (टकराव)' : 'Before: Manual Conflicts'}</span>
+                </button>
+                <button
+                  onClick={() => onTogglePlan('plan_a')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    selectedPlan === 'plan_a'
+                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                      : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700'
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span>{language === 'hi' ? 'बाद में: CP-SAT समाधान (0 विलंब)' : 'After: CP-SAT Fix (0 Delays)'}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
+      <div className="flex flex-wrap items-center justify-between pb-3 mb-2 border-b border-slate-800">
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-white flex items-center gap-2">
@@ -155,9 +210,6 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan, blocks
               </span>
             </h2>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Sloped lines indicate train movements across stations (Y-axis) vs Time (X-axis). Shaded windows represent maintenance blocks.
-          </p>
         </div>
 
         <div className="flex items-center gap-4 text-xs">
@@ -327,6 +379,100 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan, blocks
               </g>
             );
           })}
+
+          {/* Conflict Highlight Overlay for Baseline FCFS vs CP-SAT Plan A */}
+          {selectedPlan === 'baseline_fcfs' && (
+            <g className="cursor-pointer">
+              {/* Pulsing ring animation */}
+              <circle
+                cx={timeToX('01:50')}
+                cy={kmToY(213)}
+                r="22"
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="2"
+                opacity="0.8"
+              >
+                <animate attributeName="r" values="10;28;10" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.9;0.1;0.9" dur="2s" repeatCount="indefinite" />
+              </circle>
+              <circle
+                cx={timeToX('01:50')}
+                cy={kmToY(213)}
+                r="6"
+                fill="#ef4444"
+                stroke="#ffffff"
+                strokeWidth="2"
+              />
+              {/* Callout box */}
+              <g transform={`translate(${timeToX('01:50') + 15}, ${kmToY(213) - 45})`}>
+                <rect
+                  x="0"
+                  y="0"
+                  width="250"
+                  height="56"
+                  rx="8"
+                  fill="#1e1014"
+                  stroke="#ef4444"
+                  strokeWidth="1.5"
+                  className="filter drop-shadow-lg"
+                />
+                <text x="10" y="18" fill="#f87171" className="text-[11px] font-bold">
+                  ⚠️ REAL COLLISION DETECTED
+                </text>
+                <text x="10" y="33" fill="#fecaca" className="text-[10px]">
+                  Train 12582 crosses uncoordinated Civil block
+                </text>
+                <text x="10" y="47" fill="#fca5a5" className="text-[9px] font-mono">
+                  at 01:50 (KM 213 TDL) ➔ 48m Express Delay!
+                </text>
+              </g>
+            </g>
+          )}
+
+          {selectedPlan === 'plan_a' && (
+            <g className="cursor-pointer">
+              <circle
+                cx={timeToX('01:50')}
+                cy={kmToY(213)}
+                r="16"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="2"
+                opacity="0.6"
+              >
+                <animate attributeName="r" values="8;20;8" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.5s" repeatCount="indefinite" />
+              </circle>
+              <circle
+                cx={timeToX('01:50')}
+                cy={kmToY(213)}
+                r="5"
+                fill="#10b981"
+                stroke="#ffffff"
+                strokeWidth="1.5"
+              />
+              <g transform={`translate(${timeToX('01:50') + 15}, ${kmToY(213) - 40})`}>
+                <rect
+                  x="0"
+                  y="0"
+                  width="240"
+                  height="46"
+                  rx="8"
+                  fill="#06281e"
+                  stroke="#10b981"
+                  strokeWidth="1.5"
+                  className="filter drop-shadow-lg"
+                />
+                <text x="10" y="18" fill="#34d399" className="text-[11px] font-bold">
+                  ✅ CONFLICT RESOLVED (CP-SAT)
+                </text>
+                <text x="10" y="34" fill="#a7f3d0" className="text-[9.5px]">
+                  Block moved to night valley 01:00–04:25 • 0m delay
+                </text>
+              </g>
+            </g>
+          )}
         </svg>
       </div>
 

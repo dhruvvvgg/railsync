@@ -1,14 +1,18 @@
 import React, { useMemo } from 'react';
-import { Layers, ShieldCheck, Zap, Radio, Hammer } from 'lucide-react';
+import { Layers, ShieldCheck, Zap, Radio, Hammer, ArrowRight } from 'lucide-react';
 import type { CandidateBlock } from '../types';
+import type { Language } from '../i18n/translations';
+import { TRANSLATIONS } from '../i18n/translations';
 
 interface GanttTimelineProps {
   selectedPlan: string;
   blocks?: CandidateBlock[];
+  language?: Language;
 }
 
-export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, blocks }) => {
+export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, blocks, language = 'en' }) => {
   const isBaseline = selectedPlan === 'baseline_fcfs';
+  const t = TRANSLATIONS[language] || TRANSLATIONS.en;
 
   const lanes = useMemo(() => {
     // If real solver blocks are passed, extract dynamic department tasks
@@ -75,7 +79,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
       return [
         {
           id: 'civil',
-          name: 'Civil Engineering (Track/TMS)',
+          name: t.laneCivil,
           icon: Hammer,
           color: 'border-cyan-500/40 bg-cyan-950/30 text-cyan-300',
           badgeColor: 'bg-cyan-500/20 text-cyan-300',
@@ -85,7 +89,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         },
         {
           id: 'trd',
-          name: 'Traction TRD (OHE/TDMS)',
+          name: t.laneTrd,
           icon: Zap,
           color: 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300',
           badgeColor: 'bg-emerald-500/20 text-emerald-300',
@@ -95,7 +99,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         },
         {
           id: 'snt',
-          name: 'Signal & Telecom (SMMS)',
+          name: t.laneSnt,
           icon: Radio,
           color: 'border-purple-500/40 bg-purple-950/30 text-purple-300',
           badgeColor: 'bg-purple-500/20 text-purple-300',
@@ -109,7 +113,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
     return [
       {
         id: 'civil',
-        name: 'Civil Engineering (Track/TMS)',
+        name: t.laneCivil,
         icon: Hammer,
         color: 'border-cyan-500/40 bg-cyan-950/30 text-cyan-300',
         badgeColor: 'bg-cyan-500/20 text-cyan-300',
@@ -120,7 +124,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
       },
       {
         id: 'trd',
-        name: 'Traction TRD (OHE/TDMS)',
+        name: t.laneTrd,
         icon: Zap,
         color: 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300',
         badgeColor: 'bg-emerald-500/20 text-emerald-300',
@@ -131,7 +135,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
       },
       {
         id: 'snt',
-        name: 'Signal & Telecom (SMMS)',
+        name: t.laneSnt,
         icon: Radio,
         color: 'border-purple-500/40 bg-purple-950/30 text-purple-300',
         badgeColor: 'bg-purple-500/20 text-purple-300',
@@ -141,16 +145,49 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         ]
       }
     ];
-  }, [blocks]);
+  }, [blocks, t]);
 
   return (
     <div className="bg-[#0b132b] rounded-2xl border border-slate-800 p-5 shadow-xl mt-6">
+      {/* 3-State Machine Safety Badge Strip */}
+      <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <span className="font-bold text-slate-200">
+            {language === 'hi' ? '25 kV ट्रैक्शन सुरक्षा प्रोटोकॉल (G&SR):' : '25 kV Traction Safety State Machine (G&SR Norms):'}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold border ${
+            isBaseline ? 'bg-red-500/20 text-red-300 border-red-500/40 ring-1 ring-red-500/50' : 'bg-slate-800 text-slate-500 border-slate-700'
+          }`}>
+            {t.badgeLiveOhe}
+          </span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+          <span className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold border ${
+            !isBaseline ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'
+          }`}>
+            {t.badgeIsolating}
+          </span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+          <span className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold border ${
+            !isBaseline ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 ring-1 ring-emerald-500/50' : 'bg-slate-800 text-slate-500 border-slate-700'
+          }`}>
+            {t.badgeCleared}
+          </span>
+        </div>
+      </div>
+
       <div className="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-slate-800">
         <div className="flex items-center gap-2">
           <Layers className="w-5 h-5 text-cyan-400" />
-          <h2 className="text-base font-bold text-white">Cross-Department Synchronized Gantt Schedule</h2>
+          <h2 className="text-base font-bold text-white">
+            {language === 'hi' ? 'त्रि-विभागीय समन्वित कार्य अनुसूची (गैंट चार्ट)' : 'Cross-Department Synchronized Gantt Schedule'}
+          </h2>
           <span className={`text-xs px-2 py-0.5 rounded font-mono font-medium ${isBaseline ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
-            {isBaseline ? 'Fragmented Uncoordinated Possessions (Departmental Silos)' : 'Synchronized Under Single 25 kV Power Shutoff'}
+            {isBaseline
+              ? (language === 'hi' ? 'असमन्वित अलग-अलग ब्लॉक (विभागीय साइलो)' : 'Fragmented Uncoordinated Possessions (Departmental Silos)')
+              : (language === 'hi' ? 'एकल 25 kV पावर ब्लॉक में समन्वित कार्य' : 'Synchronized Under Single 25 kV Power Shutoff')}
           </span>
         </div>
         <div className="text-xs text-slate-400 flex items-center gap-2">
@@ -224,14 +261,24 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
           <span className={`w-2.5 h-2.5 rounded-full ${isBaseline ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
           <span>
             {isBaseline ? (
-              <><strong>Result:</strong> 3 departments booking separate daytime blocks causing 4+ train detentions and severe fragmentation.</>
+              language === 'hi' ? (
+                <><strong>परिणाम:</strong> 3 विभागों द्वारा अलग-अलग दिन के ब्लॉक मांगने से 4+ ट्रेनें लेट और ट्रैक क्षमता का भारी नुकसान।</>
+              ) : (
+                <><strong>Result:</strong> 3 departments booking separate daytime blocks causing 4+ train detentions and severe fragmentation.</>
+              )
             ) : (
-              <><strong>Result:</strong> 3 departments executing work in 1 combined possession. Avoids separate daytime disconnections.</>
+              language === 'hi' ? (
+                <><strong>परिणाम:</strong> तीनों विभाग 1 ही संयुक्त ब्लॉक में एक साथ काम करते हैं। दिन के अलग-अलग ब्लॉकों से पूरी तरह मुक्ति।</>
+              ) : (
+                <><strong>Result:</strong> 3 departments executing work in 1 combined possession. Avoids separate daytime disconnections.</>
+              )
             )}
           </span>
         </div>
         <span className={`font-mono font-semibold ${isBaseline ? 'text-red-400' : 'text-cyan-400'}`}>
-          {isBaseline ? 'Operational Impact: 74/100 (High Disruption)' : 'Total Effective Work Done: 8.75 Task Hours in 3.25 Block Hours (269% Productivity)'}
+          {isBaseline
+            ? (language === 'hi' ? 'संचालन प्रभाव: 74/100 (गंभीर व्यवधान)' : 'Operational Impact: 74/100 (High Disruption)')
+            : (language === 'hi' ? 'कुल प्रभावी कार्य: 3.25 घंटे में 8.75 घंटे का काम (269% उत्पादकता)' : 'Total Effective Work Done: 8.75 Task Hours in 3.25 Block Hours (269% Productivity)')}
         </span>
       </div>
     </div>
