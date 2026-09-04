@@ -25,16 +25,19 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
       number: '01',
       title: {
         en: 'The Problem: Uncoordinated Block Collision',
-        hi: 'समस्या: बिना तालमेल के ट्रेन और ब्लॉक का टकराव'
+        hi: 'समस्या: बिना तालमेल के ट्रेन और ब्लॉक का टकराव',
+        ta: 'சிக்கல்: ஒருங்கிணைப்பற்ற பராமரிப்பு பிளாக்கினால் ரயில் மோதல்'
       },
       duration: 15,
       badge: {
         en: '❌ 4 Conflicts · 2 Delayed Passenger Trains',
-        hi: '❌ 4 टकराव · 2 एक्सप्रेस ट्रेनें लेट'
+        hi: '❌ 4 टकराव · 2 एक्सप्रेस ट्रेनें लेट',
+        ta: '❌ 4 மோதல்கள் · 2 பயணிகள் ரயில்கள் தாமதம்'
       },
       summary: {
         en: 'In current manual operations, Civil, Electrical, and Signal departments book maintenance blocks on separate phone calls. On corridor COR-005, an uncoordinated Civil block directly collides with Train 12582 (BSBS-NDLS Express), forcing a 48-minute passenger detention.',
-        hi: 'मौजूदा व्यवस्था में तीनों विभाग फोन पर अलग-अलग ब्लॉक मांगते हैं। कानपुर-टुंडला सेक्शन (COR-005) पर सिविल इंजीनियरिंग का ब्लॉक सीधे ट्रेन 12582 (बीएसबीएस-नई दिल्ली एक्सप्रेस) के रास्ते में आ जाता है, जिससे ट्रेन 48 मिनट लेट हो जाती है।'
+        hi: 'मौजूदा व्यवस्था में तीनों विभाग फोन पर अलग-अलग ब्लॉक मांगते हैं। कानपुर-टुंडला सेक्शन (COR-005) पर सिविल इंजीनियरिंग का ब्लॉक सीधे ट्रेन 12582 (बीएसबीएस-नई दिल्ली एक्सप्रेस) के रास्ते में आ जाता है, जिससे ट्रेन 48 मिनट लेट हो जाती है।',
+        ta: 'தற்போதைய பழைய முறையில் சிவில், எலக்ட்ரிக்கல், சிக்னல் துறைகள் தொலைபேசி மூலம் தனித்தனியாக பிளாக் கேட்கின்றன. காரிடார் COR-005 இல், சிவில் பிளாக் நேரடியாக ரயில் 12582 (BSBS-NDLS எக்ஸ்பிரஸ்) பாதையில் குறுக்கிட்டு 48 நிமிட தாமதத்தை உருவாக்குகிறது.'
       },
       visual: (
         <div className="bg-red-950/40 border border-red-500/50 rounded-2xl p-4 space-y-3">
@@ -155,16 +158,19 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
       number: '04',
       title: {
         en: 'The Deterministic Safety Engine (Never Delegated to ML)',
-        hi: 'कठोर सुरक्षा नियम: AI कभी सुरक्षा नियमों को नहीं तोड़ सकता'
+        hi: 'कठोर सुरक्षा नियम: AI कभी सुरक्षा नियमों को नहीं तोड़ सकता',
+        ta: 'கட்டாய பாதுகாப்பு விதிகள் (G&SR சட்ட விதிமுறைகள்)'
       },
       duration: 15,
       badge: {
         en: '🛡 100% Indian Railways G&SR Compliance',
-        hi: '🛡 100% रेलवे सुरक्षा नियम (G&SR) प्रमाणित'
+        hi: '🛡 100% रेलवे सुरक्षा नियम (G&SR) प्रमाणित',
+        ta: '🛡 100% இந்திய ரயில்வே G&SR பாதுகாப்பு நெறிமுறைகள்'
       },
       summary: {
         en: 'Safety on Indian Railways cannot hallucinate. Our deterministic validator enforces: (1) 25 kV AC OHE power cutoff with earthing discharge rods, (2) 15.0 km maximum worksite single protection zone, and (3) Ballast vibration buffers between heavy tampers and delicate signal switches.',
-        hi: 'रेल सुरक्षा में कोई अनुमान या गलती स्वीकार्य नहीं है। हमारा सुरक्षा इंजन सख्ती से लागू करता है: (1) काम से पहले 25 kV बिजली बंद और अर्थिंग रॉड, (2) अधिकतम 15 किमी का सुरक्षा दायरा, और (3) भारी मशीनों के कंपन से सिग्नल मोटरों की सुरक्षा।'
+        hi: 'रेल सुरक्षा में कोई अनुमान या गलती स्वीकार्य नहीं है। हमारा सुरक्षा इंजन सख्ती से लागू करता है: (1) काम से पहले 25 kV बिजली बंद और अर्थिंग रॉड, (2) अधिकतम 15 किमी का सुरक्षा दायरा, और (3) भारी मशीनों के कंपन से सिग्नल मोटरों की सुरक्षा।',
+        ta: 'ரயில்வே பாதுகாப்பில் எந்த தவறும் நிகழக்கூடாது. எங்கள் விதிமுறை அமைப்பு: (1) மனிதர்கள் நுழையும் முன் 25 kV OHE மின்சார துண்டிப்பு, (2) அதிகபட்சம் 15 கி.மீ பாதுகாப்பு மண்டலம், மற்றும் (3) சிக்னல் மோட்டாரை சேதப்படுத்தாத டாம்பிங் அதிர்வு இடைவெளியை உறுதி செய்கிறது.'
       },
       visual: (
         <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2.5 text-xs">
@@ -197,16 +203,19 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
       number: '05',
       title: {
         en: 'The Human-in-the-Loop Payoff: Certified Section Controller Memo',
-        hi: 'नियंत्रक प्रमाणीकरण: आधिकारिक डिजिटल ब्लॉक मेमो'
+        hi: 'नियंत्रक प्रमाणीकरण: आधिकारिक डिजिटल ब्लॉक मेमो',
+        ta: 'மனித கட்டுப்பாட்டில் முடிவு: சான்றளிக்கப்பட்ட பிரிவு கட்டுப்பாட்டாளர் மெமோ'
       },
       duration: 15,
       badge: {
         en: '📝 Legally Binding Authorization · Complete Audit Trail',
-        hi: '📝 प्रमाणित डिजिटल रिकॉर्ड · 100% ऑडिट लॉग'
+        hi: '📝 प्रमाणित डिजिटल रिकॉर्ड · 100% ऑडिट लॉग',
+        ta: '📝 சட்டப்பூர்வ டிஜிட்டல் அனுமதி · முழுமையான தணிக்கை பதிவு'
       },
       summary: {
         en: 'AI recommends; the human Chief Controller decides. Plan A generates an official electronic block authorization memo with complete shift handover notes and one-click rollback capability, ready for immediate CRIS integration.',
-        hi: 'AI योजना बनाता है, लेकिन अंतिम निर्णय ड्यूटी पर तैनात सेक्शन कंट्रोलर का होता है। प्लान A का चयन होते ही आधिकारिक डिजिटल ब्लॉक मेमो जनरेट हो जाता है, जिसे रेलवे के CRIS नेटवर्क पर तुरंत लागू किया जा सकता है।'
+        hi: 'AI योजना बनाता है, लेकिन अंतिम निर्णय ड्यूटी पर तैनात सेक्शन कंट्रोलर का होता है। प्लान A का चयन होते ही आधिकारिक डिजिटल ब्लॉक मेमो जनरेट हो जाता है, जिसे रेलवे के CRIS नेटवर्क पर तुरंत लागू किया जा सकता है।',
+        ta: 'AI பரிந்துரைக்கிறது; பணியில் உள்ள தலைமை கட்டுப்பாட்டாளர் முடிவு செய்கிறார். திட்டம் A அதிகாரப்பூர்வ டிஜிட்டல் மெமோவை உருவாக்குகிறது, இதை ரயில்வேயின் CRIS அமைப்பில் உடனே செயல்படுத்த முடியும்.'
       },
       visual: (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
@@ -296,7 +305,7 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
-                  {language === 'hi' ? '90-सेकंड जज डेमो वॉकथ्रू' : '90-Second Judge Demo Tour'}
+                  {language === 'hi' ? '90-सेकंड जज डेमो वॉकथ्रू' : (language === 'ta' ? '90 வினாடி நடுவர் டெமோ உலா' : '90-Second Judge Demo Tour')}
                 </span>
                 <span className="bg-cyan-500/20 text-cyan-300 text-[10px] px-2 py-0.5 rounded-full font-mono">
                   Step {currentStep + 1} of {steps.length}
@@ -381,14 +390,14 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
-              <span>Back</span>
+              {language === 'hi' ? 'पिछला' : (language === 'ta' ? 'முந்தைய' : 'Back')}
             </button>
 
             <button
               onClick={handleNext}
               className="px-4 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 hover:brightness-110 shadow-md shadow-cyan-500/20 flex items-center gap-1.5"
             >
-              <span>{currentStep === steps.length - 1 ? (language === 'hi' ? 'कंसोल खोलें' : 'Explore Live Console') : (language === 'hi' ? 'अगला कदम' : 'Next Step')}</span>
+              <span>{currentStep === steps.length - 1 ? (language === 'hi' ? 'कंसोल खोलें' : (language === 'ta' ? 'கன்சோல் திறக்க' : 'Explore Live Console')) : (language === 'hi' ? 'अगला कदम' : (language === 'ta' ? 'அடுத்த படி' : 'Next Step'))}</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

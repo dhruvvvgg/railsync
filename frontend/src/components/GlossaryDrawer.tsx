@@ -20,8 +20,8 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
       const q = searchQuery.toLowerCase();
       const matchesSearch =
         term.acronym.toLowerCase().includes(q) ||
-        term.fullName[language].toLowerCase().includes(q) ||
-        term.plainEnglish[language].toLowerCase().includes(q);
+        (term.fullName[language] && term.fullName[language].toLowerCase().includes(q)) ||
+        (term.plainEnglish[language] && term.plainEnglish[language].toLowerCase().includes(q));
       return matchesCategory && matchesSearch;
     });
   }, [searchQuery, selectedCategory, language]);
@@ -29,8 +29,8 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-950/70 backdrop-blur-sm transition-opacity animate-fade-in flex justify-end">
-      <div className="w-full max-w-lg bg-[#0a1024] border-l border-slate-800 h-full shadow-2xl flex flex-col z-50">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-950/70 backdrop-blur-sm flex justify-end">
+      <div className="w-full max-w-md bg-[#0b132b] border-l border-slate-800 h-full flex flex-col shadow-2xl animate-slide-in-right">
         {/* Header */}
         <div className="p-5 border-b border-slate-800/80 flex items-center justify-between bg-[#0e1738]">
           <div className="flex items-center gap-3">
@@ -39,7 +39,13 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
             </div>
             <div>
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <span>{language === 'hi' ? 'भारतीय रेल शब्दावली कोष' : 'Indian Railways Domain Glossary'}</span>
+                <span>
+                  {language === 'hi'
+                    ? 'भारतीय रेल शब्दावली कोष'
+                    : (language === 'ta'
+                    ? 'இந்திய ரயில்வே கலைச்சொல் அகராதி'
+                    : 'Indian Railways Domain Glossary')}
+                </span>
                 <span className="bg-cyan-500/20 text-cyan-300 text-[10px] font-mono px-2 py-0.5 rounded-full border border-cyan-500/30">
                   {GLOSSARY_TERMS.length} Terms
                 </span>
@@ -47,7 +53,9 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
               <p className="text-xs text-slate-400 mt-0.5">
                 {language === 'hi'
                   ? 'तकनीकी रेलवे शब्दों की सरल हिंदी व्याख्या'
-                  : 'Plain-English decoder for all railway systems & acronyms'}
+                  : (language === 'ta'
+                  ? 'ரயில்வே அமைப்புகள் மற்றும் சுருக்கங்களின் எளிய விளக்கம்'
+                  : 'Plain-English decoder for all railway systems & acronyms')}
               </p>
             </div>
           </div>
@@ -67,7 +75,13 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={language === 'hi' ? 'खोजें (जैसे TMS, OHE, MSDAC, Tamper)...' : 'Search acronym (e.g. TMS, OHE, MSDAC, Tamper)...'}
+              placeholder={
+                language === 'hi'
+                  ? 'खोजें (जैसे TMS, OHE, MSDAC, Tamper)...'
+                  : (language === 'ta'
+                  ? 'தேடுக (எ.கா. TMS, OHE, MSDAC, Tamper)...'
+                  : 'Search acronym (e.g. TMS, OHE, MSDAC, Tamper)...')
+              }
               className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
             />
           </div>
@@ -93,7 +107,11 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
         <div className="flex-1 overflow-y-auto p-4 space-y-3 divide-y divide-slate-800/50">
           {filteredTerms.length === 0 ? (
             <div className="text-center py-12 text-slate-500 text-xs">
-              {language === 'hi' ? 'कोई मेल नहीं मिला।' : 'No matching railway terms found.'}
+              {language === 'hi'
+                ? 'कोई मेल नहीं मिला।'
+                : (language === 'ta'
+                ? 'பொருத்தமான ரயில்வே சொற்கள் எதுவும் கிடைக்கவில்லை.'
+                : 'No matching railway terms found.')}
             </div>
           ) : (
             filteredTerms.map((term) => {
@@ -122,25 +140,33 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
                   </div>
 
                   <h3 className="text-xs font-semibold text-cyan-300">
-                    {term.fullName[language]}
+                    {term.fullName[language] || term.fullName.en}
                   </h3>
 
                   <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 space-y-1.5">
                     <div>
                       <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-                        {language === 'hi' ? 'सरल व्याख्या' : 'Plain-English Meaning'}
+                        {language === 'hi'
+                          ? 'सरल व्याख्या'
+                          : (language === 'ta'
+                          ? 'எளிய விளக்கம்'
+                          : 'Plain-English Meaning')}
                       </span>
                       <p className="text-xs text-slate-200 leading-relaxed">
-                        {term.plainEnglish[language]}
+                        {term.plainEnglish[language] || term.plainEnglish.en}
                       </p>
                     </div>
 
                     <div className="pt-1 border-t border-slate-800/60">
                       <span className="text-[10px] uppercase font-bold text-emerald-400 block tracking-wider">
-                        {language === 'hi' ? 'रेलसिंक में इसका महत्व' : 'Why It Matters In RAILSYNC'}
+                        {language === 'hi'
+                          ? 'रेलसिंक में इसका महत्व'
+                          : (language === 'ta'
+                          ? 'ரயில்சிங்கில் இதன் முக்கியத்துவம்'
+                          : 'Why It Matters In RAILSYNC')}
                       </span>
                       <p className="text-[11px] text-slate-400 leading-relaxed">
-                        {term.whyItMatters[language]}
+                        {term.whyItMatters[language] || term.whyItMatters.en}
                       </p>
                     </div>
                   </div>
@@ -152,12 +178,18 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
 
         {/* Footer */}
         <div className="p-3.5 border-t border-slate-800/80 bg-[#080d1e] text-[11px] text-slate-400 text-center flex items-center justify-between">
-          <span>{language === 'hi' ? 'रेलवे मानक शब्दावली' : 'Standard IR Acronym Reference'}</span>
+          <span>
+            {language === 'hi'
+              ? 'रेलवे मानक शब्दावली'
+              : (language === 'ta'
+              ? 'நிலையான ரயில்வே சுருக்கங்கள்'
+              : 'Standard IR Acronym Reference')}
+          </span>
           <button
             onClick={onClose}
             className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium"
           >
-            {language === 'hi' ? 'बंद करें' : 'Close Drawer'}
+            {language === 'hi' ? 'बंद करें' : (language === 'ta' ? 'மூடுக' : 'Close Drawer')}
           </button>
         </div>
       </div>

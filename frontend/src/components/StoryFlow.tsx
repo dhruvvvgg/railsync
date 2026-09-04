@@ -64,7 +64,9 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <p className="text-slate-300 text-sm md:text-base leading-relaxed">
               {language === 'hi'
                 ? 'पारंपरिक फोन-आधारित ब्लॉक बुकिंग को हटाकर 0.031 सेकंड में गणितीय रूप से 3 विभागों के कार्यों को रात के खाली समय में बंडल करता है — ताकि वंदे भारत और राजधानी ट्रेनें 0 मिनट लेट हों।'
-                : 'Replacing disjointed phone calls with mathematical constraint programming. Bundles Civil, Electrical, and Signal maintenance into natural overnight freight valleys, ensuring zero express train delays.'}
+                : (language === 'ta'
+                ? 'தொலைபேசி அழைப்பு முறைக்கு பதிலாக கணித நிரலாக்க உகப்பாக்கம் மூலம் சிவில், எலக்ட்ரிக்கல், சிக்னல் பணிகளை இரவு நேர சரக்கு ரயில் இடைவெளியில் ஒருங்கிணைக்கிறது — ரயில்களின் தாமதத்தை முற்றிலும் தவிர்க்கிறது.'
+                : 'Replacing disjointed phone calls with mathematical constraint programming. Bundles Civil, Electrical, and Signal maintenance into natural overnight freight valleys, ensuring zero express train delays.')}
             </p>
 
             {/* Quick Action CTAs */}
@@ -99,7 +101,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
           <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl md:w-72 flex-shrink-0 space-y-4 shadow-xl">
             <div className="border-b border-slate-800 pb-3">
               <span className="text-xs text-slate-400 font-medium block">
-                {language === 'hi' ? 'सॉल्वर गति' : 'CP-SAT Solver Latency'}
+                {language === 'hi' ? 'सॉल्वर गति' : (language === 'ta' ? 'சால்வர் வேகம்' : 'CP-SAT Solver Latency')}
               </span>
               <div className="flex items-baseline gap-2 mt-0.5">
                 <span className="text-2xl font-bold font-mono text-cyan-300">0.031s</span>
@@ -109,7 +111,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
 
             <div className="border-b border-slate-800 pb-3">
               <span className="text-xs text-slate-400 font-medium block">
-                {language === 'hi' ? 'डेटा गेटवे स्क्रीनिंग' : 'Dirty Data Filter'}
+                {language === 'hi' ? 'डेटा गेटवे स्क्रीनिंग' : (language === 'ta' ? 'தரவு வடிகட்டுதல்' : 'Dirty Data Filter')}
               </span>
               <div className="flex items-baseline gap-2 mt-0.5">
                 <span className="text-2xl font-bold font-mono text-amber-300">29 / 29</span>
@@ -119,7 +121,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
 
             <div>
               <span className="text-xs text-slate-400 font-medium block">
-                {language === 'hi' ? 'सुरक्षा नियम अनुपालन' : 'Statutory Safety Rules'}
+                {language === 'hi' ? 'सुरक्षा नियम अनुपालन' : (language === 'ta' ? 'சட்டப்பூர்வ பாதுகாப்பு விதிகள்' : 'Statutory Safety Rules')}
               </span>
               <div className="flex items-baseline gap-2 mt-0.5">
                 <span className="text-2xl font-bold font-mono text-emerald-300">100%</span>
@@ -138,7 +140,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <span>{t.compareTitle}</span>
           </h2>
           <span className="text-xs text-slate-400">
-            {language === 'hi' ? 'पारंपरिक बनाम AI का सीधा असर' : 'Measurable Impact on Indian Railways Operations'}
+            {language === 'hi' ? 'पारंपरिक बनाम AI का सीधा असर' : (language === 'ta' ? 'பழைய முறை vs AI இன் நேரடி தாக்கம்' : 'Measurable Impact on Indian Railways Operations')}
           </span>
         </div>
 
@@ -155,7 +157,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <span className="text-2xl font-black font-mono text-cyan-300">0 min</span>
             </div>
             <p className="text-xs text-emerald-400 font-medium">
-              ✓ {language === 'hi' ? 'शून्य एक्सप्रेस विलंब (100% समयबद्धता)' : 'Zero passenger detentions'}
+              ✓ {language === 'hi' ? 'शून्य एक्सप्रेस विलंब (100% समयबद्धता)' : (language === 'ta' ? 'பூஜ்ஜிய பயணிகள் ரயில் தாமதம் (100% சரியான நேரம்)' : 'Zero passenger detentions')}
             </p>
             <span className="text-[10px] text-slate-400 block mt-1">{t.kpiDetentionsSub}</span>
           </div>
@@ -172,7 +174,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <span className="text-2xl font-black font-mono text-emerald-300">3.25 hrs</span>
             </div>
             <p className="text-xs text-emerald-400 font-medium">
-              ✓ {language === 'hi' ? '50% कम लाइन बंदी' : '50% reduction in track closures'}
+              ✓ {language === 'hi' ? '50% कम लाइन बंदी' : (language === 'ta' ? '50% குறைவான பாதை முடக்கம்' : '50% reduction in track closures')}
             </p>
             <span className="text-[10px] text-slate-400 block mt-1">{t.kpiDowntimeSub}</span>
           </div>
@@ -189,7 +191,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <span className="text-2xl font-black font-mono text-purple-300">83.3%</span>
             </div>
             <p className="text-xs text-emerald-400 font-medium">
-              ✓ {language === 'hi' ? '3-इन-1 संयुक्त कॉरिडोर ब्लॉक' : 'Co-located simultaneous execution'}
+              ✓ {language === 'hi' ? '3-इन-1 संयुक्त कॉरिडोर ब्लॉक' : (language === 'ta' ? '3-இன்-1 ஒரே நேரத்தில் செயல்படுத்தல்' : 'Co-located simultaneous execution')}
             </p>
             <span className="text-[10px] text-slate-400 block mt-1">{t.kpiBundlingSub}</span>
           </div>
@@ -206,7 +208,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <span className="text-2xl font-black font-mono text-blue-300">100%</span>
             </div>
             <p className="text-xs text-emerald-400 font-medium">
-              ✓ {language === 'hi' ? 'शून्य सुरक्षा उल्लंघन' : 'Zero manual safety oversights'}
+              ✓ {language === 'hi' ? 'शून्य सुरक्षा उल्लंघन' : (language === 'ta' ? 'பூஜ்ஜிய பாதுகாப்பு மீறல்கள்' : 'Zero manual safety oversights')}
             </p>
             <span className="text-[10px] text-slate-400 block mt-1">{t.kpiSafetySub}</span>
           </div>
@@ -216,7 +218,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
       {/* The 3-Act Story Cards */}
       <div className="space-y-6">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">
-          <span>{language === 'hi' ? 'सिस्टम की 3-चरणीय कार्यप्रणाली' : 'The 3-Act System Architecture'}</span>
+          <span>{language === 'hi' ? 'सिस्टम की 3-चरणीय कार्यप्रणाली' : (language === 'ta' ? 'கணினியின் 3-படி செயல்முறை' : 'The 3-Act System Architecture')}</span>
           <span className="bg-cyan-500/20 text-cyan-300 text-xs px-2.5 py-0.5 rounded-full font-mono">
             End-to-End
           </span>
@@ -249,10 +251,12 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <p className="text-xs text-slate-300">
                 {language === 'hi'
                   ? 'सुबह 09:00 से 12:00 तक ट्रैक टैम्पिंग का ब्लॉक मांगता है।'
-                  : 'Demands exclusive block 09:00–12:00 for CSM-09 track tamping.'}
+                  : (language === 'ta'
+                  ? 'காலை 09:00 முதல் 12:00 வரை தண்டவாளம் சீரமைக்க தனி பிளாக் கேட்கிறது.'
+                  : 'Demands exclusive block 09:00–12:00 for CSM-09 track tamping.')}
               </p>
               <span className="text-[10px] text-red-400 font-mono mt-2 block">
-                ❌ {language === 'hi' ? 'अलग से 3 घंटे लाइन बंद' : 'Independent 3h shutdown'}
+                ❌ {language === 'hi' ? 'अलग से 3 घंटे लाइन बंद' : (language === 'ta' ? 'தனியாக 3 மணிநேரம் பாதை மூடல்' : 'Independent 3h shutdown')}
               </span>
             </div>
 
@@ -264,10 +268,12 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <p className="text-xs text-slate-300">
                 {language === 'hi'
                   ? 'दोपहर 13:00 से 15:30 तक 25 kV ओएचई निरीक्षण मांगता है।'
-                  : 'Requests 25 kV power shutdown 13:00–15:30 for cantilever work.'}
+                  : (language === 'ta'
+                  ? 'பிற்பகல் 13:00 முதல் 15:30 வரை 25 kV கம்பி ஆய்வுக்கு மின் நிறுத்தம் கேட்கிறது.'
+                  : 'Requests 25 kV power shutdown 13:00–15:30 for cantilever work.')}
               </p>
               <span className="text-[10px] text-red-400 font-mono mt-2 block">
-                ❌ {language === 'hi' ? 'दोबारा 2.5 घंटे लाइन बंद' : 'Repeated 2.5h shutdown'}
+                ❌ {language === 'hi' ? 'दोबारा 2.5 घंटे लाइन बंद' : (language === 'ta' ? 'மீண்டும் 2.5 மணிநேரம் பாதை மூடல்' : 'Repeated 2.5h shutdown')}
               </span>
             </div>
 
@@ -279,10 +285,12 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <p className="text-xs text-slate-300">
                 {language === 'hi'
                   ? 'शाम 16:00 से 18:30 तक पॉइंट मोटर टेस्टिंग की मांग करता है।'
-                  : 'Books 16:00–18:30 for 143mm point motor calibration.'}
+                  : (language === 'ta'
+                  ? 'மாலை 16:00 முதல் 18:30 வரை சிக்னல் மோட்டார் சோதனைக்கு பிளாக் கோருகிறது.'
+                  : 'Books 16:00–18:30 for 143mm point motor calibration.')}
               </p>
               <span className="text-[10px] text-red-400 font-mono mt-2 block">
-                ❌ {language === 'hi' ? 'तीसरी बार 2.5 घंटे लाइन बंद' : 'Third separate shutdown'}
+                ❌ {language === 'hi' ? 'तीसरी बार 2.5 घंटे लाइन बंद' : (language === 'ta' ? '3-வது முறையாக 2.5 மணிநேர மூடல்' : 'Third separate shutdown')}
               </span>
             </div>
           </div>
@@ -292,12 +300,14 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
             <div className="space-y-1 text-xs">
               <span className="font-bold text-red-300 uppercase tracking-wide block">
-                {language === 'hi' ? 'वास्तविक टकराव: ट्रेन 12582 बनाम सिविल ब्लॉक' : 'Real Schedule Clash: Train 12582 vs Uncoordinated Block'}
+                {language === 'hi' ? 'वास्तविक टकराव: ट्रेन 12582 बनाम सिविल ब्लॉक' : (language === 'ta' ? 'உண்மை மோதல்: ரயில் 12582 vs திட்டமிடப்படாத சிவில் பிளாக்' : 'Real Schedule Clash: Train 12582 vs Uncoordinated Block')}
               </span>
               <p className="text-slate-300">
                 {language === 'hi'
                   ? 'सेक्शन COR-005 (शिकोहाबाद-टुंडला) पर सिविल विभाग का ब्लॉक ट्रेन 12582 (बीएसबीएस-नई दिल्ली एक्सप्रेस) के मार्ग से रात 01:50 बजे टकराता है। इसके कारण ट्रेन को 48 मिनट लाल सिग्नल पर रोका जाता है।'
-                  : 'On corridor COR-005 (Shikohabad–Tundla), an uncoordinated Civil block directly intersects Train 12582 (BSBS-NDLS Superfast Express) at 01:50, causing an immediate 48-minute passenger delay.'}
+                  : (language === 'ta'
+                  ? 'காரிடார் COR-005 இல், சிவில் பிளாக் நேரடியாக ரயில் 12582 (BSBS-NDLS எக்ஸ்பிரஸ்) உடன் இரவு 01:50 மணிக்கு மோதி 48 நிமிட தாமதத்தை உருவாக்குகிறது.'
+                  : 'On corridor COR-005 (Shikohabad–Tundla), an uncoordinated Civil block directly intersects Train 12582 (BSBS-NDLS Superfast Express) at 01:50, causing an immediate 48-minute passenger delay.')}
               </p>
             </div>
           </div>
@@ -329,7 +339,9 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <p className="text-xs text-slate-400 leading-relaxed">
                 {language === 'hi'
                   ? 'आगामी 14 दिनों के सिविल, ट्रैक्शन और सिग्नल कार्यों को एक साथ स्कैन करता है।'
-                  : 'Aggregates upcoming work across TMS, TDMS, and SMMS into unified decision sets.'}
+                  : (language === 'ta'
+                  ? 'அடுத்த 14 நாட்களுக்கான சிவில், எலக்ட்ரிக்கல், சிக்னல் பணிகளை ஒன்றாக ஸ்கேன் செய்கிறது.'
+                  : 'Aggregates upcoming work across TMS, TDMS, and SMMS into unified decision sets.')}
               </p>
             </div>
 
@@ -341,7 +353,9 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <p className="text-xs text-slate-400 leading-relaxed">
                 {language === 'hi'
                   ? 'अमान्य किमी और उलटे समय वाले 29 खराब रिकॉर्ड्स को अलग करके सॉल्वर क्रैश रोकता है।'
-                  : 'Screens 29 anomalous dirty records before optimization; zero division crashes.'}
+                  : (language === 'ta'
+                  ? 'தவறான கி.மீ மற்றும் நேரப் பிழையுள்ள 29 பதிவுகளை நீக்கி சால்வர் முடக்கத்தை தடுக்கிறது.'
+                  : 'Screens 29 anomalous dirty records before optimization; zero division crashes.')}
               </p>
             </div>
 
@@ -353,7 +367,9 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <p className="text-xs text-slate-400 leading-relaxed">
                 {language === 'hi'
                   ? '25 kV बिजली कटौती और 1 किमी टैम्पिंग-स्विच दूरी जैसे नियम कभी नहीं तोड़े जा सकते।'
-                  : 'Hardcoded G&SR safety constraints enforce OHE isolation and machine clearances.'}
+                  : (language === 'ta'
+                  ? '25 kV மின் நிறுத்தம் மற்றும் 1 கி.மீ அதிர்வு இடைவெளி போன்ற பாதுகாப்பு விதிகளை உறுதி செய்கிறது.'
+                  : 'Hardcoded G&SR safety constraints enforce OHE isolation and machine clearances.')}
               </p>
             </div>
 
@@ -365,7 +381,9 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               <p className="text-xs text-slate-400 leading-relaxed">
                 {language === 'hi'
                   ? 'ब्लॉक को रात 01:00–04:25 के खाली समय में शिफ्ट करके पैसेंजर ट्रेनों को सुरक्षित करता है।'
-                  : 'Pins possessions into 01:00–04:25 night lull valleys where freight can loop.'}
+                  : (language === 'ta'
+                  ? 'பராமரிப்பை இரவு 01:00–04:25 சரக்கு ரயில் இடைவெளிக்கு மாற்றி பயணிகள் ரயில்களை பாதுகாக்கிறது.'
+                  : 'Pins possessions into 01:00–04:25 night lull valleys where freight can loop.')}
               </p>
             </div>
           </div>
@@ -426,7 +444,9 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
                 <span className="text-xs font-bold text-white block">
                   {language === 'hi'
                     ? 'अनुभाग नियंत्रक डिजिटल लाइन क्लीयरेंस मेमो (सत्यापित)'
-                    : 'Section Controller Digital Line Clearance Memo (Verified)'}
+                    : (language === 'ta'
+                    ? 'பிரிவு கட்டுப்பாட்டாளர் டிஜிட்டல் பாதை அனுமதி மெமோ (சரிபார்க்கப்பட்டது)'
+                    : 'Section Controller Digital Line Clearance Memo (Verified)')}
                 </span>
                 <p className="text-[11px] text-slate-400 mt-0.5">{t.authFooter}</p>
                 <span className="text-[10px] text-slate-400 font-mono block mt-1">
@@ -439,7 +459,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               onClick={() => onOpenConsole('audit')}
               className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5 flex-shrink-0"
             >
-              <span>{language === 'hi' ? 'ऑडिट लॉग देखें' : 'View Audit Trail'}</span>
+              <span>{language === 'hi' ? 'ऑडिट लॉग देखें' : (language === 'ta' ? 'தணிக்கை பதிவு பார்க்க' : 'View Audit Trail')}</span>
               <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
           </div>
@@ -450,12 +470,14 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
       <div className="bg-[#0b132b] border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h3 className="text-base font-bold text-white">
-            {language === 'hi' ? 'विशेषज्ञ इंजीनियरिंग कंसोल' : 'Explore The Deep Engineering Console'}
+            {language === 'hi' ? 'विशेषज्ञ इंजीनियरिंग कंसोल' : (language === 'ta' ? 'முழு பொறியியல் கன்சோல்' : 'Explore The Deep Engineering Console')}
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
             {language === 'hi'
               ? 'जजों और तकनीकी विशेषज्ञों के लिए सभी 6 लाइव डेटा और सिमुलेशन टूल्स उपलब्ध हैं।'
-              : 'All 6 engineering tools are active for deep-dive technical questions from judges.'}
+              : (language === 'ta'
+              ? 'நடுவர்களின் தொழில்நுட்ப கேள்விகளுக்கு பதிலளிக்க அனைத்து 6 கருவிகளும் நேரலையில் தயாராக உள்ளன.'
+              : 'All 6 engineering tools are active for deep-dive technical questions from judges.')}
           </p>
         </div>
 

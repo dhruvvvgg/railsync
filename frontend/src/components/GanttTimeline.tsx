@@ -154,7 +154,11 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span className="font-bold text-slate-200">
-            {language === 'hi' ? '25 kV ट्रैक्शन सुरक्षा प्रोटोकॉल (G&SR):' : '25 kV Traction Safety State Machine (G&SR Norms):'}
+            {language === 'hi'
+              ? '25 kV ट्रैक्शन सुरक्षा प्रोटोकॉल (G&SR):'
+              : (language === 'ta'
+              ? '25 kV மின் இழுவை பாதுகாப்பு நெறிமுறை (G&SR):'
+              : '25 kV Traction Safety State Machine (G&SR Norms):')}
           </span>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -182,12 +186,24 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         <div className="flex items-center gap-2">
           <Layers className="w-5 h-5 text-cyan-400" />
           <h2 className="text-base font-bold text-white">
-            {language === 'hi' ? 'त्रि-विभागीय समन्वित कार्य अनुसूची (गैंट चार्ट)' : 'Cross-Department Synchronized Gantt Schedule'}
+            {language === 'hi'
+              ? 'त्रि-विभागीय समन्वित कार्य अनुसूची (गैंट चार्ट)'
+              : (language === 'ta'
+              ? 'முத்துறை ஒருங்கிணைந்த பணிக் காலவரிசை (கான்ட் வரைபடம்)'
+              : 'Cross-Department Synchronized Gantt Schedule')}
           </h2>
           <span className={`text-xs px-2 py-0.5 rounded font-mono font-medium ${isBaseline ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
             {isBaseline
-              ? (language === 'hi' ? 'असमन्वित अलग-अलग ब्लॉक (विभागीय साइलो)' : 'Fragmented Uncoordinated Possessions (Departmental Silos)')
-              : (language === 'hi' ? 'एकल 25 kV पावर ब्लॉक में समन्वित कार्य' : 'Synchronized Under Single 25 kV Power Shutoff')}
+              ? (language === 'hi'
+                ? 'असमन्वित अलग-अलग ब्लॉक (विभागीय साइलो)'
+                : (language === 'ta'
+                ? 'தனித்தனி ஒருங்கிணைப்பற்ற பிளாக்குகள்'
+                : 'Fragmented Uncoordinated Possessions (Departmental Silos)'))
+              : (language === 'hi'
+                ? 'एकल 25 kV पावर ब्लॉक में समन्वित कार्य'
+                : (language === 'ta'
+                ? 'ஒற்றை 25 kV மின் நிறுத்தத்தில் ஒருங்கிணைந்த பணி'
+                : 'Synchronized Under Single 25 kV Power Shutoff'))}
           </span>
         </div>
         <div className="text-xs text-slate-400 flex items-center gap-2">
@@ -263,22 +279,34 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
             {isBaseline ? (
               language === 'hi' ? (
                 <><strong>परिणाम:</strong> 3 विभागों द्वारा अलग-अलग दिन के ब्लॉक मांगने से 4+ ट्रेनें लेट और ट्रैक क्षमता का भारी नुकसान।</>
+              ) : (language === 'ta' ? (
+                <><strong>முடிவு:</strong> 3 துறைகள் பகலில் தனித்தனியாக பிளாக் கேட்பதால் 4+ ரயில்கள் தாமதம் மற்றும் பாதை திறன் இழப்பு.</>
               ) : (
                 <><strong>Result:</strong> 3 departments booking separate daytime blocks causing 4+ train detentions and severe fragmentation.</>
-              )
+              ))
             ) : (
               language === 'hi' ? (
                 <><strong>परिणाम:</strong> तीनों विभाग 1 ही संयुक्त ब्लॉक में एक साथ काम करते हैं। दिन के अलग-अलग ब्लॉकों से पूरी तरह मुक्ति।</>
+              ) : (language === 'ta' ? (
+                <><strong>முடிவு:</strong> 3 துறைகளும் ஒரே கூட்டுப் பிளாக்கில் இணைந்து செயல்படுகின்றன. பகல் நேரத் தனி மூடல்கள் தவிர்க்கப்பட்டன.</>
               ) : (
                 <><strong>Result:</strong> 3 departments executing work in 1 combined possession. Avoids separate daytime disconnections.</>
-              )
+              ))
             )}
           </span>
         </div>
         <span className={`font-mono font-semibold ${isBaseline ? 'text-red-400' : 'text-cyan-400'}`}>
           {isBaseline
-            ? (language === 'hi' ? 'संचालन प्रभाव: 74/100 (गंभीर व्यवधान)' : 'Operational Impact: 74/100 (High Disruption)')
-            : (language === 'hi' ? 'कुल प्रभावी कार्य: 3.25 घंटे में 8.75 घंटे का काम (269% उत्पादकता)' : 'Total Effective Work Done: 8.75 Task Hours in 3.25 Block Hours (269% Productivity)')}
+            ? (language === 'hi'
+              ? 'संचालन प्रभाव: 74/100 (गंभीर व्यवधान)'
+              : (language === 'ta'
+              ? 'இயக்கத் தாக்கம்: 74/100 (அதிக இடையூறு)'
+              : 'Operational Impact: 74/100 (High Disruption)'))
+            : (language === 'hi'
+              ? 'कुल प्रभावी कार्य: 3.25 घंटे में 8.75 घंटे का काम (269% उत्पादकता)'
+              : (language === 'ta'
+              ? 'மொத்த பயனுள்ள வேலை: 3.25 மணி நேரத்தில் 8.75 மணிநேர பணி (269% உற்பத்தித்திறன்)'
+              : 'Total Effective Work Done: 8.75 Task Hours in 3.25 Block Hours (269% Productivity)'))}
         </span>
       </div>
     </div>

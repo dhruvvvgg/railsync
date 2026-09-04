@@ -70,7 +70,9 @@ export const Header: React.FC<HeaderProps> = ({
             <p className="text-xs text-slate-400 mt-0.5 hidden md:block">
               {language === 'hi'
                 ? 'भारतीय रेल के लिए AI-संचालित स्वचालित ब्लॉक नियोजन • उत्तर मध्य रेलवे'
-                : 'AI-Powered Automatic Block Planning for Train Operations • North Central Railway'}
+                : (language === 'ta'
+                ? 'இந்திய ரயில்வேக்கான AI-இயங்கும் தானியங்கி பிளாக் திட்டமிடல் • வட மத்திய ரயில்வே'
+                : 'AI-Powered Automatic Block Planning for Train Operations • North Central Railway')}
             </p>
           </div>
         </div>
@@ -83,7 +85,9 @@ export const Header: React.FC<HeaderProps> = ({
             className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3 sm:px-3.5 py-1.5 rounded-xl text-xs shadow-md shadow-cyan-500/20 flex items-center gap-1.5 transition-all transform hover:scale-[1.02]"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
-            <span className="hidden sm:inline">{language === 'hi' ? '90s निर्देशित डेमो' : '90s Guided Demo'}</span>
+            <span className="hidden sm:inline">
+              {language === 'hi' ? '90s निर्देशित डेमो' : (language === 'ta' ? '90s நேரலை டெமோ' : '90s Guided Demo')}
+            </span>
             <span className="sm:hidden">Demo</span>
           </button>
 
@@ -98,7 +102,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'कहानी' : 'Story'}</span>
+              <span>{language === 'hi' ? 'कहानी' : (language === 'ta' ? 'கதை' : 'Story')}</span>
             </button>
             <button
               onClick={() => {
@@ -112,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'कंसोल' : 'Console'}</span>
+              <span>{language === 'hi' ? 'कंसोल' : (language === 'ta' ? 'கன்சோல்' : 'Console')}</span>
             </button>
           </div>
 
@@ -123,11 +127,13 @@ export const Header: React.FC<HeaderProps> = ({
             title="Open Railway Jargon Glossary"
           >
             <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden md:inline">{language === 'hi' ? 'शब्दावली' : 'Glossary'}</span>
+            <span className="hidden md:inline">
+              {language === 'hi' ? 'शब्दावली' : (language === 'ta' ? 'கலைச்சொற்கள்' : 'Glossary')}
+            </span>
             <span className="bg-amber-500/20 text-amber-300 text-[10px] px-1 rounded-full font-mono font-bold">14</span>
           </button>
 
-          {/* Bilingual Language Switcher */}
+          {/* Trilingual Language Switcher */}
           <div className="flex items-center bg-slate-900 border border-slate-700/80 rounded-xl p-0.5 text-xs">
             <button
               onClick={() => setLanguage('en')}
@@ -148,6 +154,16 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               हिन्दी
+            </button>
+            <button
+              onClick={() => setLanguage('ta')}
+              className={`px-2 py-1 rounded-lg font-mono font-semibold transition-all ${
+                language === 'ta'
+                  ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              தமிழ்
             </button>
           </div>
         </div>
@@ -241,7 +257,9 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="font-medium text-slate-300">
               {language === 'hi'
                 ? 'स्टोरी मोड सक्रिय: 5-7 मिनट के प्रेजेंटेशन और जजों के मूल्यांकन हेतु अनुकूलित'
-                : 'Pitch Mode Active: Streamlined for 5–7 minute hackathon evaluation'}
+                : (language === 'ta'
+                ? 'கதை பயன்முறை: 5-7 நிமிட நடுவர் விளக்கக்காட்சிக்கு ஏற்றவாறு வடிவமைக்கப்பட்டுள்ளது'
+                : 'Pitch Mode Active: Streamlined for 5–7 minute hackathon evaluation')}
             </span>
           </div>
           <button

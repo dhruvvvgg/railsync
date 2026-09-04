@@ -164,7 +164,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
           <div className="bg-slate-900/95 border-l-4 border-cyan-400 p-3.5 rounded-r-xl mb-4 text-xs flex flex-wrap items-center justify-between gap-3 shadow-md">
             <div className="flex items-start gap-2.5 max-w-2xl">
               <span className="font-bold text-cyan-300 flex-shrink-0 text-sm">
-                {language === 'hi' ? '📖 ग्राफ कैसे पढ़ें:' : '📖 How to Read:'}
+                {language === 'hi' ? '📖 ग्राफ कैसे पढ़ें:' : (language === 'ta' ? '📖 வரைபடத்தை எவ்வாறு படிப்பது:' : '📖 How to Read:')}
               </span>
               <span className="text-slate-200 leading-relaxed">
                 {t.mareyCaption}
@@ -181,7 +181,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-red-400"></span>
-                  <span>{language === 'hi' ? 'पहले: पुरानी अव्यवस्था (टकराव)' : 'Before: Manual Conflicts'}</span>
+                  <span>{language === 'hi' ? 'पहले: पुरानी अव्यवस्था (टकराव)' : (language === 'ta' ? 'முன்பு: கையேடு மோதல்கள்' : 'Before: Manual Conflicts')}</span>
                 </button>
                 <button
                   onClick={() => onTogglePlan('plan_a')}
@@ -192,7 +192,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  <span>{language === 'hi' ? 'बाद में: CP-SAT समाधान (0 विलंब)' : 'After: CP-SAT Fix (0 Delays)'}</span>
+                  <span>{language === 'hi' ? 'बाद में: CP-SAT समाधान (0 विलंब)' : (language === 'ta' ? 'பின்னர்: CP-SAT தீர்வு (0 தாமதம்)' : 'After: CP-SAT Fix (0 Delays)')}</span>
                 </button>
               </div>
             )}
