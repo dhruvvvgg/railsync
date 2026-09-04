@@ -48,9 +48,9 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
     'COR-012': [139, 231]
   };
 
-  const width = 900;
-  const height = 460;
-  const margin = { top: 30, right: 30, bottom: 40, left: 130 };
+  const width = 960;
+  const height = 490;
+  const margin = { top: 38, right: 30, bottom: 48, left: 185 };
 
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -235,7 +235,8 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
       </div>
 
       <div className="overflow-x-auto">
-        <svg width={width} height={height} className="select-none mx-auto">
+        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="select-none mx-auto max-w-full h-auto">
+          {/* Station gridlines and labels */}
           {stations.map((st, i) => {
             const y = kmToY(st.km);
             return (
@@ -249,26 +250,30 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   strokeDasharray={i === 0 || i === stations.length - 1 ? 'none' : '3 3'}
                   strokeWidth="1"
                 />
+                {/* KM label positioned on the far left with generous clearance */}
                 <text
-                  x={margin.left - 10}
+                  x={16}
                   y={y + 4}
-                  textAnchor="end"
-                  className="fill-slate-400 text-[11px] font-mono"
-                >
-                  {st.name} ({st.code})
-                </text>
-                <text
-                  x={margin.left - 90}
-                  y={y + 4}
-                  textAnchor="end"
-                  className="fill-slate-500 text-[10px] font-mono"
+                  textAnchor="start"
+                  className="fill-slate-500 text-[10px] font-mono select-none"
                 >
                   {st.km} km
+                </text>
+                {/* Station Name + Code right-aligned against the diagram margin */}
+                <text
+                  x={margin.left - 12}
+                  y={y + 4}
+                  textAnchor="end"
+                  className="select-none"
+                >
+                  <tspan className="fill-slate-300 font-medium text-[11px] font-sans">{st.name}</tspan>
+                  <tspan className="fill-cyan-400 font-mono font-semibold text-[10px]"> ({st.code})</tspan>
                 </text>
               </g>
             );
           })}
 
+          {/* Time axis vertical gridlines and labels */}
           {Array.from({ length: 13 }).map((_, i) => {
             const hour = i * 2;
             const hourStr = `${hour.toString().padStart(2, '0')}:00`;
@@ -285,9 +290,9 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 />
                 <text
                   x={x}
-                  y={height - margin.bottom + 18}
+                  y={height - margin.bottom + 20}
                   textAnchor="middle"
-                  className="fill-slate-400 text-[11px] font-mono"
+                  className="fill-slate-400 text-[10.5px] font-mono select-none"
                 >
                   {hourStr}
                 </text>
@@ -295,18 +300,58 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
             );
           })}
 
+          {/* Background Shadow Corridor Guide Band for Plan A & Plan B */}
+          {selectedPlan !== 'baseline_fcfs' && (
+            <g className="pointer-events-none">
+              <rect
+                x={timeToX('01:00')}
+                y={margin.top}
+                width={Math.max(20, timeToX('04:25') - timeToX('01:00'))}
+                height={innerHeight}
+                fill="#10b981"
+                fillOpacity="0.06"
+                stroke="#10b981"
+                strokeWidth="1"
+                strokeDasharray="4 4"
+              />
+              {/* Top Banner indicating the Night Maintenance Window */}
+              <rect
+                x={timeToX('01:00')}
+                y={margin.top - 24}
+                width={Math.max(20, timeToX('04:25') - timeToX('01:00'))}
+                height={18}
+                rx="4"
+                fill="#064e3b"
+                stroke="#10b981"
+                strokeWidth="1"
+                fillOpacity="0.9"
+              />
+              <text
+                x={(timeToX('01:00') + timeToX('04:25')) / 2}
+                y={margin.top - 11}
+                textAnchor="middle"
+                fill="#6ee7b7"
+                className="text-[9.5px] font-bold font-mono tracking-tight"
+              >
+                {language === 'hi' ? '✦ रात्रि ब्लॉक (01:00–04:25)' : (language === 'ta' ? '✦ இரவு பிளாக் (01:00–04:25)' : '✦ SHADOW WINDOW (01:00–04:25)')}
+              </text>
+            </g>
+          )}
+
+          {/* Candidate Block Rectangles with clean non-overlapping ID badges */}
           {candidateBlocks.map((blk) => {
             const x1 = timeToX(blk.start);
             const x2 = timeToX(blk.end);
             const y1 = kmToY(blk.km2);
             const y2 = kmToY(blk.km1);
-            const blockWidth = x2 - x1;
-            const blockHeight = y2 - y1;
+            const blockWidth = Math.max(28, x2 - x1);
+            const blockHeight = Math.max(14, y2 - y1);
+            const shortId = blk.id.replace('CAND-BLK-', 'B-').replace('BASE-BLK-', 'FCFS-');
 
             return (
               <g
                 key={blk.id}
-                className="cursor-pointer transition-opacity hover:opacity-90"
+                className="cursor-pointer transition-all hover:opacity-100"
                 onMouseEnter={() => setHoveredEntity({ type: 'block', data: blk })}
                 onMouseLeave={() => setHoveredEntity(null)}
               >
@@ -316,33 +361,29 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   width={blockWidth}
                   height={blockHeight}
                   fill={blk.color}
-                  fillOpacity="0.22"
+                  fillOpacity={selectedPlan === 'baseline_fcfs' ? "0.38" : "0.26"}
                   stroke={blk.color}
-                  strokeWidth="2"
-                  rx="6"
+                  strokeWidth="1.5"
+                  rx="4"
+                  className="hover:stroke-white hover:stroke-[2] transition-colors"
                 />
-                <text
-                  x={x1 + blockWidth / 2}
-                  y={y1 + blockHeight / 2 - 6}
-                  textAnchor="middle"
-                  fill="#ffffff"
-                  className="text-[11px] font-bold drop-shadow-md"
-                >
-                  {blk.name}
-                </text>
-                <text
-                  x={x1 + blockWidth / 2}
-                  y={y1 + blockHeight / 2 + 10}
-                  textAnchor="middle"
-                  fill={blk.color}
-                  className="text-[10px] font-semibold font-mono"
-                >
-                  {blk.depts} • {blk.start}–{blk.end}
-                </text>
+                {/* Render clean ID pill ONLY if box has adequate height and width */}
+                {blockHeight >= 18 && blockWidth >= 34 && (
+                  <text
+                    x={x1 + blockWidth / 2}
+                    y={y1 + blockHeight / 2 + 3.5}
+                    textAnchor="middle"
+                    fill="#ffffff"
+                    className="text-[9px] font-bold font-mono drop-shadow pointer-events-none select-none"
+                  >
+                    {shortId}
+                  </text>
+                )}
               </g>
             );
           })}
 
+          {/* Train Trajectory Lines */}
           {trainPaths.map((train) => {
             const x1 = timeToX(train.start);
             const x2 = timeToX(train.end);
@@ -372,7 +413,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   y={y1 + (y2 - y1) * 0.4 - 5}
                   fill={train.color}
                   transform={`rotate(-25, ${x1 + (x2 - x1) * 0.4}, ${y1 + (y2 - y1) * 0.4 - 5})`}
-                  className="text-[10px] font-mono font-semibold"
+                  className="text-[10px] font-mono font-semibold select-none"
                 >
                   {train.id} ({train.name.split(' ')[0]})
                 </text>
@@ -380,95 +421,111 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
             );
           })}
 
-          {/* Conflict Highlight Overlay for Baseline FCFS vs CP-SAT Plan A */}
+          {/* Conflict Highlight Overlay for Baseline FCFS */}
           {selectedPlan === 'baseline_fcfs' && (
             <g className="cursor-pointer">
-              {/* Pulsing ring animation */}
               <circle
                 cx={timeToX('01:50')}
                 cy={kmToY(213)}
-                r="22"
+                r="18"
                 fill="none"
                 stroke="#ef4444"
                 strokeWidth="2"
                 opacity="0.8"
               >
-                <animate attributeName="r" values="10;28;10" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="r" values="8;24;8" dur="2s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.9;0.1;0.9" dur="2s" repeatCount="indefinite" />
               </circle>
               <circle
                 cx={timeToX('01:50')}
                 cy={kmToY(213)}
-                r="6"
+                r="5"
                 fill="#ef4444"
                 stroke="#ffffff"
                 strokeWidth="2"
               />
-              {/* Callout box */}
-              <g transform={`translate(${timeToX('01:50') + 15}, ${kmToY(213) - 45})`}>
+              <line
+                x1={timeToX('01:50')}
+                y1={kmToY(213)}
+                x2={timeToX('01:50') + 20}
+                y2={kmToY(213) - 28}
+                stroke="#ef4444"
+                strokeWidth="1.5"
+                strokeDasharray="2 2"
+              />
+              <g transform={`translate(${timeToX('01:50') + 20}, ${kmToY(213) - 60})`}>
                 <rect
                   x="0"
                   y="0"
-                  width="250"
-                  height="56"
+                  width="240"
+                  height="52"
                   rx="8"
                   fill="#1e1014"
                   stroke="#ef4444"
                   strokeWidth="1.5"
-                  className="filter drop-shadow-lg"
+                  className="filter drop-shadow-xl"
                 />
-                <text x="10" y="18" fill="#f87171" className="text-[11px] font-bold">
+                <text x="10" y="17" fill="#f87171" className="text-[10.5px] font-bold">
                   ⚠️ REAL COLLISION DETECTED
                 </text>
-                <text x="10" y="33" fill="#fecaca" className="text-[10px]">
+                <text x="10" y="32" fill="#fecaca" className="text-[9.5px]">
                   Train 12582 crosses uncoordinated Civil block
                 </text>
-                <text x="10" y="47" fill="#fca5a5" className="text-[9px] font-mono">
+                <text x="10" y="45" fill="#fca5a5" className="text-[9px] font-mono">
                   at 01:50 (KM 213 TDL) ➔ 48m Express Delay!
                 </text>
               </g>
             </g>
           )}
 
+          {/* Conflict Resolved Badge for Plan A (positioned in clear space with connector) */}
           {selectedPlan === 'plan_a' && (
             <g className="cursor-pointer">
               <circle
                 cx={timeToX('01:50')}
                 cy={kmToY(213)}
-                r="16"
+                r="12"
                 fill="none"
                 stroke="#10b981"
-                strokeWidth="2"
+                strokeWidth="1.5"
                 opacity="0.6"
               >
-                <animate attributeName="r" values="8;20;8" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="r" values="6;16;6" dur="2.5s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.5s" repeatCount="indefinite" />
               </circle>
               <circle
                 cx={timeToX('01:50')}
                 cy={kmToY(213)}
-                r="5"
+                r="4"
                 fill="#10b981"
                 stroke="#ffffff"
                 strokeWidth="1.5"
               />
-              <g transform={`translate(${timeToX('01:50') + 15}, ${kmToY(213) - 40})`}>
+              {/* Dashed connector line to open valley at 04:35 KM 220 */}
+              <path
+                d={`M ${timeToX('01:50')} ${kmToY(213)} L ${timeToX('04:35')} ${kmToY(213) - 12}`}
+                stroke="#10b981"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
+                opacity="0.75"
+              />
+              <g transform={`translate(${timeToX('04:35')}, ${kmToY(213) - 36})`}>
                 <rect
                   x="0"
                   y="0"
-                  width="240"
+                  width="235"
                   height="46"
                   rx="8"
                   fill="#06281e"
                   stroke="#10b981"
                   strokeWidth="1.5"
-                  className="filter drop-shadow-lg"
+                  className="filter drop-shadow-xl"
                 />
-                <text x="10" y="18" fill="#34d399" className="text-[11px] font-bold">
+                <text x="10" y="17" fill="#34d399" className="text-[10.5px] font-bold font-sans">
                   ✅ CONFLICT RESOLVED (CP-SAT)
                 </text>
-                <text x="10" y="34" fill="#a7f3d0" className="text-[9.5px]">
-                  Block moved to night valley 01:00–04:25 • 0m delay
+                <text x="10" y="33" fill="#a7f3d0" className="text-[9.5px] font-sans">
+                  Bundled into night valley 01:00–04:25 • 0m delay
                 </text>
               </g>
             </g>

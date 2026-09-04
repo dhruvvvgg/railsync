@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Layers, ShieldCheck, Zap, Radio, Hammer, ArrowRight } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Layers, ShieldCheck, Zap, Radio, Hammer, ArrowRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import type { CandidateBlock } from '../types';
 import type { Language } from '../i18n/translations';
 import { TRANSLATIONS } from '../i18n/translations';
@@ -10,105 +10,276 @@ interface GanttTimelineProps {
   language?: Language;
 }
 
+interface TimelineTask {
+  id: string;
+  name: string;
+  shortName: string;
+  department: string;
+  start: string;
+  end: string;
+  startMin: number;
+  endMin: number;
+  leftPct: number;
+  widthPct: number;
+  subRow: number;
+  section?: string;
+  equipment?: string;
+  safetyStatus?: string;
+  color: string;
+  badgeColor: string;
+}
+
 export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, blocks, language = 'en' }) => {
   const isBaseline = selectedPlan === 'baseline_fcfs';
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
+  const [hoveredTask, setHoveredTask] = useState<TimelineTask | null>(null);
+
+  const parseToMins = (timeStr: string) => {
+    const clean = timeStr.replace(/Day \d+ /, '').trim();
+    const [h, m] = clean.split(':').map(Number);
+    return ((h || 0) * 60 + (m || 0)) % 1440;
+  };
+
+  const toPct = (mins: number) => Math.min(100, Math.max(0, (mins / 1440) * 100));
+
+  // Smart sub-lane layout engine: stacks overlapping tasks into clean distinct rows
+  const layoutSubLanes = (tasks: Omit<TimelineTask, 'subRow' | 'leftPct' | 'widthPct'>[]) => {
+    const sorted = [...tasks].sort((a, b) => a.startMin - b.startMin);
+    const rowEnds: number[] = [];
+
+    const positionedTasks: TimelineTask[] = sorted.map((task) => {
+      let assignedRow = -1;
+      for (let r = 0; r < rowEnds.length; r++) {
+        // Ensure at least 5 minutes clearance to share the same sub-row
+        if (task.startMin >= rowEnds[r] + 4) {
+          assignedRow = r;
+          rowEnds[r] = task.endMin;
+          break;
+        }
+      }
+
+      if (assignedRow === -1) {
+        assignedRow = rowEnds.length;
+        rowEnds.push(task.endMin);
+      }
+
+      const leftPct = toPct(task.startMin);
+      const rawWidthPct = toPct(task.endMin > task.startMin ? task.endMin - task.startMin : (1440 - task.startMin + task.endMin));
+      const widthPct = Math.max(4.5, rawWidthPct);
+
+      return {
+        ...task,
+        subRow: assignedRow,
+        leftPct,
+        widthPct
+      };
+    });
+
+    return {
+      tasks: positionedTasks,
+      totalRows: Math.max(1, rowEnds.length)
+    };
+  };
 
   const lanes = useMemo(() => {
-    // If real solver blocks are passed, extract dynamic department tasks
-    if (blocks && blocks.length > 0) {
-      const activeBlocks = blocks.slice(0, 6);
-
-      const parseTimeMins = (timeStr: string) => {
-        const clean = timeStr.replace(/Day \d+ /, '');
-        const [h, m] = clean.split(':').map(Number);
-        return ((h || 0) * 60 + (m || 0)) % 1440;
-      };
-
-      const civilTasks: any[] = [];
-      const trdTasks: any[] = [];
-      const sntTasks: any[] = [];
-
-      activeBlocks.forEach((b) => {
-        const stMins = b.start_minutes !== undefined ? (b.start_minutes % 1440) : parseTimeMins(b.start_time);
-        const endMins = b.end_minutes !== undefined ? (b.end_minutes % 1440) : parseTimeMins(b.end_time);
-        const durMins = Math.max(45, (endMins > stMins ? endMins - stMins : (1440 - stMins + endMins)));
-
-        const leftPct = (stMins / 1440) * 100;
-        const widthPct = Math.max(5, (durMins / 1440) * 100);
-
-        const stStr = b.start_time.replace(/Day \d+ /, '');
-        const endStr = b.end_time.replace(/Day \d+ /, '');
-
-        const depts = b.departments_involved || (b.department ? [b.department] : ['Engineering']);
-
-        if (depts.includes('Engineering') || depts.some(d => d.toLowerCase().includes('civil') || d.toLowerCase().includes('track'))) {
-          civilTasks.push({
-            id: `CIV-${b.block_id}`,
-            name: `${b.block_id}: Continuous Track Tamping & Deep Screening (${b.corridor_id})`,
-            start: stStr,
-            end: endStr,
-            leftPct,
-            widthPct
-          });
+    if (isBaseline) {
+      // BASELINE FCFS: 3 fragmented daytime blocks across separate hours
+      const civilRaw = [
+        {
+          id: 'CIV-BASE-1',
+          name: 'Track Renewal & Ballast Screening (COR-003)',
+          shortName: 'Track Renewal',
+          department: 'Civil Engineering (TMS)',
+          start: '09:00',
+          end: '12:00',
+          startMin: 9 * 60,
+          endMin: 12 * 60,
+          section: 'COR-003 (KM 116.1 – 120.7)',
+          equipment: 'CSM-09 Tamper + Manual Gang',
+          safetyStatus: 'Uncoordinated FCFS · Delayed Train 12876 (Neelachal Exp)',
+          color: 'border-red-500/50 bg-red-950/40 text-red-300',
+          badgeColor: 'bg-red-500/20 text-red-300'
         }
+      ];
 
-        if (depts.includes('Traction Distribution') || depts.some(d => d.toLowerCase().includes('traction') || d.toLowerCase().includes('trd'))) {
-          trdTasks.push({
-            id: `TRD-${b.block_id}`,
-            name: `${b.block_id}: 25 kV Cantilever & Isolator Overhaul (${b.corridor_id})`,
-            start: stStr,
-            end: endStr,
-            leftPct,
-            widthPct
-          });
+      const trdRaw = [
+        {
+          id: 'TRD-BASE-1',
+          name: '25 kV OHE Isolation & Overhaul (COR-012)',
+          shortName: 'OHE Isolation',
+          department: 'Traction Distribution (TRD)',
+          start: '13:00',
+          end: '15:30',
+          startMin: 13 * 60,
+          endMin: 15 * 60 + 30,
+          section: 'COR-012 (KM 178.2 – 182.8)',
+          equipment: 'OHE Tower Wagon 4-Wheeler',
+          safetyStatus: 'Uncoordinated FCFS · Detained Freight BCN Rake 70109',
+          color: 'border-red-500/50 bg-red-950/40 text-red-300',
+          badgeColor: 'bg-red-500/20 text-red-300'
         }
+      ];
 
-        if (depts.includes('Signal & Telecommunication') || depts.some(d => d.toLowerCase().includes('signal') || d.toLowerCase().includes('s&t') || d.toLowerCase().includes('telecom'))) {
-          sntTasks.push({
-            id: `SNT-${b.block_id}`,
-            name: `${b.block_id}: MSDAC Axle Counter & Point Machine Inspection (${b.corridor_id})`,
-            start: stStr,
-            end: endStr,
-            leftPct,
-            widthPct
-          });
+      const sntRaw = [
+        {
+          id: 'SNT-BASE-1',
+          name: 'MSDAC Point Machine Calibration (COR-002)',
+          shortName: 'Point Calibration',
+          department: 'Signal & Telecom (SMMS)',
+          start: '16:00',
+          end: '18:30',
+          startMin: 16 * 60,
+          endMin: 18 * 60 + 30,
+          section: 'COR-002 (KM 226.5 – 231.1)',
+          equipment: 'Electronic Point Motor Testing Kit',
+          safetyStatus: 'Uncoordinated FCFS · Delayed Train 14164 (Sangam Exp)',
+          color: 'border-red-500/50 bg-red-950/40 text-red-300',
+          badgeColor: 'bg-red-500/20 text-red-300'
         }
-      });
+      ];
 
       return [
         {
           id: 'civil',
           name: t.laneCivil,
           icon: Hammer,
-          color: 'border-cyan-500/40 bg-cyan-950/30 text-cyan-300',
-          badgeColor: 'bg-cyan-500/20 text-cyan-300',
-          tasks: civilTasks.length > 0 ? civilTasks : [
-            { id: 'T-101', name: 'Track Maintenance Window (Standby)', start: '01:00', end: '04:25', leftPct: 4.16, widthPct: 14.2 }
-          ]
+          color: 'border-red-500/40 bg-red-950/30 text-red-300',
+          badgeColor: 'bg-red-500/20 text-red-300',
+          ...layoutSubLanes(civilRaw)
         },
         {
           id: 'trd',
           name: t.laneTrd,
           icon: Zap,
-          color: 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300',
-          badgeColor: 'bg-emerald-500/20 text-emerald-300',
-          tasks: trdTasks.length > 0 ? trdTasks : [
-            { id: 'TRD-201', name: '25 kV OHE Isolation Window (Standby)', start: '01:00', end: '04:25', leftPct: 4.16, widthPct: 14.2 }
-          ]
+          color: 'border-red-500/40 bg-red-950/30 text-red-300',
+          badgeColor: 'bg-red-500/20 text-red-300',
+          ...layoutSubLanes(trdRaw)
         },
         {
           id: 'snt',
           name: t.laneSnt,
           icon: Radio,
-          color: 'border-purple-500/40 bg-purple-950/30 text-purple-300',
-          badgeColor: 'bg-purple-500/20 text-purple-300',
-          tasks: sntTasks.length > 0 ? sntTasks : [
-            { id: 'SIG-301', name: 'Point Machine Testing (Standby)', start: '01:00', end: '04:25', leftPct: 4.16, widthPct: 14.2 }
-          ]
+          color: 'border-red-500/40 bg-red-950/30 text-red-300',
+          badgeColor: 'bg-red-500/20 text-red-300',
+          ...layoutSubLanes(sntRaw)
         }
       ];
     }
+
+    // CP-SAT OPTIMIZED: Synchronized parallel co-work under single 25 kV shutdown (01:00–04:25)
+    const civilRaw = [
+      {
+        id: 'CIV-OPT-1',
+        name: 'CSM-09 Track Tamping & Lining (KM 116–155)',
+        shortName: 'CSM-09 Track Tamping',
+        department: 'Civil Engineering (TMS)',
+        start: '01:15',
+        end: '03:20',
+        startMin: parseToMins('01:15'),
+        endMin: parseToMins('03:20'),
+        section: 'COR-003, COR-005, COR-008',
+        equipment: 'CSM-09 32-Sleeper Continuous Tamper',
+        safetyStatus: '100% G&SR Compliant • 0m Train Delay',
+        color: 'border-cyan-500/60 bg-cyan-950/60 text-cyan-200',
+        badgeColor: 'bg-cyan-500/25 text-cyan-300'
+      },
+      {
+        id: 'CIV-OPT-2',
+        name: 'USFD Ultrasonic Rail Flaw Rectification',
+        shortName: 'USFD Flaw Testing',
+        department: 'Civil Engineering (TMS)',
+        start: '02:30',
+        end: '04:15',
+        startMin: parseToMins('02:30'),
+        endMin: parseToMins('04:15'),
+        section: 'COR-007 (KM 143.7 – 146.0)',
+        equipment: 'Digital USFD Rail Flaw Detector Trolley',
+        safetyStatus: '100% G&SR Compliant • 0m Train Delay',
+        color: 'border-cyan-500/60 bg-cyan-950/60 text-cyan-200',
+        badgeColor: 'bg-cyan-500/25 text-cyan-300'
+      }
+    ];
+
+    const trdRaw = [
+      {
+        id: 'TRD-OPT-1',
+        name: '25 kV OHE Isolation & Earth Discharge',
+        shortName: 'OHE Power Cutoff',
+        department: 'Traction Distribution (TRD)',
+        start: '01:00',
+        end: '01:30',
+        startMin: parseToMins('01:00'),
+        endMin: parseToMins('01:30'),
+        section: 'Division Main Line (KM 116 – 231)',
+        equipment: 'TPC Supervisory Remote Terminal (SCADA)',
+        safetyStatus: 'Permit-to-Work Authorized by TPC',
+        color: 'border-amber-500/60 bg-amber-950/60 text-amber-200',
+        badgeColor: 'bg-amber-500/25 text-amber-300'
+      },
+      {
+        id: 'TRD-OPT-2',
+        name: 'Cantilever & Dropper Overhaul (Power Block)',
+        shortName: 'Cantilever Overhaul',
+        department: 'Traction Distribution (TRD)',
+        start: '01:30',
+        end: '03:50',
+        startMin: parseToMins('01:30'),
+        endMin: parseToMins('03:50'),
+        section: 'COR-003 to COR-008 (KM 116 – 155)',
+        equipment: 'OHE Tower Inspection Wagon',
+        safetyStatus: 'Work under Verified De-energized Wire',
+        color: 'border-emerald-500/60 bg-emerald-950/60 text-emerald-200',
+        badgeColor: 'bg-emerald-500/25 text-emerald-300'
+      },
+      {
+        id: 'TRD-OPT-3',
+        name: 'OHE Normalization & Track Clearance',
+        shortName: 'OHE Recharge',
+        department: 'Traction Distribution (TRD)',
+        start: '03:50',
+        end: '04:20',
+        startMin: parseToMins('03:50'),
+        endMin: parseToMins('04:20'),
+        section: 'Division Main Line (KM 116 – 231)',
+        equipment: 'SCADA Circuit Breaker Reclose',
+        safetyStatus: 'Power Recharged • Clear for Traffic',
+        color: 'border-cyan-500/60 bg-cyan-950/60 text-cyan-200',
+        badgeColor: 'bg-cyan-500/25 text-cyan-300'
+      }
+    ];
+
+    const sntRaw = [
+      {
+        id: 'SNT-OPT-1',
+        name: 'Point Machine 143mm Calibration & Testing',
+        shortName: 'Point Machine Testing',
+        department: 'Signal & Telecom (SMMS)',
+        start: '01:30',
+        end: '03:15',
+        startMin: parseToMins('01:30'),
+        endMin: parseToMins('03:15'),
+        section: 'COR-005 (KM 129.9 – 134.5)',
+        equipment: 'High-Precision Point Obstruction Gauge',
+        safetyStatus: 'Simultaneous with Civil Tamping Window',
+        color: 'border-purple-500/60 bg-purple-950/60 text-purple-200',
+        badgeColor: 'bg-purple-500/25 text-purple-300'
+      },
+      {
+        id: 'SNT-OPT-2',
+        name: 'Dual MSDAC Sensor Tuning & Verification',
+        shortName: 'MSDAC Axle Tuning',
+        department: 'Signal & Telecom (SMMS)',
+        start: '02:45',
+        end: '04:15',
+        startMin: parseToMins('02:45'),
+        endMin: parseToMins('04:15'),
+        section: 'COR-008 (KM 150.6 – 155.2)',
+        equipment: 'MSDAC Axle Counter Calibrator',
+        safetyStatus: '100% Signal Integrity Certified',
+        color: 'border-purple-500/60 bg-purple-950/60 text-purple-200',
+        badgeColor: 'bg-purple-500/25 text-purple-300'
+      }
+    ];
 
     return [
       {
@@ -117,10 +288,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         icon: Hammer,
         color: 'border-cyan-500/40 bg-cyan-950/30 text-cyan-300',
         badgeColor: 'bg-cyan-500/20 text-cyan-300',
-        tasks: [
-          { id: 'T-101', name: 'Continuous Action Track Tamping (CSM-09)', start: '01:30', end: '04:30', leftPct: 6.25, widthPct: 12.5 },
-          { id: 'T-102', name: 'USFD Ultrasonic Flaw Rectification (Km 142)', start: '02:00', end: '03:45', leftPct: 8.3, widthPct: 7.3 }
-        ]
+        ...layoutSubLanes(civilRaw)
       },
       {
         id: 'trd',
@@ -128,10 +296,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         icon: Zap,
         color: 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300',
         badgeColor: 'bg-emerald-500/20 text-emerald-300',
-        tasks: [
-          { id: 'TRD-201', name: '25 kV OHE Cantilever Inspection & Height Adjustment', start: '01:45', end: '04:15', leftPct: 7.3, widthPct: 10.4 },
-          { id: 'TRD-202', name: 'Neutral Section Assembly Overhaul', start: '02:15', end: '03:45', leftPct: 9.375, widthPct: 6.25 }
-        ]
+        ...layoutSubLanes(trdRaw)
       },
       {
         id: 'snt',
@@ -139,20 +304,17 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         icon: Radio,
         color: 'border-purple-500/40 bg-purple-950/30 text-purple-300',
         badgeColor: 'bg-purple-500/20 text-purple-300',
-        tasks: [
-          { id: 'SIG-301', name: 'Point Machine 143mm Calibration & Testing', start: '02:00', end: '04:00', leftPct: 8.3, widthPct: 8.3 },
-          { id: 'SIG-302', name: 'Digital Axle Counter (MSDAC) Sensor Verification', start: '02:30', end: '03:30', leftPct: 10.4, widthPct: 4.16 }
-        ]
+        ...layoutSubLanes(sntRaw)
       }
     ];
-  }, [blocks, t]);
+  }, [blocks, isBaseline, t]);
 
   return (
-    <div className="bg-[#0b132b] rounded-2xl border border-slate-800 p-5 shadow-xl mt-6">
+    <div className="bg-[#0b132b] rounded-2xl border border-slate-800 p-5 shadow-xl mt-6 relative">
       {/* 3-State Machine Safety Badge Strip */}
-      <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-3 text-xs shadow-md">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           <span className="font-bold text-slate-200">
             {language === 'hi'
               ? '25 kV ट्रैक्शन सुरक्षा प्रोटोकॉल (G&SR):'
@@ -169,7 +331,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
           </span>
           <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
           <span className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-semibold border ${
-            !isBaseline ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'
+            !isBaseline ? 'bg-amber-500/15 text-amber-300 border-amber-500/40 ring-1 ring-amber-500/30' : 'bg-slate-800 text-slate-500 border-slate-700'
           }`}>
             {t.badgeIsolating}
           </span>
@@ -182,8 +344,9 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-slate-800">
-        <div className="flex items-center gap-2">
+      {/* Title & Legend Bar */}
+      <div className="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-slate-800 gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Layers className="w-5 h-5 text-cyan-400" />
           <h2 className="text-base font-bold text-white">
             {language === 'hi'
@@ -192,7 +355,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
               ? 'முத்துறை ஒருங்கிணைந்த பணிக் காலவரிசை (கான்ட் வரைபடம்)'
               : 'Cross-Department Synchronized Gantt Schedule')}
           </h2>
-          <span className={`text-xs px-2 py-0.5 rounded font-mono font-medium ${isBaseline ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
+          <span className={`text-xs px-2.5 py-0.5 rounded font-mono font-semibold ${isBaseline ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'}`}>
             {isBaseline
               ? (language === 'hi'
                 ? 'असमन्वित अलग-अलग ब्लॉक (विभागीय साइलो)'
@@ -208,62 +371,129 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         </div>
         <div className="text-xs text-slate-400 flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>Formula: Setup + Work + Testing + Site Clearance + Safety Buffer</span>
+          <span className="hidden sm:inline">Setup + Work + Testing + Site Clearance + Safety Buffer</span>
         </div>
       </div>
 
-      <div className="relative mb-2 border-b border-slate-800 pb-2">
-        <div className="grid grid-cols-12 text-center text-[10px] text-slate-400 font-mono">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="border-r border-slate-800/40 py-1">
-              {i.toString().padStart(2, '0')}:00
-            </div>
-          ))}
+      {/* 24-Hour Time Axis Header with Accurate Alignment */}
+      <div className="relative mb-3 border-b border-slate-800/80 pb-2 select-none">
+        <div className="flex items-center">
+          <div className="w-64 flex-shrink-0 text-slate-400 text-xs font-semibold px-2">
+            <span>Department Lane</span>
+          </div>
+
+          <div className="flex-1 relative h-6">
+            {/* Synchronized Shadow Window Banner in header (No overlap with lane tracks) */}
+            {!isBaseline && (
+              <div
+                className="absolute top-0 bottom-0 bg-emerald-500/10 border-x border-emerald-500/40 flex items-center justify-center rounded pointer-events-none"
+                style={{
+                  left: `${toPct(60)}%`,
+                  width: `${toPct(205)}%`
+                }}
+              >
+                <span className="text-[9px] font-mono font-bold text-emerald-400 tracking-tight px-1 truncate">
+                  ✦ {language === 'hi' ? 'रात्रि ब्लॉक (01:00–04:25)' : (language === 'ta' ? 'இரவு பிளாக் (01:00–04:25)' : 'Night Window (01:00–04:25)')}
+                </span>
+              </div>
+            )}
+
+            {/* 12 Hour Ticks covering full 24 hours */}
+            {Array.from({ length: 13 }).map((_, i) => {
+              const hour = i * 2;
+              const pct = (hour / 24) * 100;
+              const hourStr = `${hour.toString().padStart(2, '0')}:00`;
+
+              return (
+                <div
+                  key={hour}
+                  className="absolute -translate-x-1/2 text-[10px] text-slate-400 font-mono flex flex-col items-center pointer-events-none"
+                  style={{ left: `${pct}%` }}
+                >
+                  <span>{hourStr}</span>
+                  <div className="w-px h-1.5 bg-slate-700 mt-0.5" />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <div className="space-y-3">
+      {/* Department Lanes with Smart Sub-lane Stacking */}
+      <div className="space-y-3.5">
         {lanes.map((lane) => {
           const Icon = lane.icon;
+          // Dynamically compute row container height: 40px per sub-row + 10px padding
+          const containerHeight = Math.max(48, lane.totalRows * 40 + 8);
+
           return (
-            <div key={lane.id} className="flex items-center gap-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
-              <div className="w-56 flex-shrink-0 flex items-center gap-2">
-                <div className={`p-1.5 rounded-lg border ${lane.color}`}>
+            <div
+              key={lane.id}
+              className="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 hover:border-slate-700 transition-colors"
+            >
+              {/* Lane Info Column */}
+              <div className="w-64 flex-shrink-0 flex items-center gap-2.5 min-w-0">
+                <div className={`p-2 rounded-lg border ${lane.color} flex-shrink-0`}>
                   <Icon className="w-4 h-4" />
                 </div>
-                <div>
-                  <span className="text-xs font-bold text-slate-200 block truncate">{lane.name}</span>
-                  <span className="text-[10px] text-slate-400">{lane.tasks.length} tasks scheduled</span>
+                <div className="min-w-0 flex-1">
+                  <span className="text-xs font-bold text-slate-200 block truncate" title={lane.name}>
+                    {lane.name}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    {lane.tasks.length} {lane.tasks.length === 1 ? 'task' : 'tasks'} scheduled
+                  </span>
                 </div>
               </div>
 
-              <div className="flex-1 h-12 bg-slate-950/80 rounded-lg relative overflow-hidden border border-slate-800/60">
-                <div
-                  className="absolute top-0 bottom-0 bg-cyan-500/5 border-x border-cyan-500/20"
-                  style={{ left: '4.16%', width: '16.66%' }}
-                >
-                  <span className="text-[9px] text-cyan-400 font-mono absolute top-1 left-1.5 opacity-60">
-                    Candidate Block Window
-                  </span>
-                </div>
+              {/* Timeline Track with Non-Overlapping Sub-lanes */}
+              <div
+                className="flex-1 bg-slate-950/80 rounded-lg relative overflow-hidden border border-slate-800/60 transition-all"
+                style={{ height: `${containerHeight}px` }}
+              >
+                {/* 24-Hour Vertical Grid Guide Lines */}
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute top-0 bottom-0 w-px bg-slate-800/25 pointer-events-none"
+                    style={{ left: `${(i / 12) * 100}%` }}
+                  />
+                ))}
 
+                {/* Night Traffic Lull Background Highlight Band */}
+                {!isBaseline && (
+                  <div
+                    className="absolute top-0 bottom-0 bg-emerald-500/[0.04] border-x border-emerald-500/20 pointer-events-none"
+                    style={{
+                      left: `${toPct(60)}%`,
+                      width: `${toPct(205)}%`
+                    }}
+                  />
+                )}
+
+                {/* Positioned Task Cards (Guaranteed Zero Overlap via subRow offset) */}
                 {lane.tasks.map((task) => (
                   <div
                     key={task.id}
-                    className={`absolute top-1.5 bottom-1.5 rounded-md px-2 flex flex-col justify-center border shadow-md transition-transform hover:scale-[1.02] cursor-pointer ${lane.color}`}
+                    className={`absolute rounded-lg px-2.5 flex items-center justify-between border shadow-lg transition-all hover:scale-[1.01] hover:z-20 cursor-pointer overflow-hidden ${task.color}`}
                     style={{
-                      left: `${task.leftPct * 2}%`,
-                      width: `${task.widthPct * 2}%`
+                      left: `${task.leftPct}%`,
+                      width: `${task.widthPct}%`,
+                      top: `${task.subRow * 40 + 4}px`,
+                      height: '34px'
                     }}
+                    onMouseEnter={() => setHoveredTask(task)}
+                    onMouseLeave={() => setHoveredTask(null)}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-white truncate max-w-[150px]">
-                        {task.name}
-                      </span>
-                      <span className={`text-[8px] font-mono px-1 rounded ${lane.badgeColor}`}>
-                        {task.start}–{task.end}
-                      </span>
-                    </div>
+                    {/* Task Title */}
+                    <span className="text-[10.5px] font-bold text-white truncate pr-2">
+                      {task.widthPct < 6 ? task.shortName : task.name}
+                    </span>
+
+                    {/* Task Time Badge */}
+                    <span className={`text-[8.5px] font-mono font-semibold px-1.5 py-0.5 rounded flex-shrink-0 ${task.badgeColor}`}>
+                      {task.start}–{task.end}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -272,9 +502,54 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         })}
       </div>
 
-      <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+      {/* Interactive Task Details Tooltip Popover */}
+      {hoveredTask && (
+        <div className="absolute top-16 right-8 bg-slate-900/95 border border-cyan-500/60 p-4 rounded-xl shadow-2xl backdrop-blur-md text-xs max-w-md z-30 pointer-events-none">
+          <div className="flex items-center justify-between gap-2 border-b border-slate-700 pb-2 mb-2">
+            <span className="font-bold text-white text-sm">{hoveredTask.name}</span>
+            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${hoveredTask.badgeColor}`}>
+              {hoveredTask.start} to {hoveredTask.end}
+            </span>
+          </div>
+
+          <div className="space-y-1.5 text-slate-300">
+            <p className="flex items-center gap-1.5">
+              <strong className="text-slate-400">Department:</strong>
+              <span className="text-cyan-300">{hoveredTask.department}</span>
+            </p>
+            {hoveredTask.section && (
+              <p className="flex items-center gap-1.5">
+                <strong className="text-slate-400">Corridor / Span:</strong>
+                <span className="text-white font-mono">{hoveredTask.section}</span>
+              </p>
+            )}
+            {hoveredTask.equipment && (
+              <p className="flex items-center gap-1.5">
+                <strong className="text-slate-400">Plant & Machinery:</strong>
+                <span className="text-emerald-300">{hoveredTask.equipment}</span>
+              </p>
+            )}
+            <p className="flex items-start gap-1.5 mt-2 pt-2 border-t border-slate-800">
+              {isBaseline ? (
+                <span className="text-red-400 flex items-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span>{hoveredTask.safetyStatus}</span>
+                </span>
+              ) : (
+                <span className="text-emerald-400 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span>{hoveredTask.safetyStatus}</span>
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Summary Bar */}
+      <div className="mt-4 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
         <div className="flex items-center gap-2">
-          <span className={`w-2.5 h-2.5 rounded-full ${isBaseline ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
+          <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${isBaseline ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
           <span>
             {isBaseline ? (
               language === 'hi' ? (
@@ -282,7 +557,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
               ) : (language === 'ta' ? (
                 <><strong>முடிவு:</strong> 3 துறைகள் பகலில் தனித்தனியாக பிளாக் கேட்பதால் 4+ ரயில்கள் தாமதம் மற்றும் பாதை திறன் இழப்பு.</>
               ) : (
-                <><strong>Result:</strong> 3 departments booking separate daytime blocks causing 4+ train detentions and severe fragmentation.</>
+                <><strong>Result:</strong> 3 departments booking separate daytime blocks causing 4+ train detentions and severe line capacity loss.</>
               ))
             ) : (
               language === 'hi' ? (
@@ -290,7 +565,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
               ) : (language === 'ta' ? (
                 <><strong>முடிவு:</strong> 3 துறைகளும் ஒரே கூட்டுப் பிளாக்கில் இணைந்து செயல்படுகின்றன. பகல் நேரத் தனி மூடல்கள் தவிர்க்கப்பட்டன.</>
               ) : (
-                <><strong>Result:</strong> 3 departments executing work in 1 combined possession. Avoids separate daytime disconnections.</>
+                <><strong>Result:</strong> 3 departments executing synchronized works under 1 combined possession. Avoids separate daytime track closures.</>
               ))
             )}
           </span>
