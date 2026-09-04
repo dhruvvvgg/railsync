@@ -1,3 +1,4 @@
+import os
 import json
 import random
 from datetime import datetime, timedelta
@@ -330,7 +331,8 @@ def build_dataset():
         "dirty_audit_log": dirty_audit_log
     }
 
-    out_file = "/Users/faheem/sih_rail/backend/data/canonical_dataset.json"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    out_file = os.path.join(base_dir, "canonical_dataset.json")
     with open(out_file, "w") as f:
         json.dump(dataset, f, indent=2)
     print(f"Successfully generated canonical dataset: {out_file}")

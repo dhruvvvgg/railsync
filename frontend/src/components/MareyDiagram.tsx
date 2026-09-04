@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import type { CandidateBlock } from '../types';
 
 interface MareyDiagramProps {
   selectedPlan: string;
+  blocks?: CandidateBlock[];
+  trainSchedules?: any[];
 }
 
-export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan }) => {
+export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan, blocks, trainSchedules }) => {
   const [hoveredEntity, setHoveredEntity] = useState<any>(null);
 
   const stations = [
@@ -20,6 +23,21 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan }) => {
     { code: 'NDLS', name: 'New Delhi', km: 440 }
   ];
 
+  const corridorKmMap: Record<string, [number, number]> = {
+    'COR-001': [0, 44],
+    'COR-002': [44, 83],
+    'COR-003': [83, 139],
+    'COR-004': [139, 195],
+    'COR-005': [195, 231],
+    'COR-006': [231, 309],
+    'COR-007': [309, 352],
+    'COR-008': [352, 410],
+    'COR-009': [410, 440],
+    'COR-010': [410, 440],
+    'COR-011': [0, 83],
+    'COR-012': [139, 231]
+  };
+
   const width = 900;
   const height = 460;
   const margin = { top: 30, right: 30, bottom: 40, left: 130 };
@@ -28,35 +46,102 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({ selectedPlan }) => {
   const innerHeight = height - margin.top - margin.bottom;
 
   const timeToX = (timeStr: string) => {
-    const [h, m] = timeStr.split(':').map(Number);
-    const totalHours = h + (m || 0) / 60;
-    return margin.left + (totalHours / 24) * innerWidth;
+    const cleanTime = timeStr.replace(/Day \d+ /, '');
+    const [h, m] = cleanTime.split(':').map(Number);
+    const totalHours = (h || 0) + (m || 0) / 60;
+    return margin.left + ((totalHours % 24) / 24) * innerWidth;
   };
 
   const kmToY = (km: number) => {
-    return margin.top + innerHeight - (km / 440) * innerHeight;
+    const clampedKm = Math.max(0, Math.min(440, km));
+    return margin.top + innerHeight - (clampedKm / 440) * innerHeight;
   };
 
-  const trainPaths = [
-    { id: '20104', name: 'Vande Bharat Express', type: 'Vande Bharat', color: '#00e5ff', start: '06:00', end: '09:15', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
-    { id: '12302', name: 'Howrah Rajdhani Express', type: 'Rajdhani', color: '#38bdf8', start: '06:45', end: '10:10', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
-    { id: '12424', name: 'Dibrugarh Rajdhani Exp', type: 'Rajdhani', color: '#0ea5e9', start: '07:30', end: '10:45', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
-    { id: '12876', name: 'Neelachal Express', type: 'Superfast', color: '#818cf8', start: '11:15', end: '15:30', kmStart: 0, kmEnd: 440, priority: 'P1 Superfast' },
-    { id: '12488', name: 'Seemanchal Express', type: 'Superfast', color: '#a78bfa', start: '14:00', end: '18:15', kmStart: 83, kmEnd: 440, priority: 'P1 Superfast' },
-    { id: '14164', name: 'Sangam Express', type: 'Express', color: '#f59e0b', start: '17:45', end: '22:30', kmStart: 0, kmEnd: 352, priority: 'P2 Express' },
-    { id: '04154', name: 'Kanpur-Etawah Passenger', type: 'Passenger', color: '#fb923c', start: '19:00', end: '23:00', kmStart: 0, kmEnd: 139, priority: 'P3 Passenger' },
-    { id: 'GOODS-70102', name: 'BOXN Coal Freight Rake', type: 'Freight', color: '#64748b', start: '00:15', end: '05:30', kmStart: 440, kmEnd: 0, priority: 'Goods Rake', dashed: true },
-    { id: 'GOODS-70109', name: 'BCN Foodgrain Freight', type: 'Freight', color: '#64748b', start: '05:00', end: '09:45', kmStart: 440, kmEnd: 139, priority: 'Goods Rake', dashed: true }
-  ];
+  const trainPaths = useMemo(() => {
+    if (trainSchedules && trainSchedules.length > 0) {
+      return trainSchedules.map((t: any) => {
+        const isPremium = t.priority === 'P0_TRAIN' || t.priority === 'P0';
+        const isSuperfast = t.priority === 'P1_TRAIN' || t.priority === 'P1';
+        const isFreight = t.priority === 'P3_TRAIN' || t.priority === 'Goods Rake' || t.train_id?.includes('GOODS');
+        const color = isPremium ? '#00e5ff' : (isSuperfast ? '#818cf8' : (isFreight ? '#64748b' : '#f59e0b'));
+        const kmBounds = corridorKmMap[t.route?.[0]] || [0, 440];
+        const lastBounds = corridorKmMap[t.route?.[t.route.length - 1]] || [0, 440];
 
-  const candidateBlocks = selectedPlan === 'baseline_fcfs' ? [
-    { id: 'BASE-1', name: 'Civil Track Disconnection (Separate)', start: '09:00', end: '12:00', km1: 0, km2: 83, color: '#ef4444', depts: 'Engineering' },
-    { id: 'BASE-2', name: 'TRD OHE Inspection (Separate)', start: '13:00', end: '15:30', km1: 44, km2: 139, color: '#f97316', depts: 'Traction' },
-    { id: 'BASE-3', name: 'S&T Point Disconnection (Separate)', start: '16:00', end: '18:30', km1: 139, km2: 231, color: '#eab308', depts: 'Signal & Telecom' }
-  ] : [
-    { id: 'CAND-A1', name: 'Synchronized Shadow Corridor Block B-101', start: '01:30', end: '04:45', km1: 0, km2: 139, color: '#10b981', depts: '3-in-1: Civil + TRD + S&T' },
-    { id: 'CAND-A2', name: 'Look-Ahead Bundled Night Block B-102', start: '01:00', end: '04:15', km1: 195, km2: 309, color: '#10b981', depts: '2-in-1: Civil + TRD' }
-  ];
+        return {
+          id: t.train_id,
+          name: t.train_name,
+          type: t.class || 'Express',
+          color,
+          start: t.departure_time || '06:00',
+          end: t.arrival_time || '10:00',
+          kmStart: kmBounds[0],
+          kmEnd: lastBounds[1],
+          priority: isPremium ? 'P0 Premium' : (isSuperfast ? 'P1 Superfast' : (isFreight ? 'Goods Freight' : 'Passenger')),
+          dashed: isFreight
+        };
+      });
+    }
+
+    return [
+      { id: '20104', name: 'Vande Bharat Express', type: 'Vande Bharat', color: '#00e5ff', start: '06:00', end: '09:15', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
+      { id: '12302', name: 'Howrah Rajdhani Express', type: 'Rajdhani', color: '#38bdf8', start: '06:45', end: '10:10', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
+      { id: '12424', name: 'Dibrugarh Rajdhani Exp', type: 'Rajdhani', color: '#0ea5e9', start: '07:30', end: '10:45', kmStart: 0, kmEnd: 440, priority: 'P0 Premium' },
+      { id: '12876', name: 'Neelachal Express', type: 'Superfast', color: '#818cf8', start: '11:15', end: '15:30', kmStart: 0, kmEnd: 440, priority: 'P1 Superfast' },
+      { id: '12488', name: 'Seemanchal Express', type: 'Superfast', color: '#a78bfa', start: '14:00', end: '18:15', kmStart: 83, kmEnd: 440, priority: 'P1 Superfast' },
+      { id: '14164', name: 'Sangam Express', type: 'Express', color: '#f59e0b', start: '17:45', end: '22:30', kmStart: 0, kmEnd: 352, priority: 'P2 Express' },
+      { id: '04154', name: 'Kanpur-Etawah Passenger', type: 'Passenger', color: '#fb923c', start: '19:00', end: '23:00', kmStart: 0, kmEnd: 139, priority: 'P3 Passenger' },
+      { id: 'GOODS-70102', name: 'BOXN Coal Freight Rake', type: 'Freight', color: '#64748b', start: '00:15', end: '05:30', kmStart: 440, kmEnd: 0, priority: 'Goods Rake', dashed: true },
+      { id: 'GOODS-70109', name: 'BCN Foodgrain Freight', type: 'Freight', color: '#64748b', start: '05:00', end: '09:45', kmStart: 440, kmEnd: 139, priority: 'Goods Rake', dashed: true }
+    ];
+  }, [trainSchedules]);
+
+  // Compute dynamic candidate blocks directly from real solver output
+  const candidateBlocks = useMemo(() => {
+    if (blocks && blocks.length > 0) {
+      return blocks.slice(0, 7).map((b) => {
+        const isBaseline = selectedPlan === 'baseline_fcfs';
+        const color = isBaseline ? '#ef4444' : (selectedPlan === 'plan_b' ? '#f59e0b' : '#10b981');
+        const kmRange = corridorKmMap[b.corridor_id] || [44, 139];
+        
+        let km1 = kmRange[0];
+        let km2 = kmRange[1];
+        if (b.km_span) {
+          const match = b.km_span.match(/KM\s*([\d.]+)(?:\s*-\s*KM\s*([\d.]+))?/i);
+          if (match) {
+            km1 = parseFloat(match[1]);
+            km2 = match[2] ? parseFloat(match[2]) : km1 + 15;
+          }
+        }
+
+        const depts = (b.departments_involved && b.departments_involved.length > 0)
+          ? b.departments_involved.join(' + ')
+          : (b.department || 'Maintenance');
+
+        return {
+          id: b.block_id,
+          name: `${b.block_id}: ${b.section || b.corridor_id}`,
+          start: b.start_time.replace(/Day \d+ /, ''),
+          end: b.end_time.replace(/Day \d+ /, ''),
+          km1: Math.min(km1, km2),
+          km2: Math.max(km1, km2) + (Math.abs(km2 - km1) < 10 ? 20 : 0),
+          color,
+          depts,
+          impact: b.operational_impact_score,
+          delayedPax: b.passenger_trains_delayed || 0,
+          notes: b.explainability_notes || 'CP-SAT Scheduled Block'
+        };
+      });
+    }
+
+    return selectedPlan === 'baseline_fcfs' ? [
+      { id: 'BASE-1', name: 'Civil Track Disconnection (Separate)', start: '09:00', end: '12:00', km1: 0, km2: 83, color: '#ef4444', depts: 'Engineering', impact: 72, delayedPax: 2, notes: 'Departmental FCFS booking' },
+      { id: 'BASE-2', name: 'TRD OHE Inspection (Separate)', start: '13:00', end: '15:30', km1: 44, km2: 139, color: '#ef4444', depts: 'Traction', impact: 75, delayedPax: 1, notes: 'Departmental FCFS booking' },
+      { id: 'BASE-3', name: 'S&T Point Disconnection (Separate)', start: '16:00', end: '18:30', km1: 139, km2: 231, color: '#ef4444', depts: 'Signal & Telecom', impact: 70, delayedPax: 1, notes: 'Departmental FCFS booking' }
+    ] : [
+      { id: 'CAND-A1', name: 'Synchronized Shadow Corridor Block B-101', start: '01:00', end: '04:25', km1: 0, km2: 139, color: '#10b981', depts: '3-in-1: Civil + TRD + S&T', impact: 18, delayedPax: 0, notes: 'CP-SAT 0m delay optimal window' },
+      { id: 'CAND-A2', name: 'Look-Ahead Bundled Night Block B-102', start: '01:30', end: '04:45', km1: 195, km2: 309, color: '#10b981', depts: '2-in-1: Civil + TRD', impact: 18, delayedPax: 0, notes: 'CP-SAT 0m delay optimal window' }
+    ];
+  }, [blocks, selectedPlan]);
 
   return (
     <div className="bg-[#0b132b] rounded-2xl border border-slate-800 p-5 shadow-xl relative">

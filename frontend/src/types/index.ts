@@ -36,19 +36,24 @@ export interface CandidateBlock {
   block_id: string;
   corridor_id: string;
   section: string;
-  line: string;
+  km_span?: string;
+  line?: string;
   start_time: string;
   end_time: string;
+  start_minutes?: number;
+  end_minutes?: number;
   duration_hours: number;
-  bundled_tasks: string[];
-  departments_involved: string[];
-  isolation_required: boolean;
-  isolation_type: string;
-  affected_trains_count: number;
-  passenger_trains_delayed: number;
-  freight_trains_delayed: number;
+  bundled_tasks?: string[];
+  task_id?: string;
+  department?: string;
+  departments_involved?: string[];
+  isolation_required?: boolean;
+  isolation_type?: string;
+  affected_trains_count?: number;
+  passenger_trains_delayed?: number;
+  freight_trains_delayed?: number;
   operational_impact_score: number;
-  explainability_notes: string;
+  explainability_notes?: string;
 }
 
 export interface CandidatePlan {

@@ -129,3 +129,16 @@ class DataQualityGateway:
             "clean_defects": valid_defects,
             "flagged_defects": flagged_defects
         }
+
+    def get_sanitized_dataset(self) -> Dict[str, Any]:
+        """
+        Returns an operational dataset where dirty/flagged defects are segregated,
+        conflicting asset references are quarantined, and unavailable resources
+        are marked, preventing corrupt data from entering the optimizer.
+        """
+        report = self.validate_all()
+        clean_data = dict(self.raw_data)
+        clean_data["defects"] = report["clean_defects"]
+        clean_data["quarantined_defects"] = report["flagged_defects"]
+        clean_data["data_quality_report"] = report["summary"]
+        return clean_data

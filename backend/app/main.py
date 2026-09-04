@@ -25,7 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATA_PATH = "/Users/faheem/sih_rail/backend/data/canonical_dataset.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_PATH = os.path.join(BASE_DIR, "data", "canonical_dataset.json")
 
 def load_canonical_data():
     if not os.path.exists(DATA_PATH):
@@ -61,16 +62,21 @@ def get_data_quality_report():
 @app.get("/api/priority/scored")
 def get_scored_defects():
     data = load_canonical_data()
-    engine = PriorityAndBundlingEngine(data["defects"], data["corridors"])
+    gateway = DataQualityGateway(data)
+    clean_data = gateway.get_sanitized_dataset()
+    engine = PriorityAndBundlingEngine(clean_data["defects"], clean_data["corridors"], clean_data.get("diversion_pairs", []))
     return {
-        "total_tasks": len(data["defects"]),
+        "total_tasks": len(clean_data["defects"]),
+        "quarantined_tasks_count": len(clean_data.get("quarantined_defects", [])),
         "scored_tasks": engine.score_and_rank_defects()
     }
 
 @app.get("/api/opportunities")
 def get_bundling_opportunities():
     data = load_canonical_data()
-    engine = PriorityAndBundlingEngine(data["defects"], data["corridors"])
+    gateway = DataQualityGateway(data)
+    clean_data = gateway.get_sanitized_dataset()
+    engine = PriorityAndBundlingEngine(clean_data["defects"], clean_data["corridors"], clean_data.get("diversion_pairs", []))
     opps = engine.detect_lookahead_opportunities()
     return {
         "total_opportunities": len(opps),
