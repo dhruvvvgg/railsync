@@ -155,7 +155,11 @@ export function App() {
   const activeCandidateBlocks = currentPlan?.candidate_blocks || [];
 
   return (
-    <div className="min-h-screen bg-[#070b19] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
+    <div className="min-h-screen bg-gradient-to-b from-[#060913] via-[#090e1f] to-[#04060d] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950 relative overflow-x-hidden">
+      {/* Ambient background glow blooms */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -169,7 +173,7 @@ export function App() {
         onOpenGlossary={() => setIsGlossaryOpen(true)}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 relative z-10">
         {/* If Story Mode: Render the 3-act narrative landing page */}
         {viewMode === 'story' ? (
           <StoryFlow
@@ -184,64 +188,80 @@ export function App() {
         ) : (
           /* Full Engineering Console with all 6 original tabs */
           <div className="space-y-6">
-            {/* Top KPI Metric Cards */}
+            {/* Top KPI Metric Cards (Modern Glassmorphic Telemetry) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-[#0b132b] border border-slate-800 p-4 rounded-2xl shadow-lg">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                  <span>Block Utilization</span>
-                  <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-emerald-500/40">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                  <span className="font-medium">Block Utilization</span>
+                  <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                  </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white">
+                  <span className="text-2xl font-bold font-mono text-white tracking-tight">
                     {selectedPlanKey === 'baseline_fcfs' ? '42%' : (selectedPlanKey === 'plan_b' ? '82%' : '88%')}
                   </span>
-                  <span className={`text-xs font-semibold ${selectedPlanKey === 'baseline_fcfs' ? 'text-red-400' : 'text-emerald-400'}`}>
+                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
+                    selectedPlanKey === 'baseline_fcfs' ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'
+                  }`}>
                     {selectedPlanKey === 'baseline_fcfs' ? '-46% vs Plan A' : '+46% vs Baseline'}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-[#0b132b] border border-slate-800 p-4 rounded-2xl shadow-lg">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                  <span>Vande Bharat / Rajdhani Delay</span>
-                  <Clock className="w-4 h-4 text-cyan-400" />
+              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-cyan-500/40">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                  <span className="font-medium">Passenger Train Delays</span>
+                  <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-sm">
+                    <Clock className="w-3.5 h-3.5" />
+                  </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className={`text-2xl font-bold font-mono ${selectedPlanKey === 'baseline_fcfs' ? 'text-red-400' : 'text-cyan-300'}`}>
+                  <span className={`text-2xl font-bold font-mono tracking-tight ${selectedPlanKey === 'baseline_fcfs' ? 'text-red-400' : 'text-cyan-300'}`}>
                     {selectedPlanKey === 'baseline_fcfs' ? `${baseline?.passenger_trains_delayed || 4} Trains` : '0 min'}
                   </span>
-                  <span className={`text-xs font-semibold ${selectedPlanKey === 'baseline_fcfs' ? 'text-red-400' : 'text-cyan-400'}`}>
+                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
+                    selectedPlanKey === 'baseline_fcfs' ? 'bg-red-500/15 text-red-300' : 'bg-cyan-500/15 text-cyan-300'
+                  }`}>
                     {selectedPlanKey === 'baseline_fcfs' ? 'Detentions in Day' : '100% Punctual'}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-[#0b132b] border border-slate-800 p-4 rounded-2xl shadow-lg">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                  <span>Track Availability Index</span>
-                  <ShieldCheck className="w-4 h-4 text-blue-400" />
+              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-blue-500/40">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                  <span className="font-medium">Track Availability Index</span>
+                  <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 shadow-sm">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white">
+                  <span className="text-2xl font-bold font-mono text-white tracking-tight">
                     {selectedPlanKey === 'baseline_fcfs' ? '71.5%' : (selectedPlanKey === 'plan_b' ? '91.0%' : '94.2%')}
                   </span>
-                  <span className={`text-xs font-semibold ${selectedPlanKey === 'baseline_fcfs' ? 'text-amber-400' : 'text-blue-400'}`}>
-                    {selectedPlanKey === 'baseline_fcfs' ? 'Severe Bottlenecks' : 'Max Line Capacity'}
+                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
+                    selectedPlanKey === 'baseline_fcfs' ? 'bg-amber-500/15 text-amber-300' : 'bg-blue-500/15 text-blue-300'
+                  }`}>
+                    {selectedPlanKey === 'baseline_fcfs' ? 'Bottlenecks' : 'Max Capacity'}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-[#0b132b] border border-slate-800 p-4 rounded-2xl shadow-lg">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                  <span>Multi-Dept Bundling Efficiency</span>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-emerald-500/40">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                  <span className="font-medium">Multi-Dept Synergy</span>
+                  <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white">
+                  <span className="text-2xl font-bold font-mono text-white tracking-tight">
                     {selectedPlanKey === 'baseline_fcfs' ? '0%' : (currentPlan?.bundled_blocks_ratio || '83.3%')}
                   </span>
-                  <span className={`text-xs font-semibold ${selectedPlanKey === 'baseline_fcfs' ? 'text-red-400' : 'text-emerald-400'}`}>
-                    {selectedPlanKey === 'baseline_fcfs' ? 'Unbundled Silos' : '3-in-1 Corridors'}
+                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
+                    selectedPlanKey === 'baseline_fcfs' ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'
+                  }`}>
+                    {selectedPlanKey === 'baseline_fcfs' ? 'Unbundled Silos' : '3-in-1 Bundled'}
                   </span>
                 </div>
               </div>
@@ -250,42 +270,45 @@ export function App() {
             {/* Tab 1: Planning Cockpit (Marey & Gantt) */}
             {activeTab === 'cockpit' && (
               <div className="space-y-6">
-                <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0b132b] p-3 rounded-2xl border border-slate-800">
+                <div className="flex flex-wrap items-center justify-between gap-3 glass-panel p-3 rounded-2xl shadow-xl">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs text-slate-400 font-medium px-2">Display Plan:</span>
+                    <span className="text-xs text-slate-400 font-mono font-semibold px-2">Display Plan:</span>
                     <button
                       onClick={() => setSelectedPlanKey('plan_a')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                         selectedPlanKey === 'plan_a'
-                          ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
-                          : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-700'
+                          ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md shadow-emerald-500/25 ring-1 ring-emerald-400/40'
+                          : 'text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700/60'
                       }`}
                     >
-                      Plan A (Least Disruption - Recommended)
+                      <span className={`w-2 h-2 rounded-full ${selectedPlanKey === 'plan_a' ? 'bg-slate-950' : 'bg-emerald-400'}`}></span>
+                      <span>Plan A (Least Disruption - Recommended)</span>
                     </button>
                     <button
                       onClick={() => setSelectedPlanKey('plan_b')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                         selectedPlanKey === 'plan_b'
-                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                          : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-700'
+                          ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 shadow-md shadow-amber-500/25 ring-1 ring-amber-400/40'
+                          : 'text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700/60'
                       }`}
                     >
-                      Plan B (Fastest Critical Maintenance)
+                      <span className={`w-2 h-2 rounded-full ${selectedPlanKey === 'plan_b' ? 'bg-slate-950' : 'bg-amber-400'}`}></span>
+                      <span>Plan B (Fastest Critical Maintenance)</span>
                     </button>
                     <button
                       onClick={() => setSelectedPlanKey('baseline_fcfs')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                         selectedPlanKey === 'baseline_fcfs'
-                          ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
-                          : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-700'
+                          ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-md shadow-red-500/25 ring-1 ring-red-400/40'
+                          : 'text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700/60'
                       }`}
                     >
-                      Current Reality (FCFS Baseline)
+                      <span className={`w-2 h-2 rounded-full ${selectedPlanKey === 'baseline_fcfs' ? 'bg-white' : 'bg-red-400'}`}></span>
+                      <span>Current Reality (FCFS Baseline)</span>
                     </button>
                   </div>
 
-                  <div className="text-xs text-slate-400 font-mono hidden md:block">
+                  <div className="text-xs text-slate-400 font-mono hidden lg:block bg-slate-900/60 px-3 py-1 rounded-lg border border-slate-800">
                     Corridor: Kanpur Central (CNB) ➔ New Delhi (NDLS) Main Line
                   </div>
                 </div>
