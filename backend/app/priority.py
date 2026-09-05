@@ -1,26 +1,61 @@
+from datetime import datetime
 from typing import List, Dict, Any, Optional
 from app.safety_rules import DeterministicSafetyValidator, parse_km
+
+DEFAULT_REFERENCE_NOW = datetime(2026, 9, 10, 0, 0, 0)
 
 class PriorityAndBundlingEngine:
     def __init__(
         self,
         defects: List[Dict[str, Any]],
         corridors: List[Dict[str, Any]],
-        diversion_pairs: Optional[List[Dict[str, Any]]] = None
+        diversion_pairs: Optional[List[Dict[str, Any]]] = None,
+        assets: Optional[List[Dict[str, Any]]] = None,
+        reference_now: Optional[datetime] = None
     ):
         self.defects = defects
         self.corridors = corridors
         self.corridor_map = {c["corridor_id"]: c for c in corridors}
+        self.assets = assets or []
+        self.asset_map = {a["asset_id"]: a for a in self.assets if "asset_id" in a}
+        self.reference_now = reference_now or DEFAULT_REFERENCE_NOW
         self.safety_validator = DeterministicSafetyValidator(corridors, diversion_pairs or [])
 
-    def score_and_rank_defects(self) -> List[Dict[str, Any]]:
+    def score_and_rank_defects(
+        self,
+        assets: Optional[List[Dict[str, Any]]] = None,
+        reference_now: Optional[datetime] = None
+    ) -> List[Dict[str, Any]]:
+        if assets is not None:
+            active_asset_map = {a["asset_id"]: a for a in assets if "asset_id" in a}
+        else:
+            active_asset_map = self.asset_map
+
+        ref_now = reference_now or self.reference_now
         scored = []
         for d in self.defects:
             tier = d.get("priority_tier", "P2")
             severity = d.get("severity", "Major")
-            is_overdue = (d.get("status") == "overdue")
             recurrence = d.get("recurrence_indicator", False)
             duration = d.get("total_duration_minutes", 120)
+
+            # Deadline parsing and overdue check
+            is_overdue = (d.get("status") == "overdue")
+            deadline_str = d.get("deadline")
+            if deadline_str:
+                try:
+                    clean_deadline = deadline_str.replace("Z", "+00:00")
+                    dl_dt = datetime.fromisoformat(clean_deadline)
+                    if dl_dt.tzinfo is not None and ref_now.tzinfo is None:
+                        curr_ref = ref_now.replace(tzinfo=dl_dt.tzinfo)
+                    elif dl_dt.tzinfo is None and ref_now.tzinfo is not None:
+                        curr_ref = ref_now.replace(tzinfo=None)
+                    else:
+                        curr_ref = ref_now
+                    if dl_dt < curr_ref:
+                        is_overdue = True
+                except Exception:
+                    pass
 
             # Base score by tier
             tier_weights = {"P0": 95, "P1": 75, "P2": 50, "P3": 25}
@@ -51,6 +86,16 @@ class PriorityAndBundlingEngine:
             if cap >= 7:
                 score += 6
                 factors.append("High-traffic trunk corridor")
+
+            # Asset criticality factor
+            asset_info = active_asset_map.get(d.get("asset_id"), {})
+            asset_crit = asset_info.get("criticality")
+            if asset_crit == "High":
+                score += 10
+                factors.append("High-criticality track asset infrastructure")
+            elif asset_crit == "Medium":
+                score += 5
+                factors.append("Medium-criticality track asset infrastructure")
 
             final_score = min(100, score)
 

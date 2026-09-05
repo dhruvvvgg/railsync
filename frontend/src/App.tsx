@@ -10,7 +10,7 @@ import { DisruptionSimulator } from './components/DisruptionSimulator';
 import { AuditLogViewer } from './components/AuditLogViewer';
 import { GlossaryDrawer } from './components/GlossaryDrawer';
 import { GuidedDemoModal } from './components/GuidedDemoModal';
-import type { DataQualityReport, LookAheadOpportunity } from './types';
+import type { DataQualityReport, LookAheadOpportunity, OptimizerSolveResponse } from './types';
 import type { Language } from './i18n/translations';
 import { TrendingUp, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export function App() {
   
   const [dataReport, setDataReport] = useState<DataQualityReport | null>(null);
   const [opportunities, setOpportunities] = useState<LookAheadOpportunity[]>([]);
-  const [optimizerResults, setOptimizerResults] = useState<any>(null);
+  const [optimizerResults, setOptimizerResults] = useState<OptimizerSolveResponse | null>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
 
   useEffect(() => {

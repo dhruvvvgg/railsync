@@ -84,248 +84,131 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
   };
 
   const lanes = useMemo(() => {
-    if (isBaseline) {
-      // BASELINE FCFS: 3 uncoordinated daytime blocks across separate hours
-      const civilRaw = [
-        {
-          id: 'CIV-BASE-1',
-          name: 'Track Renewal & Ballast Screening (COR-003)',
-          shortName: 'Track Renewal',
+    const civilRaw: Omit<TimelineTask, 'subRow' | 'leftPct' | 'widthPct'>[] = [];
+    const trdRaw: Omit<TimelineTask, 'subRow' | 'leftPct' | 'widthPct'>[] = [];
+    const sntRaw: Omit<TimelineTask, 'subRow' | 'leftPct' | 'widthPct'>[] = [];
+
+    (blocks || []).forEach((b) => {
+      const depts = (b.departments_involved && b.departments_involved.length > 0)
+        ? b.departments_involved
+        : (b.department ? [b.department] : ['Engineering']);
+
+      const hasCivil = depts.some((d: string) => /civil|engineering|tms/i.test(d));
+      const hasTrd = depts.some((d: string) => /traction|trd|electrical|ohe|power/i.test(d)) || b.isolation_required;
+      const hasSnt = depts.some((d: string) => /signal|telecom|s&t|smms/i.test(d));
+
+      const cleanStart = (b.start_time || '01:00').replace(/Day \d+ /, '').trim();
+      const cleanEnd = (b.end_time || '03:00').replace(/Day \d+ /, '').trim();
+      const startMin = b.start_minutes !== undefined ? (b.start_minutes % 1440) : parseToMins(cleanStart);
+      let endMin = b.end_minutes !== undefined ? (b.end_minutes % 1440) : parseToMins(cleanEnd);
+      if (endMin <= startMin) {
+        const dur = b.duration_hours ? Math.round(b.duration_hours * 60) : 120;
+        endMin = Math.min(1439, startMin + dur);
+      }
+
+      const sectionStr = b.section || b.corridor_id || 'Corridor Track';
+      const kmStr = b.km_span ? ` (${b.km_span})` : '';
+      const equipmentStr = b.isolation_type || (b.isolation_required ? '25 kV OHE Tower Wagon' : 'Standard Gang / Machine');
+
+      // 1. Civil Lane
+      if (hasCivil || (!hasTrd && !hasSnt)) {
+        civilRaw.push({
+          id: `${b.block_id}-CIV`,
+          name: `${b.block_id}: Track Renewal & Possessions`,
+          shortName: `${b.block_id} Track Work`,
           department: 'Civil Engineering (TMS)',
-          start: '09:00',
-          end: '12:00',
-          startMin: 9 * 60,
-          endMin: 12 * 60,
-          section: 'COR-003 (KM 116.1 – 120.7)',
-          equipment: 'CSM-09 Continuous Action Tamper',
-          safetyStatus: 'Uncoordinated FCFS · Delayed Train 12876 (Neelachal Exp)',
-          gradient: 'bg-gradient-to-r from-red-950/80 to-rose-950/80',
-          border: 'border-red-500/50 hover:border-red-400',
-          badgeBg: 'bg-red-500/20',
-          badgeText: 'text-red-300'
-        }
-      ];
+          start: cleanStart,
+          end: cleanEnd,
+          startMin,
+          endMin,
+          section: `${sectionStr}${kmStr}`,
+          equipment: equipmentStr,
+          safetyStatus: isBaseline
+            ? `Uncoordinated FCFS · Impact ${b.operational_impact_score || 0}/100`
+            : (b.isolation_required ? '25 kV AC Isolated · 100% G&SR Compliant' : '100% G&SR Compliant · 0m Train Delay'),
+          gradient: isBaseline
+            ? 'bg-gradient-to-r from-red-950/80 to-rose-950/80'
+            : 'bg-gradient-to-r from-cyan-950/85 to-sky-950/85',
+          border: isBaseline ? 'border-red-500/50 hover:border-red-400' : 'border-cyan-500/50 hover:border-cyan-400',
+          badgeBg: isBaseline ? 'bg-red-500/20' : 'bg-cyan-500/20',
+          badgeText: isBaseline ? 'text-red-300' : 'text-cyan-300'
+        });
+      }
 
-      const trdRaw = [
-        {
-          id: 'TRD-BASE-1',
-          name: '25 kV OHE Isolation & Overhaul (COR-012)',
-          shortName: 'OHE Isolation',
+      // 2. TRD Lane
+      if (hasTrd) {
+        trdRaw.push({
+          id: `${b.block_id}-TRD`,
+          name: `${b.block_id}: 25 kV OHE Power Cut & Wire Overhaul`,
+          shortName: `${b.block_id} OHE Work`,
           department: 'Traction Distribution (TRD)',
-          start: '13:00',
-          end: '15:30',
-          startMin: 13 * 60,
-          endMin: 15 * 60 + 30,
-          section: 'COR-012 (KM 178.2 – 182.8)',
-          equipment: 'OHE Tower Wagon 4-Wheeler',
-          safetyStatus: 'Uncoordinated FCFS · Detained Freight BCN Rake 70109',
-          gradient: 'bg-gradient-to-r from-red-950/80 to-rose-950/80',
-          border: 'border-red-500/50 hover:border-red-400',
-          badgeBg: 'bg-red-500/20',
-          badgeText: 'text-red-300'
-        }
-      ];
+          start: cleanStart,
+          end: cleanEnd,
+          startMin,
+          endMin,
+          section: `${sectionStr}${kmStr}`,
+          equipment: 'OHE Tower Wagon & SCADA',
+          safetyStatus: isBaseline
+            ? `Uncoordinated FCFS · Impact ${b.operational_impact_score || 0}/100`
+            : 'Permit-to-Work Authorized by TPC · Wire Grounded',
+          gradient: isBaseline
+            ? 'bg-gradient-to-r from-red-950/80 to-rose-950/80'
+            : 'bg-gradient-to-r from-emerald-950/85 to-teal-950/85',
+          border: isBaseline ? 'border-red-500/50 hover:border-red-400' : 'border-emerald-500/50 hover:border-emerald-400',
+          badgeBg: isBaseline ? 'bg-red-500/20' : 'bg-emerald-500/20',
+          badgeText: isBaseline ? 'text-emerald-300' : 'text-emerald-300'
+        });
+      }
 
-      const sntRaw = [
-        {
-          id: 'SNT-BASE-1',
-          name: 'MSDAC Point Machine Calibration (COR-002)',
-          shortName: 'Point Calibration',
+      // 3. S&T Lane
+      if (hasSnt) {
+        sntRaw.push({
+          id: `${b.block_id}-SNT`,
+          name: `${b.block_id}: Point Machine & Axle Sensor Tuning`,
+          shortName: `${b.block_id} S&T Work`,
           department: 'Signal & Telecom (SMMS)',
-          start: '16:00',
-          end: '18:30',
-          startMin: 16 * 60,
-          endMin: 18 * 60 + 30,
-          section: 'COR-002 (KM 226.5 – 231.1)',
+          start: cleanStart,
+          end: cleanEnd,
+          startMin,
+          endMin,
+          section: `${sectionStr}${kmStr}`,
           equipment: 'Electronic Point Motor Testing Kit',
-          safetyStatus: 'Uncoordinated FCFS · Delayed Train 14164 (Sangam Exp)',
-          gradient: 'bg-gradient-to-r from-red-950/80 to-rose-950/80',
-          border: 'border-red-500/50 hover:border-red-400',
-          badgeBg: 'bg-red-500/20',
-          badgeText: 'text-red-300'
-        }
-      ];
-
-      return [
-        {
-          id: 'civil',
-          name: t.laneCivil,
-          icon: Hammer,
-          iconColor: 'text-red-400',
-          iconBg: 'bg-red-500/10 border-red-500/30',
-          ...layoutSubLanes(civilRaw)
-        },
-        {
-          id: 'trd',
-          name: t.laneTrd,
-          icon: Zap,
-          iconColor: 'text-red-400',
-          iconBg: 'bg-red-500/10 border-red-500/30',
-          ...layoutSubLanes(trdRaw)
-        },
-        {
-          id: 'snt',
-          name: t.laneSnt,
-          icon: Radio,
-          iconColor: 'text-red-400',
-          iconBg: 'bg-red-500/10 border-red-500/30',
-          ...layoutSubLanes(sntRaw)
-        }
-      ];
-    }
-
-    // CP-SAT OPTIMIZED: Synchronized parallel co-work under single 25 kV shutdown (01:00–04:25)
-    const civilRaw = [
-      {
-        id: 'CIV-OPT-1',
-        name: 'CSM-09 Track Tamping & Lining (KM 116–155)',
-        shortName: 'CSM-09 Track Tamping',
-        department: 'Civil Engineering (TMS)',
-        start: '01:15',
-        end: '03:20',
-        startMin: parseToMins('01:15'),
-        endMin: parseToMins('03:20'),
-        section: 'COR-003, COR-005, COR-008',
-        equipment: 'CSM-09 32-Sleeper Continuous Action Tamper',
-        safetyStatus: '100% G&SR Compliant • 0m Train Delay',
-        gradient: 'bg-gradient-to-r from-cyan-950/85 to-sky-950/85',
-        border: 'border-cyan-500/50 hover:border-cyan-400',
-        badgeBg: 'bg-cyan-500/20',
-        badgeText: 'text-cyan-300'
-      },
-      {
-        id: 'CIV-OPT-2',
-        name: 'USFD Ultrasonic Rail Flaw Rectification',
-        shortName: 'USFD Flaw Testing',
-        department: 'Civil Engineering (TMS)',
-        start: '02:30',
-        end: '04:15',
-        startMin: parseToMins('02:30'),
-        endMin: parseToMins('04:15'),
-        section: 'COR-007 (KM 143.7 – 146.0)',
-        equipment: 'Digital USFD Rail Flaw Detector Trolley',
-        safetyStatus: '100% G&SR Compliant • 0m Train Delay',
-        gradient: 'bg-gradient-to-r from-cyan-950/85 to-blue-950/85',
-        border: 'border-cyan-500/50 hover:border-cyan-400',
-        badgeBg: 'bg-cyan-500/20',
-        badgeText: 'text-cyan-300'
+          safetyStatus: isBaseline
+            ? `Uncoordinated FCFS · Impact ${b.operational_impact_score || 0}/100`
+            : '100% Signal Integrity Certified · Track Clear',
+          gradient: isBaseline
+            ? 'bg-gradient-to-r from-red-950/80 to-rose-950/80'
+            : 'bg-gradient-to-r from-purple-950/85 to-indigo-950/85',
+          border: isBaseline ? 'border-red-500/50 hover:border-red-400' : 'border-purple-500/50 hover:border-purple-400',
+          badgeBg: isBaseline ? 'bg-red-500/20' : 'bg-purple-500/20',
+          badgeText: isBaseline ? 'text-purple-300' : 'text-purple-300'
+        });
       }
-    ];
-
-    const trdRaw = [
-      {
-        id: 'TRD-OPT-1',
-        name: '25 kV OHE Isolation & Earth Discharge',
-        shortName: 'OHE Power Cutoff',
-        department: 'Traction Distribution (TRD)',
-        start: '01:00',
-        end: '01:30',
-        startMin: parseToMins('01:00'),
-        endMin: parseToMins('01:30'),
-        section: 'Division Main Line (KM 116 – 231)',
-        equipment: 'TPC Supervisory Remote Terminal (SCADA)',
-        safetyStatus: 'Permit-to-Work Authorized by TPC',
-        gradient: 'bg-gradient-to-r from-amber-950/85 to-yellow-950/85',
-        border: 'border-amber-500/50 hover:border-amber-400',
-        badgeBg: 'bg-amber-500/20',
-        badgeText: 'text-amber-300'
-      },
-      {
-        id: 'TRD-OPT-2',
-        name: 'Cantilever & Dropper Overhaul (Power Block)',
-        shortName: 'Cantilever Overhaul',
-        department: 'Traction Distribution (TRD)',
-        start: '01:30',
-        end: '03:50',
-        startMin: parseToMins('01:30'),
-        endMin: parseToMins('03:50'),
-        section: 'COR-003 to COR-008 (KM 116 – 155)',
-        equipment: 'OHE Tower Inspection Wagon',
-        safetyStatus: 'Work under Verified De-energized Wire',
-        gradient: 'bg-gradient-to-r from-emerald-950/85 to-teal-950/85',
-        border: 'border-emerald-500/50 hover:border-emerald-400',
-        badgeBg: 'bg-emerald-500/20',
-        badgeText: 'text-emerald-300'
-      },
-      {
-        id: 'TRD-OPT-3',
-        name: 'OHE Normalization & Track Clearance',
-        shortName: 'OHE Recharge',
-        department: 'Traction Distribution (TRD)',
-        start: '03:50',
-        end: '04:20',
-        startMin: parseToMins('03:50'),
-        endMin: parseToMins('04:20'),
-        section: 'Division Main Line (KM 116 – 231)',
-        equipment: 'SCADA Circuit Breaker Reclose',
-        safetyStatus: 'Power Recharged • Clear for Traffic',
-        gradient: 'bg-gradient-to-r from-cyan-950/85 to-sky-950/85',
-        border: 'border-cyan-500/50 hover:border-cyan-400',
-        badgeBg: 'bg-cyan-500/20',
-        badgeText: 'text-cyan-300'
-      }
-    ];
-
-    const sntRaw = [
-      {
-        id: 'SNT-OPT-1',
-        name: 'Point Machine 143mm Calibration & Testing',
-        shortName: 'Point Machine Testing',
-        department: 'Signal & Telecom (SMMS)',
-        start: '01:30',
-        end: '03:15',
-        startMin: parseToMins('01:30'),
-        endMin: parseToMins('03:15'),
-        section: 'COR-005 (KM 129.9 – 134.5)',
-        equipment: 'High-Precision Point Obstruction Gauge',
-        safetyStatus: 'Simultaneous with Civil Tamping Window',
-        gradient: 'bg-gradient-to-r from-purple-950/85 to-indigo-950/85',
-        border: 'border-purple-500/50 hover:border-purple-400',
-        badgeBg: 'bg-purple-500/20',
-        badgeText: 'text-purple-300'
-      },
-      {
-        id: 'SNT-OPT-2',
-        name: 'Dual MSDAC Sensor Tuning & Verification',
-        shortName: 'MSDAC Axle Tuning',
-        department: 'Signal & Telecom (SMMS)',
-        start: '02:45',
-        end: '04:15',
-        startMin: parseToMins('02:45'),
-        endMin: parseToMins('04:15'),
-        section: 'COR-008 (KM 150.6 – 155.2)',
-        equipment: 'MSDAC Axle Counter Calibrator',
-        safetyStatus: '100% Signal Integrity Certified',
-        gradient: 'bg-gradient-to-r from-purple-950/85 to-violet-950/85',
-        border: 'border-purple-500/50 hover:border-purple-400',
-        badgeBg: 'bg-purple-500/20',
-        badgeText: 'text-purple-300'
-      }
-    ];
+    });
 
     return [
       {
         id: 'civil',
         name: t.laneCivil,
         icon: Hammer,
-        iconColor: 'text-cyan-400',
-        iconBg: 'bg-cyan-500/10 border-cyan-500/30',
+        iconColor: isBaseline ? 'text-red-400' : 'text-cyan-400',
+        iconBg: isBaseline ? 'bg-red-500/10 border-red-500/30' : 'bg-cyan-500/10 border-cyan-500/30',
         ...layoutSubLanes(civilRaw)
       },
       {
         id: 'trd',
         name: t.laneTrd,
         icon: Zap,
-        iconColor: 'text-emerald-400',
-        iconBg: 'bg-emerald-500/10 border-emerald-500/30',
+        iconColor: isBaseline ? 'text-red-400' : 'text-emerald-400',
+        iconBg: isBaseline ? 'bg-red-500/10 border-red-500/30' : 'bg-emerald-500/10 border-emerald-500/30',
         ...layoutSubLanes(trdRaw)
       },
       {
         id: 'snt',
         name: t.laneSnt,
         icon: Radio,
-        iconColor: 'text-purple-400',
-        iconBg: 'bg-purple-500/10 border-purple-500/30',
+        iconColor: isBaseline ? 'text-red-400' : 'text-purple-400',
+        iconBg: isBaseline ? 'bg-red-500/10 border-red-500/30' : 'bg-purple-500/10 border-purple-500/30',
         ...layoutSubLanes(sntRaw)
       }
     ];

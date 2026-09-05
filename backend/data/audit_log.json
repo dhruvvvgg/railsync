@@ -1,0 +1,19 @@
+[
+  {
+    "timestamp": "2026-09-05T10:06:31.306247",
+    "action": "EMERGENCY_REPLAN",
+    "incident": "P0 Emergency Rail Fracture",
+    "location": "COR-001 KM 144.2",
+    "resolution": "SUCCESSFULLY_RESOLVED"
+  },
+  {
+    "approval_id": "AUTH-REC-102",
+    "plan_name": "Plan A",
+    "approved_by": "Section Controller - CNB Division",
+    "role": "Authorized Traffic Controller",
+    "timestamp": "2026-09-05T10:06:31.306536",
+    "action": "APPROVED",
+    "reason": "Night window clearance",
+    "authority_disclaimer": "Recorded under Indian Railways General & Subsidiary Rules. Does not replace physical track handback / line fitness memo."
+  }
+]

@@ -23,6 +23,86 @@ def minutes_to_time_str(mins: int) -> str:
     m = rem % 60
     return f"Day {day} {h:02d}:{m:02d}"
 
+def match_resource_for_task(task: Dict[str, Any], resources: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], str]:
+    """
+    Matches a task against the 25 resources based on required_skills_or_equipment,
+    defect_category, asset_type, and department.
+    Returns (matching_resources, required_equipment_type).
+    """
+    req = str(task.get("required_skills_or_equipment", "")).lower()
+    cat = str(task.get("defect_category", "")).lower()
+    atype = str(task.get("asset_type", "")).lower()
+    dept = str(task.get("owning_department", "")).lower()
+
+    if "tamp" in req or "tamp" in cat or "csm" in req:
+        skill = "CSM-09-32"
+    elif "bcm" in req or "ballast clean" in cat:
+        skill = "BCM-RM-80"
+    elif "dgs" in req or "stabiliz" in cat:
+        skill = "DGS-62-N"
+    elif "usfd" in req or "ultrasonic" in req or "flaw" in cat:
+        skill = "USFD Ultrasonic Crew"
+    elif "tower car" in req or "8-wheeler" in req:
+        skill = "8-Wheeler Tower Car"
+    elif "tower wagon" in req or "4-wheeler" in req or "ohe" in cat or "cantilever" in atype or "neutral" in atype:
+        skill = "4-Wheeler Tower Wagon"
+    elif "linesman" in req or "catenary" in req:
+        skill = "Linesman Gang"
+    elif "isolator" in atype or "substation" in atype or "transformer" in atype or "high voltage" in req:
+        skill = "High Voltage Crew"
+    elif "point" in atype or "turnout" in atype or "point" in req:
+        skill = "Point Calibration Gang"
+    elif "axle counter" in atype or "msdac" in atype:
+        skill = "Electronics Squad"
+    elif "interlocking" in atype or "ei " in atype or "relay" in atype:
+        skill = "EI Systems Engineers"
+    elif "signal" in dept or "telecom" in dept:
+        skill = "S&T Test Vehicle"
+    elif "traction" in dept:
+        skill = "Linesman Gang"
+    else:
+        skill = "Manual Gang"
+
+    matches = [r for r in resources if r.get("skill_or_equipment_type") == skill]
+    if not matches:
+        matches = [r for r in resources if r.get("department", "").lower() in dept or dept in r.get("department", "").lower()]
+
+    return matches, skill
+
+def check_item_resource_feasibility(
+    item_tasks: List[Dict[str, Any]],
+    corridor_id: str,
+    start_mins: int,
+    end_mins: int,
+    resources: List[Dict[str, Any]]
+) -> Tuple[bool, str, List[str]]:
+    allocated_ids = []
+    issues = []
+
+    for task in item_tasks:
+        matching, skill = match_resource_for_task(task, resources)
+        if not matching:
+            continue
+
+        available_matches = [m for m in matching if m.get("current_maintenance_state") == "available"]
+        if not available_matches:
+            unavail_ids = [m.get("resource_id") for m in matching]
+            issues.append(f"Resource {skill} ({', '.join(unavail_ids)}) is under repair / unavailable")
+        else:
+            res = available_matches[0]
+            if res.get("resource_id") not in allocated_ids:
+                allocated_ids.append(res.get("resource_id"))
+
+            setup = res.get("setup_time_minutes", 15)
+            removal = res.get("removal_time_minutes", 15)
+            dur = end_mins - start_mins
+            if dur < (setup + removal):
+                issues.append(f"Window duration ({dur}m) insufficient for setup/removal ({setup+removal}m) of {res.get('resource_name')}")
+
+    if issues:
+        return True, "; ".join(issues), allocated_ids
+    return False, "All required resources verified available", allocated_ids
+
 class AutomaticBlockPlannerSolver:
     def __init__(self, dataset: Dict[str, Any]):
         self.raw_dataset = dataset
@@ -36,9 +116,10 @@ class AutomaticBlockPlannerSolver:
         self.train_schedules = self.sanitized_data.get("train_schedules", [])
         self.diversion_pairs = self.sanitized_data.get("diversion_pairs", [])
         self.resources = self.sanitized_data.get("resources", [])
+        self.assets = self.sanitized_data.get("assets", [])
 
         self.corridor_map = {c["corridor_id"]: c for c in self.corridors}
-        self.priority_engine = PriorityAndBundlingEngine(self.defects, self.corridors, self.diversion_pairs)
+        self.priority_engine = PriorityAndBundlingEngine(self.defects, self.corridors, self.diversion_pairs, self.assets)
         self.safety_validator = DeterministicSafetyValidator(self.corridors, self.diversion_pairs)
 
     def solve_all_plans(self) -> Dict[str, Any]:
@@ -55,10 +136,22 @@ class AutomaticBlockPlannerSolver:
         baseline = self._solve_fcfs_baseline(scored_defects)
         solve_duration = round(time.time() - total_start, 3)
 
+        plan_statuses = [plan_a.get("solver_status"), plan_b.get("solver_status")]
+        if any(s == "INFEASIBLE" for s in plan_statuses):
+            overall_status = "ONE_OR_MORE_PLANS_INFEASIBLE"
+        elif any(s == "MODEL_INVALID" for s in plan_statuses):
+            overall_status = "MODEL_INVALID"
+        elif all(s == "OPTIMAL" for s in plan_statuses):
+            overall_status = "OPTIMAL_FOUND"
+        elif any(s in ["FEASIBLE", "OPTIMAL"] for s in plan_statuses):
+            overall_status = "FEASIBLE_FOUND"
+        else:
+            overall_status = "UNKNOWN_STATUS"
+
         return {
             "solver_engine": "Google OR-Tools CP-SAT (Lexicographic Constraint Programming)",
             "solve_runtime_seconds": solve_duration,
-            "status": "OPTIMAL_FOUND",
+            "status": overall_status,
             "data_quality_screening": {
                 "total_screened": self.gateway.validation_report["total_records_screened"],
                 "clean_records_scheduled": len(self.defects),
@@ -94,6 +187,14 @@ class AutomaticBlockPlannerSolver:
             opp_tasks = opp.get("tasks", [])
             opp_criticality = sum(t.get("criticality_score", 50) for t in opp_tasks)
 
+            # Determine required specialized machine across bundle tasks
+            req_machine = "Standard Gang"
+            for t in opp_tasks:
+                _, t_skill = match_resource_for_task(t, self.resources)
+                if t_skill in ["CSM-09-32", "BCM-RM-80", "DGS-62-N"]:
+                    req_machine = t_skill
+                    break
+
             candidates.append({
                 "item_id": opp["opportunity_id"],
                 "type": "BUNDLE",
@@ -108,7 +209,8 @@ class AutomaticBlockPlannerSolver:
                 "criticality_weight": opp_criticality,
                 "has_trd": "Traction Distribution" in opp["departments"],
                 "has_p0_p1": any(t.get("priority_tier") in ["P0", "P1"] for t in opp_tasks),
-                "required_machine": "CSM-09 Tamper" if any("Tamping" in t.get("defect_category", "") for t in opp_tasks) else "Standard Gang"
+                "required_machine": req_machine,
+                "tasks_data": opp_tasks
             })
             for tid in opp["bundled_task_ids"]:
                 bundled_defect_ids.add(tid)
@@ -119,6 +221,8 @@ class AutomaticBlockPlannerSolver:
                 duration_mins = task.get("total_duration_minutes", 120) + 20  # +20 min handback buffer
                 cid = task.get("corridor_id", "COR-001")
                 km_val = parse_km(task.get("km_location")) or 120.0
+                _, t_skill = match_resource_for_task(task, self.resources)
+                req_machine = t_skill if t_skill in ["CSM-09-32", "BCM-RM-80", "DGS-62-N"] else "Standard Gang"
 
                 candidates.append({
                     "item_id": f"IND-{task['defect_id']}",
@@ -134,7 +238,8 @@ class AutomaticBlockPlannerSolver:
                     "criticality_weight": task.get("criticality_score", 50),
                     "has_trd": task.get("owning_department") == "Traction Distribution",
                     "has_p0_p1": task.get("priority_tier") in ["P0", "P1"],
-                    "required_machine": "CSM-09 Tamper" if "Tamping" in task.get("defect_category", "") else "Standard Gang"
+                    "required_machine": req_machine,
+                    "tasks_data": [task]
                 })
 
         return candidates
@@ -231,7 +336,7 @@ class AutomaticBlockPlannerSolver:
 
             # Machine resource non-overlap
             machine = item["required_machine"]
-            if machine != "Standard Gang":
+            if machine and machine not in ["Standard Gang", "Manual Gang"]:
                 resource_intervals.setdefault(machine, []).append(interval)
 
             item_vars[i] = {
@@ -331,6 +436,14 @@ class AutomaticBlockPlannerSolver:
                     is_alternate_route_congested=False
                 )
 
+                is_constrained, res_diag, alloc_res = check_item_resource_feasibility(
+                    item_tasks=item.get("tasks_data", []),
+                    corridor_id=cid,
+                    start_mins=st_min,
+                    end_mins=end_min,
+                    resources=self.resources
+                )
+
                 candidate_blocks.append({
                     "block_id": f"CAND-BLK-A{idx+1:02d}",
                     "corridor_id": cid,
@@ -346,6 +459,10 @@ class AutomaticBlockPlannerSolver:
                     "departments_involved": item["departments"],
                     "isolation_required": item["has_trd"],
                     "isolation_type": "25 kV AC Traction Isolation (TPC Authorized)" if item["has_trd"] else "Traffic Block",
+                    "resource_constrained": is_constrained,
+                    "resource_status": "RESOURCE_CONSTRAINED" if is_constrained else "RESOURCE_VERIFIED",
+                    "resource_diagnostics": res_diag,
+                    "allocated_resources": alloc_res,
                     "affected_trains_count": len(affected),
                     "passenger_trains_delayed": sum(1 for t in affected if t["priority"] in ["P0_TRAIN", "P1_TRAIN", "P2_TRAIN"]),
                     "freight_trains_delayed": sum(1 for t in affected if "GOODS" in t.get("train_id", "") or t["priority"] == "P3_TRAIN"),
@@ -354,6 +471,7 @@ class AutomaticBlockPlannerSolver:
                         f"CP-SAT Optimized Bundle: Solved mathematically with 0 express passenger conflicts. "
                         f"Consolidates {item['tasks_count']} tasks across {len(item['departments'])} departments ({', '.join(item['departments'])}) "
                         f"under single possession."
+                        + (f" [RESOURCE WARNING: {res_diag}]" if is_constrained else "")
                     )
                 })
 
@@ -366,7 +484,7 @@ class AutomaticBlockPlannerSolver:
             "primary_objective": "Minimize train punctuality loss & secondary network congestion",
             "solver_status": solver.StatusName(status),
             "total_candidate_blocks": len(candidate_blocks),
-            "bundled_blocks_ratio": "83.3%",
+            "bundled_blocks_ratio": f"{round(sum(1 for b in candidate_blocks if len(b.get('bundled_tasks', [])) > 1) / max(1, len(candidate_blocks)) * 100, 1)}%" if candidate_blocks else "0.0%",
             "tasks_scheduled": tasks_scheduled,
             "unscheduled_tasks": len(self.defects) - tasks_scheduled,
             "total_block_hours": round(total_block_hours, 1),
@@ -377,6 +495,9 @@ class AutomaticBlockPlannerSolver:
             "trade_off_summary": (
                 "Mathematically verified by Google OR-Tools CP-SAT: 100% punctuality preservation for Vande Bharat and Rajdhani. "
                 "Blocks are locked into night freight valleys with 0 express passenger train detentions."
+            ) if status in [cp_model.OPTIMAL, cp_model.FEASIBLE] else (
+                f"INFEASIBLE: Unable to schedule candidate blocks within permitted maintenance windows without express train detention. "
+                f"Scheduled 0 of {len(self.defects)} tasks."
             )
         }
 
@@ -420,7 +541,7 @@ class AutomaticBlockPlannerSolver:
             corridor_intervals.setdefault(cid, []).append(interval)
 
             machine = item["required_machine"]
-            if machine != "Standard Gang":
+            if machine and machine not in ["Standard Gang", "Manual Gang"]:
                 resource_intervals.setdefault(machine, []).append(interval)
 
             item_vars[i] = {
@@ -440,6 +561,17 @@ class AutomaticBlockPlannerSolver:
         for machine, ivals in resource_intervals.items():
             if len(ivals) > 1:
                 model.AddNoOverlap(ivals)
+
+        # Hard Constraint: Diversion corridors cannot be blocked concurrently
+        for dp in self.diversion_pairs:
+            p_cid = dp["primary_corridor"]
+            a_cid = dp["alternate_corridor"]
+            p_ivals = corridor_intervals.get(p_cid, [])
+            a_ivals = corridor_intervals.get(a_cid, [])
+            if p_ivals and a_ivals:
+                for p_iv in p_ivals:
+                    for a_iv in a_ivals:
+                        model.AddNoOverlap([p_iv, a_iv])
 
         # Objective: Schedule all P0/P1 as early as possible + maximize total tasks cleared
         obj_terms = []
@@ -463,6 +595,7 @@ class AutomaticBlockPlannerSolver:
         total_block_hours = 0.0
 
         if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            scored_map = {d["defect_id"]: d for d in scored_defects}
             scheduled_items = []
             for i, iv in item_vars.items():
                 if solver.Value(iv["is_sched"]) == 1:
@@ -493,6 +626,44 @@ class AutomaticBlockPlannerSolver:
                     is_alternate_route_congested=False
                 )
 
+                is_constrained, res_diag, alloc_res = check_item_resource_feasibility(
+                    item_tasks=item.get("tasks_data", []),
+                    corridor_id=cid,
+                    start_mins=st_min,
+                    end_mins=end_min,
+                    resources=self.resources
+                )
+
+                task_summaries = []
+                earliest_dl = None
+                for tid in item["task_ids"]:
+                    sd = scored_map.get(tid, {})
+                    tier = sd.get("priority_tier", "P2")
+                    score = sd.get("criticality_score", 50)
+                    cat = sd.get("defect_category", "Track Defect")
+                    dl = sd.get("deadline")
+                    if dl:
+                        dl_clean = dl.split("T")[0] if "T" in dl else dl
+                        if earliest_dl is None or dl_clean < earliest_dl:
+                            earliest_dl = dl_clean
+                    task_summaries.append(f"{tid} ({tier}, score {score}, {cat})")
+
+                depts_str = ", ".join(item["departments"])
+                time_span_str = f"{minutes_to_time_str(st_min)}–{minutes_to_time_str(end_min)}"
+                tasks_detail_str = "; ".join(task_summaries)
+                sla_info = f"nearest statutory SLA deadline {earliest_dl}" if earliest_dl else "statutory SLA"
+
+                if item["type"] == "BUNDLE":
+                    base_notes = (
+                        f"CP-SAT Coordinated Safety Window ({time_span_str}): Scheduled across {len(item['departments'])} departments ({depts_str}) "
+                        f"to satisfy {sla_info}. Bundles {item['tasks_count']} tasks: {tasks_detail_str}."
+                    )
+                else:
+                    base_notes = (
+                        f"CP-SAT High-Criticality Window ({time_span_str}): Dedicated corridor possession for {depts_str} "
+                        f"to clear critical defect within {sla_info}. Task: {tasks_detail_str}."
+                    )
+
                 candidate_blocks.append({
                     "block_id": f"CAND-BLK-B{idx+1:02d}",
                     "corridor_id": cid,
@@ -508,13 +679,17 @@ class AutomaticBlockPlannerSolver:
                     "departments_involved": item["departments"],
                     "isolation_required": item["has_trd"],
                     "isolation_type": "25 kV AC Traction Isolation" if item["has_trd"] else "Traffic Block",
+                    "resource_constrained": is_constrained,
+                    "resource_status": "RESOURCE_CONSTRAINED" if is_constrained else "RESOURCE_VERIFIED",
+                    "resource_diagnostics": res_diag,
+                    "allocated_resources": alloc_res,
                     "affected_trains_count": len(affected),
                     "passenger_trains_delayed": sum(1 for t in affected if t["priority"] in ["P0_TRAIN", "P1_TRAIN"]),
                     "freight_trains_delayed": sum(1 for t in affected if "GOODS" in t.get("train_id", "") or t["priority"] in ["P2_TRAIN", "P3_TRAIN"]),
                     "operational_impact_score": impact_score,
                     "explainability_notes": (
-                        f"CP-SAT High-Criticality Window: Enforces statutory safety SLA. "
-                        f"Clears critical maintenance with zero compromise on track integrity."
+                        base_notes
+                        + (f" [RESOURCE WARNING: {res_diag}]" if is_constrained else "")
                     )
                 })
 
@@ -527,7 +702,7 @@ class AutomaticBlockPlannerSolver:
             "primary_objective": "Maximize infrastructure safety by clearing 100% of P0/P1 defects within 48h",
             "solver_status": solver.StatusName(status),
             "total_candidate_blocks": len(candidate_blocks),
-            "bundled_blocks_ratio": "58.3%",
+            "bundled_blocks_ratio": f"{round(sum(1 for b in candidate_blocks if len(b.get('bundled_tasks', [])) > 1) / max(1, len(candidate_blocks)) * 100, 1)}%" if candidate_blocks else "0.0%",
             "tasks_scheduled": tasks_scheduled,
             "unscheduled_tasks": len(self.defects) - tasks_scheduled,
             "total_block_hours": round(total_block_hours, 1),
@@ -536,8 +711,11 @@ class AutomaticBlockPlannerSolver:
             "freight_trains_delayed": total_frt_delayed,
             "candidate_blocks": candidate_blocks,
             "trade_off_summary": (
-                "Engineered for Chief Track Engineers: Mathematically clears 100% of urgent P0/P1 safety defects within 48h. "
+                f"Engineered for Chief Track Engineers: Mathematically clears {tasks_scheduled} tasks ({tasks_scheduled}/{len(self.defects)}) including urgent P0/P1 safety defects within 48h. "
                 "Regulates selected freight movements on loop lines while keeping express corridors protected."
+            ) if status in [cp_model.OPTIMAL, cp_model.FEASIBLE] else (
+                f"INFEASIBLE: Unable to schedule all mandatory P0/P1 tasks within the 48h horizon due to corridor capacity constraints. "
+                f"Scheduled 0 of {len(self.defects)} tasks."
             )
         }
 
@@ -594,7 +772,7 @@ class AutomaticBlockPlannerSolver:
                 "duration_hours": dur_h,
                 "task_id": task["defect_id"],
                 "bundled": False,
-                "operational_impact_score": max(68, impact_score),
+                "operational_impact_score": impact_score,
                 "affected_trains_count": len(affected),
                 "passenger_trains_delayed": sum(1 for t in affected if t["priority"] in ["P0_TRAIN", "P1_TRAIN", "P2_TRAIN"]),
                 "freight_trains_delayed": sum(1 for t in affected if "GOODS" in t.get("train_id", "") or t["priority"] == "P3_TRAIN")
@@ -602,6 +780,7 @@ class AutomaticBlockPlannerSolver:
 
         total_pax = sum(b["passenger_trains_delayed"] for b in candidate_blocks)
         total_frt = sum(b["freight_trains_delayed"] for b in candidate_blocks)
+        avg_impact = round(sum(b["operational_impact_score"] for b in candidate_blocks) / max(1, len(candidate_blocks)), 1)
 
         return {
             "plan_name": "Current Baseline (Department-Wise FCFS)",
@@ -609,14 +788,14 @@ class AutomaticBlockPlannerSolver:
             "total_separate_blocks": len(candidate_blocks),
             "bundled_blocks": 0,
             "total_block_hours": round(total_block_hours, 1),
-            "average_operational_impact": 74,
-            "passenger_trains_delayed": max(4, total_pax),
-            "freight_trains_delayed": max(8, total_frt),
+            "average_operational_impact": avg_impact,
+            "passenger_trains_delayed": total_pax,
+            "freight_trains_delayed": total_frt,
             "candidate_blocks": candidate_blocks,
             "summary": (
-                "Severe fragmentation: 12 separate line possessions on overlapping corridors. "
-                "Generates 4+ premium passenger train detentions, 8+ freight stoppages, "
-                "and heavy manual phone-call coordination overhead."
+                f"Severe fragmentation: {len(candidate_blocks)} separate line possessions on overlapping corridors. "
+                f"Generates {total_pax} passenger train detentions, {total_frt} freight stoppages, "
+                f"and heavy manual phone-call coordination overhead."
             )
         }
 

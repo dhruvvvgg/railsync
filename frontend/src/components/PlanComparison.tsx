@@ -5,7 +5,7 @@ import type { CandidatePlan } from '../types';
 interface PlanComparisonProps {
   planA: CandidatePlan | null;
   planB: CandidatePlan | null;
-  baseline: any | null;
+  baseline: CandidatePlan | null;
   onApprove: (planName: string, reason: string) => void;
 }
 
@@ -112,6 +112,14 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
                 <span className="text-slate-400">Operational Impact Index:</span>
                 <strong className="text-emerald-400 font-mono text-sm">{planA?.average_operational_impact || 18}/100 (Optimal)</strong>
               </div>
+              <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <span className="text-slate-400">Resource Feasibility:</span>
+                <strong className={`font-mono text-xs ${planA?.candidate_blocks?.some(b => b.resource_constrained) ? 'text-amber-400' : 'text-emerald-400'}`}>
+                  {planA?.candidate_blocks?.some(b => b.resource_constrained)
+                    ? `${planA?.candidate_blocks?.filter(b => b.resource_constrained).length} Constrained`
+                    : 'All Resources Verified'}
+                </strong>
+              </div>
             </div>
           </div>
 
@@ -149,6 +157,14 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
               <div className="flex justify-between py-1 border-b border-slate-800/60">
                 <span className="text-slate-400">Operational Impact Index:</span>
                 <strong className="text-amber-400 font-mono text-sm">{planB?.average_operational_impact || 34}/100 (Moderate)</strong>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <span className="text-slate-400">Resource Feasibility:</span>
+                <strong className={`font-mono text-xs ${planB?.candidate_blocks?.some(b => b.resource_constrained) ? 'text-amber-400' : 'text-emerald-400'}`}>
+                  {planB?.candidate_blocks?.some(b => b.resource_constrained)
+                    ? `${planB?.candidate_blocks?.filter(b => b.resource_constrained).length} Constrained`
+                    : 'All Resources Verified'}
+                </strong>
               </div>
             </div>
           </div>

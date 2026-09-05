@@ -28,7 +28,7 @@ interface PossessionZone {
 
 export const MareyDiagram: React.FC<MareyDiagramProps> = ({
   selectedPlan,
-  blocks: _blocks,
+  blocks = [],
   trainSchedules,
   onTogglePlan,
   language = 'en'
@@ -124,192 +124,64 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
   }, [trainSchedules]);
 
   // Non-Overlapping Station-to-Station Corridor Possessions
-  // In real railway operations, maintenance possessions are booked across contiguous station block sections
+  // Dynamic Station-to-Station Corridor Possessions mapped directly from real solver candidate_blocks
   const candidateBlocks: PossessionZone[] = useMemo(() => {
-    if (selectedPlan === 'baseline_fcfs') {
-      return [
-        {
-          id: 'BASE-CLASH',
-          sectionName: 'Shikohabad–Tundla Jn',
-          start: '01:15',
-          end: '02:45',
-          km1: 195,
-          km2: 231,
-          color: '#ef4444',
-          depts: 'Civil Engineering (Unbundled)',
-          impact: 89,
-          delayedPax: 1,
-          notes: 'Direct physical clash with Train 12582 at 01:50 KM 213. Express detained 48 mins!',
-          subTasks: [
-            'CAND-BLK-A05: Emergency Track Lining KM 205–210',
-            'CAND-BLK-A06: Ballast Tamping KM 219–224'
-          ]
-        },
-        {
-          id: 'BASE-1',
-          sectionName: 'Phaphund–Etawah',
-          start: '09:00',
-          end: '12:00',
-          km1: 83,
-          km2: 139,
-          color: '#ef4444',
-          depts: 'Civil Track Disconnection',
-          impact: 72,
-          delayedPax: 2,
-          notes: 'Departmental FCFS booking during peak daytime. Halts Neelachal Express!',
-          subTasks: [
-            'CAND-BLK-A01: Track Tamping KM 116–120'
-          ]
-        },
-        {
-          id: 'BASE-2',
-          sectionName: 'Etawah–Shikohabad',
-          start: '13:00',
-          end: '15:30',
-          km1: 139,
-          km2: 195,
-          color: '#ef4444',
-          depts: 'TRD OHE Inspection',
-          impact: 75,
-          delayedPax: 1,
-          notes: 'Departmental FCFS booking during afternoon freight traffic. Halts BCN Rake 70109!',
-          subTasks: [
-            'CAND-BLK-A03: OHE Cantilever Inspection KM 150–155'
-          ]
-        },
-        {
-          id: 'BASE-3',
-          sectionName: 'Shikohabad–Tundla Jn',
-          start: '16:00',
-          end: '18:30',
-          km1: 195,
-          km2: 231,
-          color: '#ef4444',
-          depts: 'S&T Point Disconnection',
-          impact: 70,
-          delayedPax: 1,
-          notes: 'Departmental FCFS booking during evening peak. Halts Sangam Express!',
-          subTasks: [
-            'CAND-BLK-A07: Point Machine Calibration KM 226–231'
-          ]
-        }
-      ];
+    if (!blocks || blocks.length === 0) {
+      return [];
     }
 
-    if (selectedPlan === 'plan_b') {
-      return [
-        {
-          id: 'B-201',
-          sectionName: 'Phaphund–Etawah',
-          start: '00:00',
-          end: '03:25',
-          km1: 83,
-          km2: 139,
-          color: '#f59e0b',
-          depts: 'Fast-Track Track & Power (Civil + TRD)',
-          impact: 22,
-          delayedPax: 0,
-          notes: 'Expedited Night Window • 0m delay • 25 kV AC isolated',
-          subTasks: [
-            'CAND-BLK-B01: High-Speed Tamping KM 116–120',
-            'CAND-BLK-B02: 25 kV Isolation KM 130–135'
-          ]
-        },
-        {
-          id: 'B-202',
-          sectionName: 'Etawah–Shikohabad',
-          start: '00:00',
-          end: '03:45',
-          km1: 139,
-          km2: 195,
-          color: '#f59e0b',
-          depts: 'Fast-Track Track & Signal (Civil + S&T)',
-          impact: 20,
-          delayedPax: 0,
-          notes: 'Expedited Night Window • 0m delay • Point Testing Verified',
-          subTasks: [
-            'CAND-BLK-B03: USFD Rail Flaw Rectification KM 150–155',
-            'CAND-BLK-B04: MSDAC Electronic Verification KM 164–169'
-          ]
-        },
-        {
-          id: 'B-203',
-          sectionName: 'Shikohabad–Tundla Jn',
-          start: '00:00',
-          end: '04:00',
-          km1: 195,
-          km2: 231,
-          color: '#f59e0b',
-          depts: '3-in-1 Triple Possession (Civil + TRD + S&T)',
-          impact: 18,
-          delayedPax: 0,
-          notes: 'Expedited Night Window • 0m delay • Full Division Clearance',
-          subTasks: [
-            'CAND-BLK-B05: Deep Ballast Screening KM 212–217',
-            'CAND-BLK-B06: Cantilever Overhaul KM 220–224',
-            'CAND-BLK-B07: Dual MSDAC Tuning KM 226–231'
-          ]
-        }
-      ];
-    }
+    return blocks.map((b) => {
+      // Determine KM bounds for the corridor
+      const defaultBounds = corridorKmMap[b.corridor_id] || [83, 139];
+      const kmMatches = (b.km_span || '').match(/\d+(?:\.\d+)?/g);
+      const km1 = kmMatches && kmMatches[0] ? parseFloat(kmMatches[0]) : defaultBounds[0];
+      const km2 = kmMatches && kmMatches[1] ? parseFloat(kmMatches[1]) : defaultBounds[1];
 
-    // Default: PLAN A (Least Disruption, Recommended CP-SAT Solution)
-    // Three contiguous, non-overlapping section possessions during 01:00–04:25
-    return [
-      {
-        id: 'B-101',
-        sectionName: 'Phaphund–Etawah',
-        start: '01:00',
-        end: '04:25',
-        km1: 83,
-        km2: 139,
-        color: '#10b981',
-        depts: '3-in-1: Civil + TRD + S&T',
-        impact: 18,
-        delayedPax: 0,
-        notes: 'Synchronized Shadow Corridor • 0m delay • 25 kV AC isolated',
-        subTasks: [
-          'CAND-BLK-A01: CSM-09 Track Tamping (KM 116.1 – 120.7)',
-          'CAND-BLK-A02: Point Machine Testing (KM 129.9 – 134.5)'
-        ]
-      },
-      {
-        id: 'B-102',
-        sectionName: 'Etawah–Shikohabad',
-        start: '01:10',
-        end: '04:15',
-        km1: 139,
-        km2: 195,
-        color: '#10b981',
-        depts: '3-in-1: Civil + TRD + S&T',
-        impact: 18,
-        delayedPax: 0,
-        notes: 'Synchronized Shadow Corridor • 0m delay • USFD Verified',
-        subTasks: [
-          'CAND-BLK-A03: USFD Ultrasonic Rail Flaw Detection (KM 150.6 – 155.2)',
-          'CAND-BLK-A04: 25 kV Cantilever Overhaul (KM 143.7 – 146.0)'
-        ]
-      },
-      {
-        id: 'B-103',
-        sectionName: 'Shikohabad–Tundla Jn',
-        start: '01:25',
-        end: '04:20',
-        km1: 195,
-        km2: 231,
-        color: '#10b981',
-        depts: '3-in-1: Civil + TRD + S&T',
-        impact: 18,
-        delayedPax: 0,
-        notes: 'Synchronized Shadow Corridor • 0m delay • G&SR Rules Certified',
-        subTasks: [
-          'CAND-BLK-A05: Deep Ballast Screening (KM 205.8 – 210.4)',
-          'CAND-BLK-A06: Neutral Section Overhaul (KM 219.6 – 224.2)',
-          'CAND-BLK-A07: Dual MSDAC Axle Counter Verification (KM 226.5 – 231.1)'
-        ]
-      }
-    ];
-  }, [selectedPlan]);
+      // Format clean HH:MM string for Marey time axis
+      const cleanStart = (b.start_time || '01:00').replace(/Day \d+ /, '').trim();
+      const cleanEnd = (b.end_time || '04:00').replace(/Day \d+ /, '').trim();
+
+      // Color scheme based on plan type and performance
+      const isBaseline = selectedPlan === 'baseline_fcfs';
+      const color = isBaseline
+        ? '#ef4444'
+        : selectedPlan === 'plan_b'
+        ? '#f59e0b'
+        : '#10b981';
+
+      // Department description
+      const depts = b.departments_involved && b.departments_involved.length > 0
+        ? b.departments_involved.join(' + ')
+        : (b.department || 'Civil Engineering');
+
+      // Notes
+      const notes = b.explainability_notes || (
+        isBaseline
+          ? `Departmental FCFS booking · ${b.passenger_trains_delayed || 0} pax delay`
+          : `CP-SAT Optimized Window · ${b.passenger_trains_delayed || 0}m train delay`
+      );
+
+      // Sub-tasks
+      const subTasks = b.bundled_tasks && b.bundled_tasks.length > 0
+        ? b.bundled_tasks.map((tid: any) => typeof tid === 'string' ? `${b.block_id}: Task ${tid}` : `${b.block_id}: Task ${tid.defect_id || ''}`)
+        : [b.task_id ? `${b.block_id}: Task ${b.task_id}` : `${b.block_id}: Single Task Possession`];
+
+      return {
+        id: b.block_id,
+        sectionName: b.section || b.corridor_id,
+        start: cleanStart,
+        end: cleanEnd,
+        km1: Math.min(km1, km2),
+        km2: Math.max(km1, km2),
+        color,
+        depts,
+        impact: b.operational_impact_score || 20,
+        delayedPax: b.passenger_trains_delayed || 0,
+        notes,
+        subTasks
+      };
+    });
+  }, [blocks, selectedPlan]);
 
   return (
     <div className="glass-panel p-5 sm:p-6 rounded-2xl shadow-2xl relative transition-all">
