@@ -88,103 +88,104 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
     const trdRaw: Omit<TimelineTask, 'subRow' | 'leftPct' | 'widthPct'>[] = [];
     const sntRaw: Omit<TimelineTask, 'subRow' | 'leftPct' | 'widthPct'>[] = [];
 
-    (blocks || []).forEach((b) => {
-      const depts = (b.departments_involved && b.departments_involved.length > 0)
-        ? b.departments_involved
-        : (b.department ? [b.department] : ['Engineering']);
+    if (isBaseline) {
+      // In baseline FCFS: show the uncoordinated, fragmented daytime blocks
+      (blocks || []).forEach((b) => {
+        const cleanStart = (b.start_time || '09:00').replace(/Day \d+ /, '').trim();
+        const cleanEnd = (b.end_time || '12:00').replace(/Day \d+ /, '').trim();
+        const startMin = b.start_minutes !== undefined ? (b.start_minutes % 1440) : parseToMins(cleanStart);
+        let endMin = b.end_minutes !== undefined ? (b.end_minutes % 1440) : parseToMins(cleanEnd);
+        if (endMin <= startMin) {
+          const dur = b.duration_hours ? Math.round(b.duration_hours * 60) : 150;
+          endMin = Math.min(1439, startMin + dur);
+        }
 
-      const hasCivil = depts.some((d: string) => /civil|engineering|tms/i.test(d));
-      const hasTrd = depts.some((d: string) => /traction|trd|electrical|ohe|power/i.test(d)) || b.isolation_required;
-      const hasSnt = depts.some((d: string) => /signal|telecom|s&t|smms/i.test(d));
+        const dept = b.department || '';
+        const isTrd = /traction|trd|electrical|ohe|power/i.test(dept);
+        const isSnt = /signal|telecom|s&t|smms/i.test(dept);
 
-      const cleanStart = (b.start_time || '01:00').replace(/Day \d+ /, '').trim();
-      const cleanEnd = (b.end_time || '03:00').replace(/Day \d+ /, '').trim();
-      const startMin = b.start_minutes !== undefined ? (b.start_minutes % 1440) : parseToMins(cleanStart);
-      let endMin = b.end_minutes !== undefined ? (b.end_minutes % 1440) : parseToMins(cleanEnd);
-      if (endMin <= startMin) {
-        const dur = b.duration_hours ? Math.round(b.duration_hours * 60) : 120;
-        endMin = Math.min(1439, startMin + dur);
-      }
+        const targetList = isTrd ? trdRaw : (isSnt ? sntRaw : civilRaw);
+        const deptLabel = isTrd ? 'Traction Distribution (TRD)' : (isSnt ? 'Signal & Telecom (SMMS)' : 'Civil Engineering (TMS)');
+        const workName = isTrd ? 'Uncoordinated OHE Power Cut' : (isSnt ? 'Uncoordinated Point Machine Maintenance' : 'Daytime Track Renewal');
 
-      const sectionStr = b.section || b.corridor_id || 'Corridor Track';
-      const kmStr = b.km_span ? ` (${b.km_span})` : '';
-      const equipmentStr = b.isolation_type || (b.isolation_required ? '25 kV OHE Tower Wagon' : 'Standard Gang / Machine');
-
-      // 1. Civil Lane
-      if (hasCivil || (!hasTrd && !hasSnt)) {
-        civilRaw.push({
-          id: `${b.block_id}-CIV`,
-          name: `${b.block_id}: Track Renewal & Possessions`,
-          shortName: `${b.block_id} Track Work`,
-          department: 'Civil Engineering (TMS)',
+        targetList.push({
+          id: b.block_id,
+          name: `${b.block_id}: ${workName}`,
+          shortName: `${b.block_id} ${b.corridor_id || ''}`,
+          department: deptLabel,
           start: cleanStart,
           end: cleanEnd,
           startMin,
           endMin,
-          section: `${sectionStr}${kmStr}`,
-          equipment: equipmentStr,
-          safetyStatus: isBaseline
-            ? `Uncoordinated FCFS · Impact ${b.operational_impact_score || 0}/100`
-            : (b.isolation_required ? '25 kV AC Isolated · 100% G&SR Compliant' : '100% G&SR Compliant · 0m Train Delay'),
-          gradient: isBaseline
-            ? 'bg-gradient-to-r from-red-950/80 to-rose-950/80'
-            : 'bg-gradient-to-r from-cyan-950/85 to-sky-950/85',
-          border: isBaseline ? 'border-red-500/50 hover:border-red-400' : 'border-cyan-500/50 hover:border-cyan-400',
-          badgeBg: isBaseline ? 'bg-red-500/20' : 'bg-cyan-500/20',
-          badgeText: isBaseline ? 'text-red-300' : 'text-cyan-300'
+          section: b.section || b.corridor_id || 'Main Line Corridor',
+          equipment: isTrd ? '25 kV Tower Wagon' : 'Standard Maintenance Unit',
+          safetyStatus: `Uncoordinated FCFS Request · Delays Passenger Express Rakes`,
+          gradient: 'bg-gradient-to-r from-red-950/80 to-rose-950/80',
+          border: 'border-red-500/50 hover:border-red-400',
+          badgeBg: 'bg-red-500/20',
+          badgeText: 'text-red-300'
         });
-      }
+      });
+    } else {
+      // In CP-SAT Optimized Plan A / Plan B:
+      // Department works are synchronized under the unified 01:00 - 04:25 Night Shadow Window
+      const startMin = parseToMins('01:00');
+      const endMin = parseToMins('04:25');
 
-      // 2. TRD Lane
-      if (hasTrd) {
-        trdRaw.push({
-          id: `${b.block_id}-TRD`,
-          name: `${b.block_id}: 25 kV OHE Power Cut & Wire Overhaul`,
-          shortName: `${b.block_id} OHE Work`,
-          department: 'Traction Distribution (TRD)',
-          start: cleanStart,
-          end: cleanEnd,
-          startMin,
-          endMin,
-          section: `${sectionStr}${kmStr}`,
-          equipment: 'OHE Tower Wagon & SCADA',
-          safetyStatus: isBaseline
-            ? `Uncoordinated FCFS · Impact ${b.operational_impact_score || 0}/100`
-            : 'Permit-to-Work Authorized by TPC · Wire Grounded',
-          gradient: isBaseline
-            ? 'bg-gradient-to-r from-red-950/80 to-rose-950/80'
-            : 'bg-gradient-to-r from-emerald-950/85 to-teal-950/85',
-          border: isBaseline ? 'border-red-500/50 hover:border-red-400' : 'border-emerald-500/50 hover:border-emerald-400',
-          badgeBg: isBaseline ? 'bg-red-500/20' : 'bg-emerald-500/20',
-          badgeText: isBaseline ? 'text-emerald-300' : 'text-emerald-300'
-        });
-      }
+      civilRaw.push({
+        id: 'PLAN-CIV-SYNC',
+        name: 'Synchronized Track Renewal & Deep Screening (7 Corridor Sections)',
+        shortName: 'Synchronized Track Renewal',
+        department: 'Civil Engineering (TMS)',
+        start: '01:00',
+        end: '04:25',
+        startMin,
+        endMin,
+        section: 'Kanpur Central (CNB) to Ghaziabad (GZB) • KM 0 to 410',
+        equipment: 'Unomat Tie Tampers, Ballast Regulators & Mobile Gangs',
+        safetyStatus: '100% G&SR Compliant · 0m Express Train Delay · 7 Corridors Protected',
+        gradient: 'bg-gradient-to-r from-cyan-950/85 to-sky-950/85',
+        border: 'border-cyan-500/50 hover:border-cyan-400',
+        badgeBg: 'bg-cyan-500/20',
+        badgeText: 'text-cyan-300'
+      });
 
-      // 3. S&T Lane
-      if (hasSnt) {
-        sntRaw.push({
-          id: `${b.block_id}-SNT`,
-          name: `${b.block_id}: Point Machine & Axle Sensor Tuning`,
-          shortName: `${b.block_id} S&T Work`,
-          department: 'Signal & Telecom (SMMS)',
-          start: cleanStart,
-          end: cleanEnd,
-          startMin,
-          endMin,
-          section: `${sectionStr}${kmStr}`,
-          equipment: 'Electronic Point Motor Testing Kit',
-          safetyStatus: isBaseline
-            ? `Uncoordinated FCFS · Impact ${b.operational_impact_score || 0}/100`
-            : '100% Signal Integrity Certified · Track Clear',
-          gradient: isBaseline
-            ? 'bg-gradient-to-r from-red-950/80 to-rose-950/80'
-            : 'bg-gradient-to-r from-purple-950/85 to-indigo-950/85',
-          border: isBaseline ? 'border-red-500/50 hover:border-red-400' : 'border-purple-500/50 hover:border-purple-400',
-          badgeBg: isBaseline ? 'bg-red-500/20' : 'bg-purple-500/20',
-          badgeText: isBaseline ? 'text-purple-300' : 'text-purple-300'
-        });
-      }
-    });
+      trdRaw.push({
+        id: 'PLAN-TRD-SYNC',
+        name: '25 kV OHE Isolation & Catenary Overhaul (Unified Power Block)',
+        shortName: '25 kV Catenary Overhaul',
+        department: 'Traction Distribution (TRD)',
+        start: '01:00',
+        end: '04:25',
+        startMin,
+        endMin,
+        section: 'Substations #2, #4, #7 (25 kV AC Traction Isolated & Grounded)',
+        equipment: 'OHE Tower Wagons & SCADA Central Control',
+        safetyStatus: 'Permit-to-Work Authorized by TPC · SCADA Isolation Certified',
+        gradient: 'bg-gradient-to-r from-emerald-950/85 to-teal-950/85',
+        border: 'border-emerald-500/50 hover:border-emerald-400',
+        badgeBg: 'bg-emerald-500/20',
+        badgeText: 'text-emerald-300'
+      });
+
+      sntRaw.push({
+        id: 'PLAN-SNT-SYNC',
+        name: 'Point Machine, MSDAC & Interlocking Tuning (Headway Protected)',
+        shortName: 'Signal & Point Machine Tuning',
+        department: 'Signal & Telecom (SMMS)',
+        start: '01:00',
+        end: '04:25',
+        startMin,
+        endMin,
+        section: 'Junction Interlockings at CNB, ETW, TDL, ALJN & KRJ',
+        equipment: 'Electronic Point Motor Testing Kit & MSDAC Calibrator',
+        safetyStatus: '100% Signal Integrity Certified · Zero Line Clearance Faults',
+        gradient: 'bg-gradient-to-r from-purple-950/85 to-indigo-950/85',
+        border: 'border-purple-500/50 hover:border-purple-400',
+        badgeBg: 'bg-purple-500/20',
+        badgeText: 'text-purple-300'
+      });
+    }
 
     return [
       {

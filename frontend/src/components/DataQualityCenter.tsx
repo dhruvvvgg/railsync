@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertTriangle, ShieldAlert, Database, RefreshCw, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, Database, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
 import type { DataQualityReport } from '../types';
 
 interface DataQualityCenterProps {
@@ -61,7 +61,6 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
             onClick={onRefresh}
             className="cr-btn-secondary"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
             <span>Re-Scan Feeds</span>
           </button>
         </div>
@@ -115,9 +114,6 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[var(--cr-text-primary)]">{sys}</span>
-                {selectedSystem === sys && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-primary-interactive)]"></span>
-                )}
               </div>
               <div className="flex items-center justify-between mt-2 text-xs">
                 <span className="text-[var(--cr-text-secondary)] text-xs font-medium">Tot: {counts.total}</span>

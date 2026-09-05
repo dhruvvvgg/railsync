@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertCircle, Zap, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
 
 interface DisruptionSimulatorProps {
   onInject: () => Promise<any>;
@@ -42,8 +42,7 @@ export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ onInje
             disabled={loading}
             className="cr-btn-primary bg-[var(--cr-status-red)] text-white hover:opacity-90 disabled:opacity-50"
           >
-            <Zap className={`w-4 h-4 text-white ${loading ? 'animate-spin' : ''}`} />
-            <span>{loading ? 'Solving CP-SAT Constraints...' : '🚨 Trigger Live Emergency: Rail Fracture at Km 144.2'}</span>
+            <span>{loading ? 'Solving CP-SAT Constraints...' : 'Simulate Emergency: Rail Fracture at Km 144.2'}</span>
           </button>
         </div>
       </div>

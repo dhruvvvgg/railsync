@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layers, ShieldCheck, Clock, ChevronDown, ChevronUp, CheckCircle2, Zap } from 'lucide-react';
+import { Layers, ShieldCheck, Clock, CheckCircle2, Zap } from 'lucide-react';
 import type { LookAheadOpportunity } from '../types';
 
 interface OpportunityPanelProps {
@@ -133,10 +133,9 @@ export const OpportunityPanel: React.FC<OpportunityPanelProps> = ({ opportunitie
 
                 <button
                   onClick={() => toggleExpand(opp.opportunity_id)}
-                  className="text-[var(--cr-primary-interactive)] hover:underline text-xs font-bold flex items-center gap-1 cursor-pointer"
+                  className="text-[var(--cr-primary-interactive)] hover:underline text-xs font-bold flex items-center cursor-pointer"
                 >
                   <span>{isExpanded ? 'Hide Isolation Details' : 'View Invariant Details'}</span>
-                  {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>

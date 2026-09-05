@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, Search, BookOpen, ShieldCheck, Zap, Radio, Hammer } from 'lucide-react';
+import { Search, BookOpen, ShieldCheck, Zap, Radio, Hammer } from 'lucide-react';
 import { GLOSSARY_TERMS, type Language } from '../i18n/translations';
 
 interface GlossaryDrawerProps {
@@ -61,9 +61,9 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
+            className="px-2.5 py-1 text-xs font-bold text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
           >
-            <X className="w-5 h-5" />
+            {language === 'hi' ? 'बंद करें' : (language === 'ta' ? 'மூடுக' : 'Close')}
           </button>
         </div>
 

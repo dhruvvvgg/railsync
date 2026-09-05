@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Play,
   ArrowRight,
   ShieldCheck,
   Cpu,
@@ -9,7 +8,6 @@ import {
   Clock,
   TrendingUp,
   CheckCircle2,
-  BookOpen,
   FileCheck,
   Zap,
   Radio,
@@ -71,7 +69,6 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
                 onClick={onLaunchDemo}
                 className="cr-btn-primary"
               >
-                <Play className="w-3.5 h-3.5 fill-current" />
                 <span>{t.runDemoButton}</span>
               </button>
 
@@ -80,14 +77,12 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
                 className="cr-btn-secondary font-semibold"
               >
                 <span>{t.exploreConsoleButton}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
               </button>
 
               <button
                 onClick={onOpenGlossary}
                 className="cr-btn-secondary"
               >
-                <BookOpen className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" />
                 <span>{t.glossaryButton}</span>
               </button>
             </div>
@@ -453,7 +448,6 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               className="cr-btn-secondary flex-shrink-0 font-semibold"
             >
               <span>{language === 'hi' ? 'ऑडिट लॉग देखें' : (language === 'ta' ? 'தணிக்கை பதிவு பார்க்க' : 'View Audit Trail')}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-text-secondary)]" />
             </button>
           </div>
         </div>
@@ -485,21 +479,18 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             onClick={() => onOpenConsole('gateway')}
             className="cr-btn-secondary"
           >
-            <AlertTriangle className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" />
             <span>Data Gateway</span>
           </button>
           <button
             onClick={() => onOpenConsole('opportunities')}
             className="cr-btn-secondary"
           >
-            <Layers className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
             <span>Look-Ahead</span>
           </button>
           <button
             onClick={() => onOpenConsole('emergency')}
             className="cr-btn-secondary"
           >
-            <Zap className="w-3.5 h-3.5 text-[var(--cr-status-red)]" />
             <span>Disruption Sandbox</span>
           </button>
         </div>

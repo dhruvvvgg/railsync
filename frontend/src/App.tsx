@@ -307,35 +307,32 @@ export function App() {
                       <div className="cr-segmented-container">
                         <button
                           onClick={() => setSelectedPlanKey('plan_a')}
-                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                             selectedPlanKey === 'plan_a'
                               ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border-active)] shadow-xs'
                               : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
                           }`}
                         >
-                          <span className="w-2 h-2 rounded-full bg-[var(--cr-status-green)]"></span>
                           <span>Plan A (Least Disruption - Recommended)</span>
                         </button>
                         <button
                           onClick={() => setSelectedPlanKey('plan_b')}
-                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                             selectedPlanKey === 'plan_b'
                               ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border-active)] shadow-xs'
                               : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
                           }`}
                         >
-                          <span className="w-2 h-2 rounded-full bg-[var(--cr-status-amber)]"></span>
                           <span>Plan B (Fastest Critical Maintenance)</span>
                         </button>
                         <button
                           onClick={() => setSelectedPlanKey('baseline_fcfs')}
-                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                             selectedPlanKey === 'baseline_fcfs'
                               ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border-active)] shadow-xs'
                               : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
                           }`}
                         >
-                          <span className="w-2 h-2 rounded-full bg-[var(--cr-status-red)]"></span>
                           <span>Current Reality (FCFS Baseline)</span>
                         </button>
                       </div>

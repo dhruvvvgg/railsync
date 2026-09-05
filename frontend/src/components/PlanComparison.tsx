@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GitCompare, CheckCircle, FileCheck, ChevronDown, ChevronUp, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { GitCompare, CheckCircle, FileCheck, AlertTriangle, ShieldCheck } from 'lucide-react';
 import type { CandidatePlan } from '../types';
 
 interface PlanComparisonProps {
@@ -168,10 +168,9 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
 
               <button
                 onClick={() => toggleDetails('planA')}
-                className="text-xs text-[var(--cr-primary-interactive)] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                className="text-xs text-[var(--cr-primary-interactive)] hover:underline font-bold flex items-center cursor-pointer"
               >
                 <span>{expandedDetails.planA ? 'Hide Constraints Detail' : 'View Safety & Headway Diagnostics'}</span>
-                {expandedDetails.planA ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
 
               {expandedDetails.planA && (
@@ -246,10 +245,9 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
 
               <button
                 onClick={() => toggleDetails('planB')}
-                className="text-xs text-[var(--cr-status-amber)] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                className="text-xs text-[var(--cr-status-amber)] hover:underline font-bold flex items-center cursor-pointer"
               >
                 <span>{expandedDetails.planB ? 'Hide Constraints Detail' : 'View Safety & Headway Diagnostics'}</span>
-                {expandedDetails.planB ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
 
               {expandedDetails.planB && (
@@ -309,7 +307,6 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
             onClick={handleApproveClick}
             className="cr-btn-primary"
           >
-            <CheckCircle className="w-4 h-4 text-white" />
             <span>Authorize & Record Candidate Plan</span>
           </button>
         </div>

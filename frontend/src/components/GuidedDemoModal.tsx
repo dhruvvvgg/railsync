@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Play, Pause, ChevronRight, ChevronLeft, CheckCircle2, AlertTriangle, ShieldCheck, Cpu, Sparkles, FileText } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, ShieldCheck, Cpu, Sparkles, FileText } from 'lucide-react';
 import type { Language } from '../i18n/translations';
 
 interface GuidedDemoModalProps {
@@ -318,9 +318,9 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
+            className="px-2.5 py-1 text-xs font-bold text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
           >
-            <X className="w-5 h-5" />
+            {language === 'hi' ? 'बंद करें' : (language === 'ta' ? 'மூடுக' : 'Close')}
           </button>
         </div>
 
@@ -341,9 +341,8 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="cr-btn-secondary py-1 px-2.5 text-xs flex items-center gap-1.5"
+                className="cr-btn-secondary py-1 px-3 text-xs"
               >
-                {isPlaying ? <Pause className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" /> : <Play className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />}
                 <span>{isPlaying ? 'Pause' : 'Auto-Play'}</span>
               </button>
             </div>
@@ -383,20 +382,18 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
             <button
               onClick={handlePrev}
               disabled={currentStep === 0}
-              className={`cr-btn-secondary py-1.5 px-3 text-xs flex items-center gap-1 ${
+              className={`cr-btn-secondary py-1.5 px-3 text-xs ${
                 currentStep === 0 ? 'opacity-40 cursor-not-allowed' : ''
               }`}
             >
-              <ChevronLeft className="w-4 h-4" />
               {language === 'hi' ? 'पिछला' : (language === 'ta' ? 'முந்தைய' : 'Back')}
             </button>
 
             <button
               onClick={handleNext}
-              className="cr-btn-primary py-1.5 px-4 text-xs flex items-center gap-1.5"
+              className="cr-btn-primary py-1.5 px-4 text-xs"
             >
               <span>{currentStep === steps.length - 1 ? (language === 'hi' ? 'कंसोल खोलें' : (language === 'ta' ? 'கன்சோல் திறக்க' : 'Explore Live Console')) : (language === 'hi' ? 'अगला कदम' : (language === 'ta' ? 'அடுத்த படி' : 'Next Step'))}</span>
-              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

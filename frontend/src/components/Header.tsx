@@ -1,16 +1,4 @@
 import React from 'react';
-import {
-  Activity,
-  AlertTriangle,
-  Layers,
-  GitCompare,
-  FileCheck,
-  Play,
-  BookOpen,
-  Compass,
-  Sun,
-  Moon
-} from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Language } from '../i18n/translations';
 import { TRANSLATIONS } from '../i18n/translations';
@@ -83,24 +71,23 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Controls: Demo CTA, Story/Console Toggle, Glossary, Theme Toggle, Language */}
         <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
-          {/* 90-Second Guided Demo CTA */}
+          {/* 90-Second Guided Demo CTA - Pure Text, No Icons */}
           <button
             onClick={onLaunchDemo}
             className="cr-btn-primary text-xs"
             title="Launch 90-Second Guided Demo"
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
             <span className="hidden sm:inline">
               {language === 'hi' ? '90s निर्देशित डेमो' : (language === 'ta' ? '90s நேரலை டெமோ' : '90s Guided Demo')}
             </span>
             <span className="sm:hidden">Demo</span>
           </button>
 
-          {/* View Mode Switcher: Story Flow vs Full Console (Uiverse tactile segmented control) */}
+          {/* View Mode Switcher: Story Flow vs Full Console (Pure Text) */}
           <div className="cr-segmented-container text-xs">
             <button
               onClick={() => setViewMode('story')}
-              className={`relative px-2.5 py-1 rounded-md font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
+              className={`relative px-2.5 py-1 rounded-md font-semibold transition-colors flex items-center cursor-pointer ${
                 viewMode === 'story'
                   ? 'text-[var(--cr-primary-interactive)]'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
@@ -113,7 +100,6 @@ export const Header: React.FC<HeaderProps> = ({
                   transition={{ type: 'spring', stiffness: 450, damping: 35 }}
                 />
               )}
-              <Compass className="w-3.5 h-3.5 relative z-10" />
               <span className="relative z-10">{language === 'hi' ? 'कहानी' : (language === 'ta' ? 'கதை' : 'Story')}</span>
             </button>
 
@@ -122,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
                 setViewMode('console');
                 if (activeTab === 'story') setActiveTab('cockpit');
               }}
-              className={`relative px-2.5 py-1 rounded-md font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
+              className={`relative px-2.5 py-1 rounded-md font-semibold transition-colors flex items-center cursor-pointer ${
                 viewMode === 'console'
                   ? 'text-[var(--cr-primary-interactive)]'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
@@ -135,19 +121,17 @@ export const Header: React.FC<HeaderProps> = ({
                   transition={{ type: 'spring', stiffness: 450, damping: 35 }}
                 />
               )}
-              <Layers className="w-3.5 h-3.5 relative z-10" />
               <span className="relative z-10">{language === 'hi' ? 'कंसोल' : (language === 'ta' ? 'கன்சோல்' : 'Console')}</span>
             </button>
           </div>
 
-          {/* Glossary Drawer Trigger */}
+          {/* Glossary Drawer Trigger - Pure Text */}
           <button
             onClick={onOpenGlossary}
-            className="cr-btn-secondary text-xs"
+            className="cr-btn-secondary text-xs flex items-center gap-1.5"
             title="Open Railway Jargon Glossary"
           >
-            <BookOpen className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" />
-            <span className="hidden md:inline">
+            <span>
               {language === 'hi' ? 'शब्दावली' : (language === 'ta' ? 'கலைச்சொற்கள்' : 'Glossary')}
             </span>
             <span className="text-xs font-bold px-1.5 py-0.2 rounded bg-[var(--cr-status-amber-bg)] text-[var(--cr-status-amber)]">
@@ -155,18 +139,14 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </button>
 
-          {/* Theme Toggle (Sun / Moon) */}
+          {/* Theme Toggle - Pure Text */}
           <button
             onClick={onToggleTheme}
-            className="cr-btn-secondary p-1.5 rounded-lg text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]"
+            className="cr-btn-secondary px-2.5 py-1 text-xs font-semibold rounded-md text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]"
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             aria-label="Toggle Theme"
           >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400 transition-transform hover:rotate-45" />
-            ) : (
-              <Moon className="w-4 h-4 text-[var(--cr-primary-interactive)] transition-transform hover:-rotate-12" />
-            )}
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           </button>
 
           {/* Trilingual Language Switcher */}
@@ -211,25 +191,23 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center gap-1.5 overflow-x-auto py-1 text-xs sm:text-sm font-medium">
             <button
               onClick={() => setActiveTab('cockpit')}
-              className={`relative px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`relative px-3.5 py-1.5 rounded-lg flex items-center transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'cockpit'
                   ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border)] font-bold shadow-xs'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] border border-transparent'
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-primary-interactive)]"></span>
               <span>{t.tabCockpit}</span>
             </button>
 
             <button
               onClick={() => setActiveTab('gateway')}
-              className={`relative px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`relative px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'gateway'
                   ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border)] font-bold shadow-xs'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] border border-transparent'
               }`}
             >
-              <AlertTriangle className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" />
               <span>{t.tabGateway}</span>
               <span className="cr-badge-amber text-xs py-0 px-1.5">
                 {anomaliesCount}
@@ -238,13 +216,12 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={() => setActiveTab('opportunities')}
-              className={`relative px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`relative px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'opportunities'
                   ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border)] font-bold shadow-xs'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] border border-transparent'
               }`}
             >
-              <Layers className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
               <span>{t.tabOpportunities}</span>
               <span className="cr-badge-green text-xs py-0 px-1.5">
                 {opportunitiesCount}
@@ -253,37 +230,34 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={() => setActiveTab('comparison')}
-              className={`relative px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`relative px-3.5 py-1.5 rounded-lg flex items-center transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'comparison'
                   ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border)] font-bold shadow-xs'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] border border-transparent'
               }`}
             >
-              <GitCompare className="w-3.5 h-3.5 text-[var(--cr-status-blue)]" />
               <span>{t.tabComparison}</span>
             </button>
 
             <button
               onClick={() => setActiveTab('emergency')}
-              className={`relative px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`relative px-3.5 py-1.5 rounded-lg flex items-center transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'emergency'
                   ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border)] font-bold shadow-xs'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] border border-transparent'
               }`}
             >
-              <Activity className="w-3.5 h-3.5 text-[var(--cr-status-red)]" />
               <span>{t.tabEmergency}</span>
             </button>
 
             <button
               onClick={() => setActiveTab('audit')}
-              className={`relative px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`relative px-3.5 py-1.5 rounded-lg flex items-center transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'audit'
                   ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border)] font-bold shadow-xs'
                   : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] border border-transparent'
               }`}
             >
-              <FileCheck className="w-3.5 h-3.5 text-[var(--cr-text-secondary)]" />
               <span>{t.tabAudit}</span>
             </button>
           </div>

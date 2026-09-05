@@ -65,9 +65,9 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
   };
 
   const width = 1180;
-  const height = 490;
+  const height = 530;
   // Generous left margin (195px) guarantees zero collision between station names and KM text
-  const margin = { top: 38, right: 36, bottom: 48, left: 195 };
+  const margin = { top: 54, right: 36, bottom: 48, left: 195 };
 
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -130,12 +130,41 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
       return [];
     }
 
-    return blocks.map((b) => {
-      // Determine KM bounds for the corridor
-      const defaultBounds = corridorKmMap[b.corridor_id] || [83, 139];
-      const kmMatches = (b.km_span || '').match(/\d+(?:\.\d+)?/g);
-      const km1 = kmMatches && kmMatches[0] ? parseFloat(kmMatches[0]) : defaultBounds[0];
-      const km2 = kmMatches && kmMatches[1] ? parseFloat(kmMatches[1]) : defaultBounds[1];
+    // Filter to primary 24-hour cycle window (Day 1 blocks or un-prefixed blocks)
+    const day1Blocks = blocks.filter((b) => !b.start_time?.includes('Day 2') && !b.start_time?.includes('Day 3'));
+    const displayBlocks = day1Blocks.length > 0 ? day1Blocks : blocks.slice(0, 7);
+
+    return displayBlocks.map((b) => {
+      // Determine KM bounds for the corridor section cleanly without stacking
+      let km1 = 83;
+      let km2 = 139;
+
+      if (b.corridor_id && corridorKmMap[b.corridor_id]) {
+        [km1, km2] = corridorKmMap[b.corridor_id];
+      } else {
+        const sec = (b.section || '').toLowerCase();
+        if (sec.includes('kanpur') || sec.includes('rura')) {
+          km1 = 0; km2 = 44;
+        } else if (sec.includes('phaphund') || (sec.includes('etawah') && !sec.includes('shikohabad'))) {
+          km1 = 83; km2 = 139;
+        } else if (sec.includes('etawah') && sec.includes('shikohabad')) {
+          km1 = 139; km2 = 195;
+        } else if (sec.includes('shikohabad') && sec.includes('tundla')) {
+          km1 = 195; km2 = 231;
+        } else if (sec.includes('tundla') || sec.includes('hathras')) {
+          km1 = 231; km2 = 309;
+        } else if (sec.includes('aligarh') || sec.includes('khurja')) {
+          km1 = 309; km2 = 352;
+        } else if (sec.includes('ghaziabad') || sec.includes('delhi')) {
+          km1 = 410; km2 = 440;
+        } else {
+          const kmMatches = (b.km_span || '').match(/\d+(?:\.\d+)?/g);
+          if (kmMatches && kmMatches.length >= 2) {
+            km1 = parseFloat(kmMatches[0]);
+            km2 = parseFloat(kmMatches[1]);
+          }
+        }
+      }
 
       // Format clean HH:MM string for Marey time axis
       const cleanStart = (b.start_time || '01:00').replace(/Day \d+ /, '').trim();
@@ -166,9 +195,12 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
         ? b.bundled_tasks.map((tid: any) => typeof tid === 'string' ? `${b.block_id}: Task ${tid}` : `${b.block_id}: Task ${tid.defect_id || ''}`)
         : [b.task_id ? `${b.block_id}: Task ${b.task_id}` : `${b.block_id}: Single Task Possession`];
 
+      // Station section clean label
+      const cleanSection = b.section?.replace(/[?]/g, '➔') || `${km1}–${km2} km`;
+
       return {
         id: b.block_id,
-        sectionName: b.section || b.corridor_id,
+        sectionName: cleanSection,
         start: cleanStart,
         end: cleanEnd,
         km1: Math.min(km1, km2),
@@ -192,7 +224,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
           <div className="bg-[var(--cr-bg)] border-l-2 border-l-[var(--cr-primary)] border-y border-r border-[var(--cr-border)] p-3 rounded-r-lg mb-4 text-xs flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-start gap-2 max-w-2xl">
               <span className="font-bold text-[var(--cr-primary)] flex-shrink-0 text-xs">
-                {language === 'hi' ? '📖 ग्राफ कैसे पढ़ें:' : (language === 'ta' ? '📖 வரைபடத்தை எவ்வாறு படிப்பது:' : '📖 How to Read:')}
+                {language === 'hi' ? 'ग्राफ कैसे पढ़ें:' : (language === 'ta' ? 'வரைபடத்தை எவ்வாறு படிப்பது:' : 'How to Read:')}
               </span>
               <span className="text-[var(--cr-text-muted)] leading-relaxed text-xs">
                 {t.mareyCaption}
@@ -202,24 +234,22 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 <button
                   onClick={() => onTogglePlan('baseline_fcfs')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     selectedPlan === 'baseline_fcfs'
                       ? 'bg-[var(--cr-status-red)]/15 text-[var(--cr-status-red)] border border-[var(--cr-status-red)]/50'
                       : 'bg-[var(--cr-surface)] text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] border border-[var(--cr-border)]'
                   }`}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-status-red)]"></span>
                   <span>{language === 'hi' ? 'पहले: पुरानी अव्यवस्था (टकराव)' : (language === 'ta' ? 'முன்பு: கையேடு மோதல்கள்' : 'Before: Manual Conflicts')}</span>
                 </button>
                 <button
                   onClick={() => onTogglePlan('plan_a')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     selectedPlan === 'plan_a'
                       ? 'bg-[var(--cr-status-green)]/15 text-[var(--cr-status-green)] border border-[var(--cr-status-green)]/50'
                       : 'bg-[var(--cr-surface)] text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] border border-[var(--cr-border)]'
                   }`}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-status-green)]"></span>
                   <span>{language === 'hi' ? 'बाद में: CP-SAT समाधान (0 विलंब)' : (language === 'ta' ? 'பின்னர்: CP-SAT தீர்வு (0 தாமதம்)' : 'After: CP-SAT Fix (0 Delays)')}</span>
                 </button>
               </div>
@@ -310,6 +340,8 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
             const hour = i * 2;
             const hourStr = `${hour.toString().padStart(2, '0')}:00`;
             const x = timeToX(hourStr);
+            const anchor = i === 0 ? 'start' : (i === 12 ? 'end' : 'middle');
+            const xOffset = i === 0 ? x + 2 : (i === 12 ? x - 2 : x);
             return (
               <g key={hour}>
                 <line
@@ -322,9 +354,9 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   strokeOpacity="0.6"
                 />
                 <text
-                  x={x}
+                  x={xOffset}
                   y={height - margin.bottom + 22}
-                  textAnchor="middle"
+                  textAnchor={anchor}
                   fill="var(--cr-text-secondary)"
                   className="text-xs tabular-nums font-semibold select-none"
                 >
@@ -348,19 +380,19 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 strokeWidth="1"
                 strokeDasharray="4 4"
               />
-              {/* Top Banner indicating the Night Maintenance Window */}
+              {/* Top Banner indicating the Night Maintenance Window - Never Clipped */}
               <rect
                 x={timeToX('01:00')}
-                y={margin.top - 24}
+                y={14}
                 width={Math.max(20, timeToX('04:25') - timeToX('01:00'))}
-                height={20}
-                rx="4"
+                height={26}
+                rx="6"
                 fill="var(--cr-status-green)"
                 fillOpacity="0.9"
               />
               <text
                 x={(timeToX('01:00') + timeToX('04:25')) / 2}
-                y={margin.top - 10}
+                y={31}
                 textAnchor="middle"
                 fill="#ffffff"
                 className="text-xs font-bold tracking-tight"
@@ -374,10 +406,10 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
           {candidateBlocks.map((blk) => {
             const x1 = timeToX(blk.start);
             const x2 = timeToX(blk.end);
-            const y1 = kmToY(blk.km2);
-            const y2 = kmToY(blk.km1);
-            const blockWidth = Math.max(80, x2 - x1);
-            const blockHeight = Math.max(26, y2 - y1);
+            const yTop = kmToY(blk.km2);
+            const yBottom = kmToY(blk.km1);
+            const blockWidth = Math.max(90, x2 - x1);
+            const blockHeight = Math.max(30, yBottom - yTop);
 
             return (
               <g
@@ -389,7 +421,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 {/* Block Possession Rectangle with Soft Glow */}
                 <rect
                   x={x1}
-                  y={y1}
+                  y={yTop}
                   width={blockWidth}
                   height={blockHeight}
                   fill={blk.color}
@@ -403,18 +435,18 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 {/* Primary Block Title */}
                 <text
                   x={x1 + 10}
-                  y={y1 + 16}
+                  y={yTop + 16}
                   fill="#ffffff"
                   className="text-xs font-bold drop-shadow-md select-none pointer-events-none"
                 >
                   {blk.id}: {blk.sectionName}
                 </text>
 
-                {/* Secondary Department & Timing Subtitle (rendered if height permits) */}
-                {blockHeight >= 32 && (
+                {/* Secondary Department & Timing Subtitle */}
+                {blockHeight >= 30 && (
                   <text
                     x={x1 + 10}
-                    y={y1 + 30}
+                    y={yTop + 29}
                     fill={selectedPlan === 'baseline_fcfs' ? '#fecaca' : '#a7f3d0'}
                     className="text-xs font-medium tabular-nums select-none pointer-events-none"
                   >
@@ -424,7 +456,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
 
                 {/* Right Status Pill Badge */}
                 {blockWidth >= 120 && (
-                  <g transform={`translate(${x1 + blockWidth - 76}, ${y1 + 5})`}>
+                  <g transform={`translate(${x1 + blockWidth - 76}, ${yTop + 5})`}>
                     <rect
                       x="0"
                       y="0"
@@ -457,6 +489,9 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
             const y1 = kmToY(train.kmStart);
             const y2 = kmToY(train.kmEnd);
 
+            const midX = x1 + (x2 - x1) * 0.45;
+            const midY = y1 + (y2 - y1) * 0.45;
+
             return (
               <g
                 key={train.id}
@@ -475,15 +510,28 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   strokeLinecap="round"
                   className="transition-all hover:stroke-white hover:stroke-[3.5]"
                 />
-                <text
-                  x={x1 + (x2 - x1) * 0.4}
-                  y={y1 + (y2 - y1) * 0.4 - 5}
-                  fill={train.color}
-                  transform={`rotate(-25, ${x1 + (x2 - x1) * 0.4}, ${y1 + (y2 - y1) * 0.4 - 5})`}
-                  className="text-xs font-bold tabular-nums select-none drop-shadow"
-                >
-                  {train.id} ({train.name.split(' ')[0]})
-                </text>
+                <g transform={`translate(${midX - 34}, ${midY - 10})`}>
+                  <rect
+                    x="0"
+                    y="0"
+                    width="68"
+                    height="18"
+                    rx="4"
+                    fill="var(--cr-surface)"
+                    stroke={train.color}
+                    strokeWidth="1.2"
+                    className="filter drop-shadow-sm"
+                  />
+                  <text
+                    x="34"
+                    y="13"
+                    textAnchor="middle"
+                    fill={train.color}
+                    className="text-xs font-bold tabular-nums select-none pointer-events-none"
+                  >
+                    {train.id}
+                  </text>
+                </g>
               </g>
             );
           })}
@@ -514,13 +562,13 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
               <line
                 x1={timeToX('01:50')}
                 y1={kmToY(213)}
-                x2={timeToX('01:50') + 20}
-                y2={kmToY(213) - 28}
+                x2={timeToX('04:30')}
+                y2={kmToY(213) - 40}
                 stroke="var(--cr-status-red)"
                 strokeWidth="1.5"
                 strokeDasharray="2 2"
               />
-              <g transform={`translate(${timeToX('01:50') + 20}, ${kmToY(213) - 62})`}>
+              <g transform={`translate(${timeToX('04:30')}, ${kmToY(213) - 62})`}>
                 <rect
                   x="0"
                   y="0"
@@ -568,15 +616,15 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 stroke="#ffffff"
                 strokeWidth="1.5"
               />
-              {/* Dashed connector line to open valley at 04:35 KM 220 */}
+              {/* Dashed connector line to open valley */}
               <path
-                d={`M ${timeToX('01:50')} ${kmToY(213)} L ${timeToX('04:35')} ${kmToY(213) - 12}`}
+                d={`M ${timeToX('01:50')} ${kmToY(213)} L ${timeToX('05:00')} ${kmToY(260)}`}
                 stroke="var(--cr-status-green)"
                 strokeWidth="1.2"
                 strokeDasharray="3 3"
                 opacity="0.75"
               />
-              <g transform={`translate(${timeToX('04:35')}, ${kmToY(213) - 38})`}>
+              <g transform={`translate(${timeToX('05:00')}, ${kmToY(260) - 25})`}>
                 <rect
                   x="0"
                   y="0"
