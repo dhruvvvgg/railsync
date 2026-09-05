@@ -29,16 +29,16 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-950/70 backdrop-blur-sm flex justify-end">
-      <div className="w-full max-w-md bg-[#0b132b] border-l border-slate-800 h-full flex flex-col shadow-2xl animate-slide-in-right">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/75 backdrop-blur-sm flex justify-end">
+      <div className="w-full max-w-md bg-[var(--cr-surface)] border-l border-[var(--cr-border)] h-full flex flex-col shadow-2xl animate-slide-in-right">
         {/* Header */}
-        <div className="p-5 border-b border-slate-800/80 flex items-center justify-between bg-[#0e1738]">
+        <div className="p-4 sm:p-5 border-b border-[var(--cr-border)] flex items-center justify-between bg-[var(--cr-bg)]">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30">
+            <div className="p-2 bg-[var(--cr-surface)] text-[var(--cr-primary)] rounded-lg border border-[var(--cr-border)]">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <h2 className="text-base font-bold text-[var(--cr-text-primary)] flex items-center gap-2">
                 <span>
                   {language === 'hi'
                     ? 'भारतीय रेल शब्दावली कोष'
@@ -46,11 +46,11 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
                     ? 'இந்திய ரயில்வே கலைச்சொல் அகராதி'
                     : 'Indian Railways Domain Glossary')}
                 </span>
-                <span className="bg-cyan-500/20 text-cyan-300 text-[10px] font-mono px-2 py-0.5 rounded-full border border-cyan-500/30">
+                <span className="cr-badge-blue text-[10px]">
                   {GLOSSARY_TERMS.length} Terms
                 </span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-[var(--cr-text-muted)] mt-0.5">
                 {language === 'hi'
                   ? 'तकनीकी रेलवे शब्दों की सरल हिंदी व्याख्या'
                   : (language === 'ta'
@@ -61,16 +61,16 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1.5 text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Search & Category Filters */}
-        <div className="p-4 border-b border-slate-800/60 space-y-3 bg-[#080d1e]">
+        <div className="p-4 border-b border-[var(--cr-border)] space-y-3 bg-[var(--cr-bg)]">
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-[var(--cr-text-muted)] absolute left-3 top-2.5" />
             <input
               type="text"
               value={searchQuery}
@@ -82,7 +82,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
                   ? 'தேடுக (எ.கா. TMS, OHE, MSDAC, Tamper)...'
                   : 'Search acronym (e.g. TMS, OHE, MSDAC, Tamper)...')
               }
-              className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+              className="w-full bg-[var(--cr-surface)] border border-[var(--cr-border)] rounded-lg pl-9 pr-4 py-1.5 text-xs text-[var(--cr-text-primary)] placeholder-[var(--cr-text-muted)] focus:outline-none focus:border-[var(--cr-primary)]"
             />
           </div>
 
@@ -91,10 +91,10 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`text-[11px] px-2.5 py-1 rounded-lg font-medium transition-all ${
+                className={`text-[11px] px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
                   selectedCategory === cat
-                    ? 'bg-cyan-500 text-slate-950 font-bold shadow-sm'
-                    : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'
+                    ? 'bg-[var(--cr-primary)] text-white font-semibold shadow-sm'
+                    : 'text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] border border-[var(--cr-border)]'
                 }`}
               >
                 {cat}
@@ -104,9 +104,9 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
         </div>
 
         {/* Glossary Terms List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 divide-y divide-slate-800/50">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 divide-y divide-[var(--cr-border)]">
           {filteredTerms.length === 0 ? (
-            <div className="text-center py-12 text-slate-500 text-xs">
+            <div className="text-center py-12 text-[var(--cr-text-muted)] text-xs italic">
               {language === 'hi'
                 ? 'कोई मेल नहीं मिला।'
                 : (language === 'ta'
@@ -118,54 +118,54 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
               const getCategoryBadge = () => {
                 switch (term.category) {
                   case 'Track':
-                    return <span className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] px-2 py-0.5 rounded flex items-center gap-1"><Hammer className="w-3 h-3" /> Track / Civil</span>;
+                    return <span className="cr-badge-blue text-[10px]"><Hammer className="w-3 h-3" /> Track / Civil</span>;
                   case 'Traction':
-                    return <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded flex items-center gap-1"><Zap className="w-3 h-3" /> 25 kV Electrical</span>;
+                    return <span className="cr-badge-green text-[10px]"><Zap className="w-3 h-3" /> 25 kV Electrical</span>;
                   case 'Signal':
-                    return <span className="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] px-2 py-0.5 rounded flex items-center gap-1"><Radio className="w-3 h-3" /> S&T / Signal</span>;
+                    return <span className="cr-badge-blue text-[10px]"><Radio className="w-3 h-3" /> S&T / Signal</span>;
                   case 'Rules':
-                    return <span className="bg-red-500/20 text-red-300 border border-red-500/30 text-[10px] px-2 py-0.5 rounded flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Safety Rules</span>;
+                    return <span className="cr-badge-red text-[10px]"><ShieldCheck className="w-3 h-3" /> Safety Rules</span>;
                   default:
-                    return <span className="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] px-2 py-0.5 rounded flex items-center gap-1">Operations</span>;
+                    return <span className="cr-badge-neutral text-[10px]">Operations</span>;
                 }
               };
 
               return (
                 <div key={term.acronym} className="pt-3 first:pt-0 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-white text-sm bg-slate-900 px-2 py-0.5 rounded border border-slate-700">
+                    <span className="font-bold text-[var(--cr-primary)] text-xs bg-[var(--cr-bg)] px-2 py-0.5 rounded border border-[var(--cr-border)]">
                       {term.acronym}
                     </span>
                     {getCategoryBadge()}
                   </div>
 
-                  <h3 className="text-xs font-semibold text-cyan-300">
+                  <h3 className="text-xs font-semibold text-[var(--cr-text-primary)]">
                     {term.fullName[language] || term.fullName.en}
                   </h3>
 
-                  <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 space-y-1.5">
+                  <div className="bg-[var(--cr-bg)] p-2.5 rounded-xl border border-[var(--cr-border)] space-y-1.5">
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                      <span className="text-[10px] uppercase font-bold text-[var(--cr-text-muted)] block tracking-wider">
                         {language === 'hi'
                           ? 'सरल व्याख्या'
                           : (language === 'ta'
                           ? 'எளிய விளக்கம்'
                           : 'Plain-English Meaning')}
                       </span>
-                      <p className="text-xs text-slate-200 leading-relaxed">
+                      <p className="text-xs text-[var(--cr-text-primary)] leading-relaxed">
                         {term.plainEnglish[language] || term.plainEnglish.en}
                       </p>
                     </div>
 
-                    <div className="pt-1 border-t border-slate-800/60">
-                      <span className="text-[10px] uppercase font-bold text-emerald-400 block tracking-wider">
+                    <div className="pt-1 border-t border-[var(--cr-border)]">
+                      <span className="text-[10px] uppercase font-bold text-[var(--cr-status-green)] block tracking-wider">
                         {language === 'hi'
                           ? 'रेलसिंक में इसका महत्व'
                           : (language === 'ta'
                           ? 'ரயில்சிங்கில் இதன் முக்கியத்துவம்'
                           : 'Why It Matters In RAILSYNC')}
                       </span>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                      <p className="text-[11px] text-[var(--cr-text-muted)] leading-relaxed">
                         {term.whyItMatters[language] || term.whyItMatters.en}
                       </p>
                     </div>
@@ -177,7 +177,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
         </div>
 
         {/* Footer */}
-        <div className="p-3.5 border-t border-slate-800/80 bg-[#080d1e] text-[11px] text-slate-400 text-center flex items-center justify-between">
+        <div className="p-3.5 border-t border-[var(--cr-border)] bg-[var(--cr-bg)] text-xs text-[var(--cr-text-muted)] text-center flex items-center justify-between">
           <span>
             {language === 'hi'
               ? 'रेलवे मानक शब्दावली'
@@ -187,7 +187,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
           </span>
           <button
             onClick={onClose}
-            className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium"
+            className="cr-btn-secondary py-1 text-xs"
           >
             {language === 'hi' ? 'बंद करें' : (language === 'ta' ? 'மூடுக' : 'Close Drawer')}
           </button>

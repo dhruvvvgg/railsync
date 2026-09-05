@@ -40,27 +40,27 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         ta: 'தற்போதைய பழைய முறையில் சிவில், எலக்ட்ரிக்கல், சிக்னல் துறைகள் தொலைபேசி மூலம் தனித்தனியாக பிளாக் கேட்கின்றன. காரிடார் COR-005 இல், சிவில் பிளாக் நேரடியாக ரயில் 12582 (BSBS-NDLS எக்ஸ்பிரஸ்) பாதையில் குறுக்கிட்டு 48 நிமிட தாமதத்தை உருவாக்குகிறது.'
       },
       visual: (
-        <div className="bg-red-950/40 border border-red-500/50 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-red-400 font-bold flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-red-400" />
+        <div className="bg-[var(--cr-status-red)]/10 border border-[var(--cr-status-red)]/40 rounded-2xl p-4 space-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-[var(--cr-status-red)] font-bold flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-[var(--cr-status-red)]" />
               CRITICAL TIMETABLE COLLISION DETECTED
             </span>
-            <span className="bg-red-500/20 text-red-300 px-2 py-0.5 rounded">COR-005 Km 195–231</span>
+            <span className="bg-[var(--cr-status-red)]/20 text-[var(--cr-status-red)] px-2 py-0.5 rounded text-xs font-semibold tabular-nums">COR-005 Km 195–231</span>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-xs bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <div className="grid grid-cols-2 gap-3 text-xs bg-[var(--cr-surface)] p-3 rounded-xl border border-[var(--cr-border)]">
             <div>
-              <span className="text-slate-400 block text-[10px] uppercase">Passenger Movement:</span>
-              <strong className="text-white text-sm">Train 12582 BSBS-NDLS Express</strong>
-              <span className="text-amber-400 block text-[11px] mt-0.5">Scheduled at COR-005: 01:20 – 02:30</span>
+              <span className="text-[var(--cr-text-muted)] block text-[10px] uppercase">Passenger Movement:</span>
+              <strong className="text-[var(--cr-text-primary)] text-sm">Train 12582 BSBS-NDLS Express</strong>
+              <span className="text-[var(--cr-status-amber)] block text-[11px] mt-0.5 tabular-nums">Scheduled at COR-005: 01:20 – 02:30</span>
             </div>
-            <div className="border-l border-slate-700/60 pl-3">
-              <span className="text-slate-400 block text-[10px] uppercase">Manual Block Window:</span>
-              <strong className="text-red-300 text-sm">Civil Track Tamping (Separate)</strong>
-              <span className="text-red-400 block text-[11px] mt-0.5">Booked Window: 01:00 – 04:00 (Direct Overlap!)</span>
+            <div className="border-l border-[var(--cr-border)] pl-3">
+              <span className="text-[var(--cr-text-muted)] block text-[10px] uppercase">Manual Block Window:</span>
+              <strong className="text-[var(--cr-status-red)] text-sm">Civil Track Tamping (Separate)</strong>
+              <span className="text-[var(--cr-status-red)] block text-[11px] mt-0.5 tabular-nums">Booked Window: 01:00 – 04:00 (Direct Overlap!)</span>
             </div>
           </div>
-          <p className="text-[11px] text-red-300/90 font-medium">
+          <p className="text-[11px] text-[var(--cr-status-red)] font-medium">
             ⚠ Result under manual FCFS: Passenger express train stopped at home signal; cascading delays across 3 divisions.
           </p>
         </div>
@@ -83,23 +83,23 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         hi: 'सिविल विभाग सोमवार को ट्रैक बंद करता है। बिजली विभाग बुधवार को ओवरहेड तार की जांच करता है। सिग्नल विभाग शुक्रवार को पॉइंट मोटर ठीक करता है। एक ही 40 किमी रेल लाइन को हफ्ते में 3 बार बंद किया जाता है क्योंकि तीनों सॉफ्टवेयर (TMS, TDMS, SMMS) आपस में जुड़े नहीं हैं।'
       },
       visual: (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="text-xs font-semibold text-slate-300">Uncoordinated 14-Day Maintenance Pipeline:</div>
+        <div className="bg-[var(--cr-surface)] border border-[var(--cr-border)] rounded-2xl p-4 space-y-3">
+          <div className="text-xs font-semibold text-[var(--cr-text-primary)]">Uncoordinated 14-Day Maintenance Pipeline:</div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs bg-cyan-950/30 border border-cyan-500/30 p-2 rounded-lg">
-              <span className="text-cyan-300 font-medium">Day 1: Civil Track Tamping (TMS)</span>
-              <span className="text-slate-400 font-mono">2.5h Possession · Daytime</span>
+            <div className="flex items-center justify-between text-xs bg-[var(--cr-bg)] border border-[var(--cr-border)] p-2 rounded-lg">
+              <span className="text-[var(--cr-primary)] font-medium">Day 1: Civil Track Tamping (TMS)</span>
+              <span className="text-[var(--cr-text-muted)] tabular-nums">2.5h Possession · Daytime</span>
             </div>
-            <div className="flex items-center justify-between text-xs bg-emerald-950/30 border border-emerald-500/30 p-2 rounded-lg">
-              <span className="text-emerald-300 font-medium">Day 3: 25 kV OHE Inspection (TDMS)</span>
-              <span className="text-slate-400 font-mono">2.0h Possession · Daytime</span>
+            <div className="flex items-center justify-between text-xs bg-[var(--cr-bg)] border border-[var(--cr-border)] p-2 rounded-lg">
+              <span className="text-[var(--cr-status-green)] font-medium">Day 3: 25 kV OHE Inspection (TDMS)</span>
+              <span className="text-[var(--cr-text-muted)] tabular-nums">2.0h Possession · Daytime</span>
             </div>
-            <div className="flex items-center justify-between text-xs bg-purple-950/30 border border-purple-500/30 p-2 rounded-lg">
-              <span className="text-purple-300 font-medium">Day 5: Point Machine 143mm (SMMS)</span>
-              <span className="text-slate-400 font-mono">2.0h Possession · Evening</span>
+            <div className="flex items-center justify-between text-xs bg-[var(--cr-bg)] border border-[var(--cr-border)] p-2 rounded-lg">
+              <span className="text-[var(--cr-primary)] font-medium">Day 5: Point Machine 143mm (SMMS)</span>
+              <span className="text-[var(--cr-text-muted)] tabular-nums">2.0h Possession · Evening</span>
             </div>
           </div>
-          <div className="text-[11px] text-amber-400 font-medium bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg">
+          <div className="text-[11px] text-[var(--cr-status-amber)] font-medium bg-[var(--cr-status-amber)]/10 border border-[var(--cr-status-amber)]/30 p-2 rounded-lg">
             Total disruption: 6.5 hours of track closure when all 3 jobs could be done in 1 shared 3.25-hour window.
           </div>
         </div>
@@ -122,32 +122,32 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         hi: 'रेलसिंक का CP-SAT सॉल्वर 14 दिनों के सभी कार्यों को स्कैन करता है, 29 खराब डेटा रिकॉर्ड्स को अलग करता है, और ट्रेन 12582 के समय को सुरक्षित रखते हुए ब्लॉक को रात 01:00–04:25 के खाली समय में शिफ्ट कर देता है।'
       },
       visual: (
-        <div className="bg-emerald-950/40 border border-emerald-500/50 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-emerald-400 font-bold flex items-center gap-1.5">
-              <Cpu className="w-4 h-4 text-emerald-400" />
+        <div className="bg-[var(--cr-status-green)]/10 border border-[var(--cr-status-green)]/40 rounded-2xl p-4 space-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-[var(--cr-status-green)] font-bold flex items-center gap-1.5">
+              <Cpu className="w-4 h-4 text-[var(--cr-status-green)]" />
               CP-SAT LEXICOGRAPHIC MULTI-OBJECTIVE RESULT
             </span>
-            <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">OPTIMAL FOUND (31ms)</span>
+            <span className="bg-[var(--cr-status-green)]/20 text-[var(--cr-status-green)] px-2 py-0.5 rounded font-bold text-[10px]">OPTIMAL FOUND (31ms)</span>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+          <div className="grid grid-cols-3 gap-2 text-center bg-[var(--cr-surface)] p-3 rounded-xl border border-[var(--cr-border)]">
             <div>
-              <span className="text-slate-400 block text-[10px]">Conflicts</span>
-              <span className="text-xl font-bold font-mono text-emerald-400">0</span>
-              <span className="text-[10px] text-slate-500 block">was 4</span>
+              <span className="text-[var(--cr-text-muted)] block text-[10px]">Conflicts</span>
+              <span className="text-xl font-bold tabular-nums text-[var(--cr-status-green)]">0</span>
+              <span className="text-[10px] text-[var(--cr-text-muted)] block">was 4</span>
             </div>
-            <div className="border-x border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Vande Bharat / Rajdhani</span>
-              <span className="text-xl font-bold font-mono text-cyan-300">0 min</span>
-              <span className="text-[10px] text-slate-500 block">100% Punctual</span>
+            <div className="border-x border-[var(--cr-border)]">
+              <span className="text-[var(--cr-text-muted)] block text-[10px]">Vande Bharat / Rajdhani</span>
+              <span className="text-xl font-bold tabular-nums text-[var(--cr-primary)]">0 min</span>
+              <span className="text-[10px] text-[var(--cr-text-muted)] block">100% Punctual</span>
             </div>
             <div>
-              <span className="text-slate-400 block text-[10px]">Total Downtime</span>
-              <span className="text-xl font-bold font-mono text-emerald-400">3.25h</span>
-              <span className="text-[10px] text-emerald-400 block">-50% line downtime</span>
+              <span className="text-[var(--cr-text-muted)] block text-[10px]">Total Downtime</span>
+              <span className="text-xl font-bold tabular-nums text-[var(--cr-status-green)]">3.25h</span>
+              <span className="text-[10px] text-[var(--cr-status-green)] block font-medium">-50% line downtime</span>
             </div>
           </div>
-          <p className="text-[11px] text-emerald-300 font-medium">
+          <p className="text-[11px] text-[var(--cr-status-green)] font-medium">
             ✓ 3-in-1 Coordinated Possession: Civil track tamping, 25 kV wire inspection, and signal testing execute in 1 shared block.
           </p>
         </div>
@@ -173,24 +173,24 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         ta: 'ரயில்வே பாதுகாப்பில் எந்த தவறும் நிகழக்கூடாது. எங்கள் விதிமுறை அமைப்பு: (1) மனிதர்கள் நுழையும் முன் 25 kV OHE மின்சார துண்டிப்பு, (2) அதிகபட்சம் 15 கி.மீ பாதுகாப்பு மண்டலம், மற்றும் (3) சிக்னல் மோட்டாரை சேதப்படுத்தாத டாம்பிங் அதிர்வு இடைவெளியை உறுதி செய்கிறது.'
       },
       visual: (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2.5 text-xs">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <span className="font-bold text-white flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        <div className="bg-[var(--cr-surface)] border border-[var(--cr-border)] rounded-2xl p-4 space-y-2.5 text-xs">
+          <div className="flex items-center justify-between pb-2 border-b border-[var(--cr-border)]">
+            <span className="font-bold text-[var(--cr-text-primary)] flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-[var(--cr-status-green)]" />
               Deterministic Safety Invariants Verified
             </span>
-            <span className="bg-blue-500/20 text-blue-300 text-[10px] px-2 py-0.5 rounded">G&SR Chapter XV</span>
+            <span className="bg-[var(--cr-primary)]/15 text-[var(--cr-primary)] text-[10px] font-semibold px-2 py-0.5 rounded">G&SR Chapter XV</span>
           </div>
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2 text-emerald-400">
+          <div className="space-y-1.5 text-[var(--cr-text-primary)]">
+            <div className="flex items-center gap-2 text-[var(--cr-status-green)]">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span><strong>Rule 1:</strong> 25 kV Traction Power Isolation mandatory before any human track access.</span>
             </div>
-            <div className="flex items-center gap-2 text-emerald-400">
+            <div className="flex items-center gap-2 text-[var(--cr-status-green)]">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span><strong>Rule 2:</strong> Worksite span constrained to ≤ 15.0 km (under 1 Section Controller jurisdiction).</span>
             </div>
-            <div className="flex items-center gap-2 text-emerald-400">
+            <div className="flex items-center gap-2 text-[var(--cr-status-green)]">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span><strong>Rule 3:</strong> CSM Tamper ground vibration isolated from electronic point switches (&gt;1.0 km buffer).</span>
             </div>
@@ -218,23 +218,23 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         ta: 'AI பரிந்துரைக்கிறது; பணியில் உள்ள தலைமை கட்டுப்பாட்டாளர் முடிவு செய்கிறார். திட்டம் A அதிகாரப்பூர்வ டிஜிட்டல் மெமோவை உருவாக்குகிறது, இதை ரயில்வேயின் CRIS அமைப்பில் உடனே செயல்படுத்த முடியும்.'
       },
       visual: (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div className="bg-[var(--cr-surface)] border border-[var(--cr-border)] rounded-2xl p-4 space-y-3">
+          <div className="flex items-center justify-between border-b border-[var(--cr-border)] pb-2">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-bold text-white font-mono">MEMO #AUTH-REC-104</span>
+              <FileText className="w-4 h-4 text-[var(--cr-primary)]" />
+              <span className="text-xs font-bold text-[var(--cr-text-primary)]">MEMO #AUTH-REC-104</span>
             </div>
-            <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded">
+            <span className="bg-[var(--cr-status-green)]/15 text-[var(--cr-status-green)] text-[10px] font-bold px-2 py-0.5 rounded">
               DIGITALLY AUTHORIZED
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
-            <div>Officer: <strong>Senior Section Controller</strong></div>
-            <div>Division: <strong>Kanpur Central (CNB)</strong></div>
-            <div>Granted Window: <strong>Day 1 01:00 – 04:25 (3h 25m)</strong></div>
-            <div>Express Detention: <strong className="text-emerald-400">0 Minutes (100% Punctual)</strong></div>
+          <div className="grid grid-cols-2 gap-2 text-[11px] text-[var(--cr-text-muted)]">
+            <div>Officer: <strong className="text-[var(--cr-text-primary)]">Senior Section Controller</strong></div>
+            <div>Division: <strong className="text-[var(--cr-text-primary)]">Kanpur Central (CNB)</strong></div>
+            <div>Granted Window: <strong className="text-[var(--cr-text-primary)] tabular-nums">Day 1 01:00 – 04:25 (3h 25m)</strong></div>
+            <div>Express Detention: <strong className="text-[var(--cr-status-green)]">0 Minutes (100% Punctual)</strong></div>
           </div>
-          <p className="text-[10px] text-slate-400 italic pt-1 border-t border-slate-800">
+          <p className="text-[10px] text-[var(--cr-text-muted)] italic pt-1 border-t border-[var(--cr-border)]">
             Recorded under Indian Railways General & Subsidiary Rules. Pilot-ready for deployment on Kanpur–New Delhi HDN trunk line.
           </p>
         </div>
@@ -294,62 +294,62 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-[#0b132b] border border-slate-700/80 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-scale-up">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="cr-panel w-full max-w-2xl rounded-xl overflow-hidden border border-[var(--cr-border)] bg-[var(--cr-surface)] shadow-2xl flex flex-col animate-scale-up">
         {/* Top Header */}
-        <div className="p-5 border-b border-slate-800/80 bg-[#0e1738] flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-[var(--cr-border)] bg-[var(--cr-bg)] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl text-white shadow-md">
+            <div className="p-2 bg-[var(--cr-surface)] text-[var(--cr-primary)] rounded-lg border border-[var(--cr-border)]">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-[var(--cr-primary)] uppercase tracking-wider">
                   {language === 'hi' ? '90-सेकंड जज डेमो वॉकथ्रू' : (language === 'ta' ? '90 வினாடி நடுவர் டெமோ உலா' : '90-Second Judge Demo Tour')}
                 </span>
-                <span className="bg-cyan-500/20 text-cyan-300 text-[10px] px-2 py-0.5 rounded-full font-mono">
+                <span className="cr-badge-blue text-[10px]">
                   Step {currentStep + 1} of {steps.length}
                 </span>
               </div>
-              <h2 className="text-base font-bold text-white mt-0.5">
+              <h2 className="text-base font-bold text-[var(--cr-text-primary)] mt-0.5">
                 {current.title[language]}
               </h2>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1.5 text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-slate-900 h-1.5">
+        <div className="w-full bg-[var(--cr-bg)] h-1 border-b border-[var(--cr-border)]">
           <div
-            className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-1.5 transition-all duration-100 ease-linear"
+            className="bg-[var(--cr-primary)] h-1 transition-all duration-100 ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>
 
         {/* Step Content */}
-        <div className="p-6 space-y-4 flex-1">
+        <div className="p-5 sm:p-6 space-y-4 flex-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+            <span className="cr-badge-neutral text-xs py-1">
               {current.badge[language]}
             </span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="flex items-center gap-1 text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-900 border border-slate-800"
+                className="cr-btn-secondary py-1 px-2.5 text-xs flex items-center gap-1.5"
               >
-                {isPlaying ? <Pause className="w-3.5 h-3.5 text-amber-400" /> : <Play className="w-3.5 h-3.5 text-emerald-400" />}
+                {isPlaying ? <Pause className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" /> : <Play className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />}
                 <span>{isPlaying ? 'Pause' : 'Auto-Play'}</span>
               </button>
             </div>
           </div>
 
-          <p className="text-xs text-slate-300 leading-relaxed font-normal">
+          <p className="text-xs text-[var(--cr-text-muted)] leading-relaxed font-normal">
             {current.summary[language]}
           </p>
 
@@ -360,18 +360,18 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         </div>
 
         {/* Bottom Navigation & Controls */}
-        <div className="p-5 border-t border-slate-800/80 bg-[#080d1e] flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-t border-[var(--cr-border)] bg-[var(--cr-bg)] flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             {steps.map((s, idx) => (
               <button
                 key={s.id}
                 onClick={() => handleJumpToStep(idx)}
-                className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition-all ${
+                className={`w-7 h-7 rounded-md text-xs font-bold transition-colors cursor-pointer ${
                   idx === currentStep
-                    ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
+                    ? 'bg-[var(--cr-primary)] text-white shadow-sm'
                     : idx < currentStep
-                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/40'
-                    : 'bg-slate-900 text-slate-500 border border-slate-800'
+                    ? 'bg-[var(--cr-status-green)]/15 text-[var(--cr-status-green)] border border-[var(--cr-status-green)]/40'
+                    : 'bg-[var(--cr-surface)] text-[var(--cr-text-muted)] border border-[var(--cr-border)]'
                 }`}
               >
                 {s.number}
@@ -383,10 +383,8 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
             <button
               onClick={handlePrev}
               disabled={currentStep === 0}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1 ${
-                currentStep === 0
-                  ? 'opacity-40 cursor-not-allowed text-slate-600 bg-slate-900'
-                  : 'text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-700'
+              className={`cr-btn-secondary py-1.5 px-3 text-xs flex items-center gap-1 ${
+                currentStep === 0 ? 'opacity-40 cursor-not-allowed' : ''
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -395,7 +393,7 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
 
             <button
               onClick={handleNext}
-              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 hover:brightness-110 shadow-md shadow-cyan-500/20 flex items-center gap-1.5"
+              className="cr-btn-primary py-1.5 px-4 text-xs flex items-center gap-1.5"
             >
               <span>{currentStep === steps.length - 1 ? (language === 'hi' ? 'कंसोल खोलें' : (language === 'ta' ? 'கன்சோல் திறக்க' : 'Explore Live Console')) : (language === 'hi' ? 'अगला कदम' : (language === 'ta' ? 'அடுத்த படி' : 'Next Step'))}</span>
               <ChevronRight className="w-4 h-4" />

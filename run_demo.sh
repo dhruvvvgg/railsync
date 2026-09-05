@@ -1,7 +1,7 @@
 #!/bin/bash
-# RAILSYNC-ABP Single-Command Hackathon Launcher
+# RAILSYNC Single-Command Hackathon Launcher
 echo "=========================================================="
-echo "🚆 Starting RAILSYNC-ABP Prototype (SIH26027)"
+echo "🚆 Starting RAILSYNC Prototype (SIH26027)"
 echo "   Ministry of Railways | Automatic Block Planning Cockpit"
 echo "=========================================================="
 

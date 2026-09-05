@@ -2,7 +2,7 @@
   "metadata": {
     "generated_at": "2026-09-04T17:34:50.142284",
     "section": "Kanpur Central (CNB) - Ghaziabad (GZB) Corridor Network",
-    "spec_version": "RAILSYNC-ABP v1.0",
+    "spec_version": "RAILSYNC v1.0",
     "total_corridors": 12,
     "total_assets": 60,
     "total_resources": 25,

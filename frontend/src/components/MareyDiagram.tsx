@@ -184,17 +184,17 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
   }, [blocks, selectedPlan]);
 
   return (
-    <div className="glass-panel p-5 sm:p-6 rounded-2xl shadow-2xl relative transition-all">
+    <div className="cr-panel p-5 sm:p-6 relative">
       {/* Plain-English Caption Banner */}
       {(() => {
         const t = TRANSLATIONS[language] || TRANSLATIONS.en;
         return (
-          <div className="bg-slate-900/90 border-l-4 border-cyan-400 p-3.5 rounded-r-xl mb-4 text-xs flex flex-wrap items-center justify-between gap-3 shadow-md backdrop-blur-sm">
-            <div className="flex items-start gap-2.5 max-w-2xl">
-              <span className="font-bold text-cyan-300 flex-shrink-0 text-sm">
+          <div className="bg-[var(--cr-bg)] border-l-2 border-l-[var(--cr-primary)] border-y border-r border-[var(--cr-border)] p-3 rounded-r-lg mb-4 text-xs flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-start gap-2 max-w-2xl">
+              <span className="font-bold text-[var(--cr-primary)] flex-shrink-0 text-xs">
                 {language === 'hi' ? '📖 ग्राफ कैसे पढ़ें:' : (language === 'ta' ? '📖 வரைபடத்தை எவ்வாறு படிப்பது:' : '📖 How to Read:')}
               </span>
-              <span className="text-slate-200 leading-relaxed">
+              <span className="text-[var(--cr-text-muted)] leading-relaxed text-xs">
                 {t.mareyCaption}
               </span>
             </div>
@@ -202,24 +202,24 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 <button
                   onClick={() => onTogglePlan('baseline_fcfs')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
                     selectedPlan === 'baseline_fcfs'
-                      ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
-                      : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700'
+                      ? 'bg-[var(--cr-status-red)]/15 text-[var(--cr-status-red)] border border-[var(--cr-status-red)]/50'
+                      : 'bg-[var(--cr-surface)] text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] border border-[var(--cr-border)]'
                   }`}
                 >
-                  <span className="w-2 h-2 rounded-full bg-red-400"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-status-red)]"></span>
                   <span>{language === 'hi' ? 'पहले: पुरानी अव्यवस्था (टकराव)' : (language === 'ta' ? 'முன்பு: கையேடு மோதல்கள்' : 'Before: Manual Conflicts')}</span>
                 </button>
                 <button
                   onClick={() => onTogglePlan('plan_a')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
                     selectedPlan === 'plan_a'
-                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                      : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700'
+                      ? 'bg-[var(--cr-status-green)]/15 text-[var(--cr-status-green)] border border-[var(--cr-status-green)]/50'
+                      : 'bg-[var(--cr-surface)] text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] border border-[var(--cr-border)]'
                   }`}
                 >
-                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-status-green)]"></span>
                   <span>{language === 'hi' ? 'बाद में: CP-SAT समाधान (0 विलंब)' : (language === 'ta' ? 'பின்னர்: CP-SAT தீர்வு (0 தாமதம்)' : 'After: CP-SAT Fix (0 Delays)')}</span>
                 </button>
               </div>
@@ -229,34 +229,34 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
       })()}
 
       {/* Header with Title & Legend */}
-      <div className="flex flex-wrap items-center justify-between pb-3 mb-2 border-b border-slate-800/80 gap-3">
+      <div className="flex flex-wrap items-center justify-between pb-3 mb-2 border-b border-[var(--cr-border)] gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <h2 className="text-base font-bold text-[var(--cr-text-primary)] flex items-center gap-2">
               <span>Railway Time-Distance Marey Diagram (String Graph)</span>
-              <span className="bg-cyan-500/20 text-cyan-300 text-xs px-2 py-0.5 rounded font-mono font-normal border border-cyan-500/30">
+              <span className="cr-badge-blue text-[10px]">
                 Live Division View
               </span>
             </h2>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs flex-wrap">
+        <div className="flex items-center gap-4 text-xs flex-wrap text-[11px]">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-1 bg-[#00e5ff] rounded-full shadow-[0_0_8px_#00e5ff]"></span>
-            <span className="text-slate-300">Vande Bharat / Rajdhani</span>
+            <span className="w-3 h-1 bg-[#00e5ff] rounded-full"></span>
+            <span className="text-[var(--cr-text-muted)]">Vande Bharat / Rajdhani</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-1 bg-[#818cf8] rounded-full"></span>
-            <span className="text-slate-300">Superfast / Express</span>
+            <span className="text-[var(--cr-text-muted)]">Superfast / Express</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-1 bg-[#64748b] rounded-full border border-dashed border-slate-400"></span>
-            <span className="text-slate-300">Goods Freight</span>
+            <span className="text-[var(--cr-text-muted)]">Goods Freight</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className={`w-3 h-2 rounded ${selectedPlan === 'baseline_fcfs' ? 'bg-red-500/60 shadow-[0_0_8px_#ef4444]' : 'bg-emerald-500/60 shadow-[0_0_8px_#10b981]'}`}></span>
-            <span className="text-slate-300">
+            <span className={`w-3 h-2 rounded ${selectedPlan === 'baseline_fcfs' ? 'bg-[var(--cr-status-red)]' : 'bg-[var(--cr-status-green)]'}`}></span>
+            <span className="text-[var(--cr-text-muted)]">
               {selectedPlan === 'baseline_fcfs' ? 'Fragmented Possessions (Conflicting)' : 'Bundled Shadow Blocks (0m Delay)'}
             </span>
           </div>
@@ -264,7 +264,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
       </div>
 
       {/* Main SVG Visualization */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-w-full">
         <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="select-none mx-auto max-w-full h-auto">
           {/* Station gridlines and labels */}
           {stations.map((st, i) => {
@@ -276,16 +276,18 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   y1={y}
                   x2={width - margin.right}
                   y2={y}
-                  stroke={i === 0 || i === stations.length - 1 ? '#334155' : '#1e293b'}
+                  stroke="var(--cr-border)"
                   strokeDasharray={i === 0 || i === stations.length - 1 ? 'none' : '3 3'}
                   strokeWidth="1"
+                  strokeOpacity="0.8"
                 />
                 {/* KM label positioned on the far left with generous clearance */}
                 <text
                   x={16}
                   y={y + 4}
                   textAnchor="start"
-                  className="fill-slate-500 text-[10px] font-mono select-none"
+                  fill="var(--cr-text-muted)"
+                  className="text-[10px] tabular-nums font-medium select-none"
                 >
                   {st.km} km
                 </text>
@@ -296,8 +298,8 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   textAnchor="end"
                   className="select-none"
                 >
-                  <tspan className="fill-slate-300 font-medium text-[11px] font-sans">{st.name}</tspan>
-                  <tspan className="fill-cyan-400 font-mono font-semibold text-[10px]"> ({st.code})</tspan>
+                  <tspan fill="var(--cr-text-primary)" className="font-semibold text-[11px]">{st.name}</tspan>
+                  <tspan fill="var(--cr-primary)" className="font-bold text-[10.5px]"> ({st.code})</tspan>
                 </text>
               </g>
             );
@@ -315,14 +317,16 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   y1={margin.top}
                   x2={x}
                   y2={height - margin.bottom}
-                  stroke="#1e293b"
+                  stroke="var(--cr-border)"
                   strokeWidth="1"
+                  strokeOpacity="0.6"
                 />
                 <text
                   x={x}
                   y={height - margin.bottom + 20}
                   textAnchor="middle"
-                  className="fill-slate-400 text-[10.5px] font-mono select-none"
+                  fill="var(--cr-text-muted)"
+                  className="text-[10.5px] tabular-nums font-medium select-none"
                 >
                   {hourStr}
                 </text>
@@ -338,9 +342,9 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 y={margin.top}
                 width={Math.max(20, timeToX('04:25') - timeToX('01:00'))}
                 height={innerHeight}
-                fill="#10b981"
-                fillOpacity="0.05"
-                stroke="#10b981"
+                fill="var(--cr-status-green)"
+                fillOpacity="0.08"
+                stroke="var(--cr-status-green)"
                 strokeWidth="1"
                 strokeDasharray="4 4"
               />
@@ -351,17 +355,15 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 width={Math.max(20, timeToX('04:25') - timeToX('01:00'))}
                 height={18}
                 rx="4"
-                fill="#064e3b"
-                stroke="#10b981"
-                strokeWidth="1"
+                fill="var(--cr-status-green)"
                 fillOpacity="0.9"
               />
               <text
                 x={(timeToX('01:00') + timeToX('04:25')) / 2}
                 y={margin.top - 11}
                 textAnchor="middle"
-                fill="#6ee7b7"
-                className="text-[9.5px] font-bold font-mono tracking-tight"
+                fill="#ffffff"
+                className="text-[9.5px] font-bold tracking-tight"
               >
                 {language === 'hi' ? '✦ रात्रि ब्लॉक (01:00–04:25)' : (language === 'ta' ? '✦ இரவு பிளாக் (01:00–04:25)' : '✦ SHADOW WINDOW (01:00–04:25)')}
               </text>
@@ -403,7 +405,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   x={x1 + 10}
                   y={y1 + 16}
                   fill="#ffffff"
-                  className="text-[10px] font-bold font-sans drop-shadow-md select-none pointer-events-none"
+                  className="text-[10px] font-bold drop-shadow-md select-none pointer-events-none"
                 >
                   {blk.id}: {blk.sectionName}
                 </text>
@@ -414,7 +416,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                     x={x1 + 10}
                     y={y1 + 29}
                     fill={selectedPlan === 'baseline_fcfs' ? '#fecaca' : '#a7f3d0'}
-                    className="text-[9px] font-medium font-mono select-none pointer-events-none"
+                    className="text-[9px] font-medium tabular-nums select-none pointer-events-none"
                   >
                     {blk.depts} • {blk.start}–{blk.end}
                   </text>
@@ -430,15 +432,15 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                       height="16"
                       rx="4"
                       fill={selectedPlan === 'baseline_fcfs' ? '#450a0a' : '#064e3b'}
-                      stroke={selectedPlan === 'baseline_fcfs' ? '#ef4444' : '#10b981'}
+                      stroke={selectedPlan === 'baseline_fcfs' ? 'var(--cr-status-red)' : 'var(--cr-status-green)'}
                       strokeWidth="1"
                     />
                     <text
                       x="30"
                       y="11.5"
                       textAnchor="middle"
-                      fill={selectedPlan === 'baseline_fcfs' ? '#fca5a5' : '#6ee7b7'}
-                      className="text-[8.5px] font-bold font-mono select-none pointer-events-none"
+                      fill="#ffffff"
+                      className="text-[8.5px] font-bold select-none pointer-events-none"
                     >
                       {selectedPlan === 'baseline_fcfs' ? 'Train Delay' : '0m Delay'}
                     </text>
@@ -478,7 +480,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   y={y1 + (y2 - y1) * 0.4 - 5}
                   fill={train.color}
                   transform={`rotate(-25, ${x1 + (x2 - x1) * 0.4}, ${y1 + (y2 - y1) * 0.4 - 5})`}
-                  className="text-[9.5px] font-mono font-semibold select-none drop-shadow"
+                  className="text-[9.5px] font-semibold tabular-nums select-none drop-shadow"
                 >
                   {train.id} ({train.name.split(' ')[0]})
                 </text>
@@ -494,7 +496,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 cy={kmToY(213)}
                 r="18"
                 fill="none"
-                stroke="#ef4444"
+                stroke="var(--cr-status-red)"
                 strokeWidth="2"
                 opacity="0.8"
               >
@@ -505,7 +507,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 cx={timeToX('01:50')}
                 cy={kmToY(213)}
                 r="5"
-                fill="#ef4444"
+                fill="var(--cr-status-red)"
                 stroke="#ffffff"
                 strokeWidth="2"
               />
@@ -514,7 +516,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 y1={kmToY(213)}
                 x2={timeToX('01:50') + 20}
                 y2={kmToY(213) - 28}
-                stroke="#ef4444"
+                stroke="var(--cr-status-red)"
                 strokeWidth="1.5"
                 strokeDasharray="2 2"
               />
@@ -525,18 +527,18 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   width="240"
                   height="52"
                   rx="8"
-                  fill="#1e1014"
-                  stroke="#ef4444"
+                  fill="var(--cr-surface)"
+                  stroke="var(--cr-status-red)"
                   strokeWidth="1.5"
                   className="filter drop-shadow-xl"
                 />
-                <text x="10" y="17" fill="#f87171" className="text-[10.5px] font-bold">
+                <text x="10" y="17" fill="var(--cr-status-red)" className="text-[10.5px] font-bold">
                   ⚠️ REAL COLLISION DETECTED
                 </text>
-                <text x="10" y="32" fill="#fecaca" className="text-[9.5px]">
+                <text x="10" y="32" fill="var(--cr-text-primary)" className="text-[9.5px]">
                   Train 12582 crosses uncoordinated Civil block
                 </text>
-                <text x="10" y="45" fill="#fca5a5" className="text-[9px] font-mono">
+                <text x="10" y="45" fill="var(--cr-status-red)" className="text-[9px] tabular-nums font-semibold">
                   at 01:50 (KM 213 TDL) ➔ 48m Express Delay!
                 </text>
               </g>
@@ -551,7 +553,7 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 cy={kmToY(213)}
                 r="12"
                 fill="none"
-                stroke="#10b981"
+                stroke="var(--cr-status-green)"
                 strokeWidth="1.5"
                 opacity="0.6"
               >
@@ -562,14 +564,14 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                 cx={timeToX('01:50')}
                 cy={kmToY(213)}
                 r="4"
-                fill="#10b981"
+                fill="var(--cr-status-green)"
                 stroke="#ffffff"
                 strokeWidth="1.5"
               />
               {/* Dashed connector line to open valley at 04:35 KM 220 */}
               <path
                 d={`M ${timeToX('01:50')} ${kmToY(213)} L ${timeToX('04:35')} ${kmToY(213) - 12}`}
-                stroke="#10b981"
+                stroke="var(--cr-status-green)"
                 strokeWidth="1.2"
                 strokeDasharray="3 3"
                 opacity="0.75"
@@ -581,15 +583,15 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
                   width="235"
                   height="46"
                   rx="8"
-                  fill="#06281e"
-                  stroke="#10b981"
+                  fill="var(--cr-surface)"
+                  stroke="var(--cr-status-green)"
                   strokeWidth="1.5"
                   className="filter drop-shadow-xl"
                 />
-                <text x="10" y="17" fill="#34d399" className="text-[10.5px] font-bold font-sans">
+                <text x="10" y="17" fill="var(--cr-status-green)" className="text-[10.5px] font-bold">
                   ✅ CONFLICT RESOLVED (CP-SAT)
                 </text>
-                <text x="10" y="33" fill="#a7f3d0" className="text-[9.5px] font-sans">
+                <text x="10" y="33" fill="var(--cr-text-primary)" className="text-[9.5px]">
                   Bundled into night valley 01:00–04:25 • 0m delay
                 </text>
               </g>
@@ -600,52 +602,52 @@ export const MareyDiagram: React.FC<MareyDiagramProps> = ({
 
       {/* Rich Interactive Floating Inspection Card */}
       {hoveredEntity && (
-        <div className="absolute bottom-5 right-6 bg-slate-900/95 border border-cyan-500/50 p-4 rounded-xl shadow-2xl backdrop-blur-md text-xs max-w-sm z-30 pointer-events-none transition-all">
+        <div className="absolute bottom-5 right-6 cr-panel p-4 shadow-2xl backdrop-blur-md text-xs max-w-sm z-30 pointer-events-none transition-all">
           {hoveredEntity.type === 'train' ? (
             <div>
-              <div className="flex items-center justify-between gap-2 border-b border-slate-700 pb-1.5 mb-1.5">
-                <span className="font-bold text-white font-mono">{hoveredEntity.data.id} • {hoveredEntity.data.name}</span>
-                <span className="bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded text-[10px] font-semibold">
+              <div className="flex items-center justify-between gap-2 border-b border-[var(--cr-border)] pb-1.5 mb-1.5">
+                <span className="font-bold text-[var(--cr-text-primary)] tabular-nums">{hoveredEntity.data.id} • {hoveredEntity.data.name}</span>
+                <span className="bg-[var(--cr-primary)]/15 text-[var(--cr-primary)] px-1.5 py-0.5 rounded text-[10px] font-semibold">
                   {hoveredEntity.data.priority}
                 </span>
               </div>
-              <p className="text-slate-300">
-                Departure: <strong className="text-white font-mono">{hoveredEntity.data.start}</strong> ➔ Arrival: <strong className="text-white font-mono">{hoveredEntity.data.end}</strong>
+              <p className="text-[var(--cr-text-muted)]">
+                Departure: <strong className="text-[var(--cr-text-primary)] tabular-nums">{hoveredEntity.data.start}</strong> ➔ Arrival: <strong className="text-[var(--cr-text-primary)] tabular-nums">{hoveredEntity.data.end}</strong>
               </p>
-              <p className="text-emerald-400 mt-1.5 flex items-center gap-1 font-medium">
+              <p className="text-[var(--cr-status-green)] mt-1.5 flex items-center gap-1 font-medium">
                 ✓ Full speed headway clear; zero conflict with shadow maintenance corridor.
               </p>
             </div>
           ) : (
             <div>
-              <div className="flex items-center justify-between gap-2 border-b border-slate-700 pb-1.5 mb-1.5">
-                <span className="font-bold text-white text-sm">{hoveredEntity.data.id}: {hoveredEntity.data.sectionName}</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
-                  selectedPlan === 'baseline_fcfs' ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'
+              <div className="flex items-center justify-between gap-2 border-b border-[var(--cr-border)] pb-1.5 mb-1.5">
+                <span className="font-bold text-[var(--cr-text-primary)] text-sm">{hoveredEntity.data.id}: {hoveredEntity.data.sectionName}</span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                  selectedPlan === 'baseline_fcfs' ? 'bg-[var(--cr-status-red)]/15 text-[var(--cr-status-red)]' : 'bg-[var(--cr-status-green)]/15 text-[var(--cr-status-green)]'
                 }`}>
                   {selectedPlan === 'baseline_fcfs' ? 'Conflict Block' : 'Shadow Possession'}
                 </span>
               </div>
-              <p className="text-slate-300">
-                Window: <strong className="text-white font-mono">{hoveredEntity.data.start} to {hoveredEntity.data.end}</strong> (KM {hoveredEntity.data.km1}–{hoveredEntity.data.km2})
+              <p className="text-[var(--cr-text-muted)]">
+                Window: <strong className="text-[var(--cr-text-primary)] tabular-nums">{hoveredEntity.data.start} to {hoveredEntity.data.end}</strong> (KM {hoveredEntity.data.km1}–{hoveredEntity.data.km2})
               </p>
-              <p className="text-slate-300 mt-0.5">
-                Departments: <strong className="text-cyan-300">{hoveredEntity.data.depts}</strong>
+              <p className="text-[var(--cr-text-muted)] mt-0.5">
+                Departments: <strong className="text-[var(--cr-primary)]">{hoveredEntity.data.depts}</strong>
               </p>
               {hoveredEntity.data.subTasks && hoveredEntity.data.subTasks.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 block mb-1">Bundled Works:</span>
-                  <ul className="space-y-0.5 text-[10px] text-slate-300">
+                <div className="mt-2 pt-2 border-t border-[var(--cr-border)]">
+                  <span className="text-[10px] font-bold text-[var(--cr-text-muted)] block mb-1">Bundled Works:</span>
+                  <ul className="space-y-0.5 text-[10px] text-[var(--cr-text-primary)]">
                     {hoveredEntity.data.subTasks.map((t: string, idx: number) => (
                       <li key={idx} className="flex items-start gap-1">
-                        <span className="text-emerald-400">•</span>
+                        <span className="text-[var(--cr-status-green)]">•</span>
                         <span>{t}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
-              <p className="text-[10.5px] text-slate-400 mt-2 italic">
+              <p className="text-[10.5px] text-[var(--cr-text-muted)] mt-2 italic">
                 {hoveredEntity.data.notes}
               </p>
             </div>

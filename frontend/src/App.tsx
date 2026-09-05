@@ -13,6 +13,7 @@ import { GuidedDemoModal } from './components/GuidedDemoModal';
 import type { DataQualityReport, LookAheadOpportunity, OptimizerSolveResponse } from './types';
 import type { Language } from './i18n/translations';
 import { TrendingUp, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function App() {
   const [language, setLanguage] = useState<Language>('en');
@@ -21,6 +22,25 @@ export function App() {
   const [selectedPlanKey, setSelectedPlanKey] = useState<'plan_a' | 'plan_b' | 'baseline_fcfs'>('plan_a');
   const [isGlossaryOpen, setIsGlossaryOpen] = useState<boolean>(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState<boolean>(false);
+
+  // Theme Management: light / dark with system preference fallback and localStorage persistence
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('railsync-theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
+    localStorage.setItem('railsync-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
   
   const [dataReport, setDataReport] = useState<DataQualityReport | null>(null);
   const [opportunities, setOpportunities] = useState<LookAheadOpportunity[]>([]);
@@ -155,11 +175,7 @@ export function App() {
   const activeCandidateBlocks = currentPlan?.candidate_blocks || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#060913] via-[#090e1f] to-[#04060d] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950 relative overflow-x-hidden">
-      {/* Ambient background glow blooms */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="min-h-screen bg-[var(--cr-bg)] text-[var(--cr-text-primary)] flex flex-col font-sans selection:bg-[var(--cr-primary-interactive)] selection:text-white relative overflow-x-hidden w-full max-w-full transition-colors">
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -171,194 +187,212 @@ export function App() {
         setViewMode={setViewMode}
         onLaunchDemo={() => setIsDemoModalOpen(true)}
         onOpenGlossary={() => setIsGlossaryOpen(true)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 relative z-10">
-        {/* If Story Mode: Render the 3-act narrative landing page */}
-        {viewMode === 'story' ? (
-          <StoryFlow
-            language={language}
-            onLaunchDemo={() => setIsDemoModalOpen(true)}
-            onOpenConsole={(tab) => {
-              if (tab) setActiveTab(tab);
-              setViewMode('console');
-            }}
-            onOpenGlossary={() => setIsGlossaryOpen(true)}
-          />
-        ) : (
-          /* Full Engineering Console with all 6 original tabs */
-          <div className="space-y-6">
-            {/* Top KPI Metric Cards (Modern Glassmorphic Telemetry) */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-emerald-500/40">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                  <span className="font-medium">Block Utilization</span>
-                  <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white tracking-tight">
-                    {selectedPlanKey === 'baseline_fcfs' ? '42%' : (selectedPlanKey === 'plan_b' ? '82%' : '88%')}
-                  </span>
-                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
-                    selectedPlanKey === 'baseline_fcfs' ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'
-                  }`}>
-                    {selectedPlanKey === 'baseline_fcfs' ? '-46% vs Plan A' : '+46% vs Baseline'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-cyan-500/40">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                  <span className="font-medium">Passenger Train Delays</span>
-                  <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-sm">
-                    <Clock className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className={`text-2xl font-bold font-mono tracking-tight ${selectedPlanKey === 'baseline_fcfs' ? 'text-red-400' : 'text-cyan-300'}`}>
-                    {selectedPlanKey === 'baseline_fcfs' ? `${baseline?.passenger_trains_delayed || 4} Trains` : '0 min'}
-                  </span>
-                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
-                    selectedPlanKey === 'baseline_fcfs' ? 'bg-red-500/15 text-red-300' : 'bg-cyan-500/15 text-cyan-300'
-                  }`}>
-                    {selectedPlanKey === 'baseline_fcfs' ? 'Detentions in Day' : '100% Punctual'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-blue-500/40">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                  <span className="font-medium">Track Availability Index</span>
-                  <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 shadow-sm">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white tracking-tight">
-                    {selectedPlanKey === 'baseline_fcfs' ? '71.5%' : (selectedPlanKey === 'plan_b' ? '91.0%' : '94.2%')}
-                  </span>
-                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
-                    selectedPlanKey === 'baseline_fcfs' ? 'bg-amber-500/15 text-amber-300' : 'bg-blue-500/15 text-blue-300'
-                  }`}>
-                    {selectedPlanKey === 'baseline_fcfs' ? 'Bottlenecks' : 'Max Capacity'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="glass-card p-4 rounded-2xl shadow-xl hover:border-emerald-500/40">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                  <span className="font-medium">Multi-Dept Synergy</span>
-                  <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white tracking-tight">
-                    {selectedPlanKey === 'baseline_fcfs' ? '0%' : (currentPlan?.bundled_blocks_ratio || '83.3%')}
-                  </span>
-                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
-                    selectedPlanKey === 'baseline_fcfs' ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'
-                  }`}>
-                    {selectedPlanKey === 'baseline_fcfs' ? 'Unbundled Silos' : '3-in-1 Bundled'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Tab 1: Planning Cockpit (Marey & Gantt) */}
-            {activeTab === 'cockpit' && (
-              <div className="space-y-6">
-                <div className="flex flex-wrap items-center justify-between gap-3 glass-panel p-3 rounded-2xl shadow-xl">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs text-slate-400 font-mono font-semibold px-2">Display Plan:</span>
-                    <button
-                      onClick={() => setSelectedPlanKey('plan_a')}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        selectedPlanKey === 'plan_a'
-                          ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md shadow-emerald-500/25 ring-1 ring-emerald-400/40'
-                          : 'text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700/60'
-                      }`}
-                    >
-                      <span className={`w-2 h-2 rounded-full ${selectedPlanKey === 'plan_a' ? 'bg-slate-950' : 'bg-emerald-400'}`}></span>
-                      <span>Plan A (Least Disruption - Recommended)</span>
-                    </button>
-                    <button
-                      onClick={() => setSelectedPlanKey('plan_b')}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        selectedPlanKey === 'plan_b'
-                          ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 shadow-md shadow-amber-500/25 ring-1 ring-amber-400/40'
-                          : 'text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700/60'
-                      }`}
-                    >
-                      <span className={`w-2 h-2 rounded-full ${selectedPlanKey === 'plan_b' ? 'bg-slate-950' : 'bg-amber-400'}`}></span>
-                      <span>Plan B (Fastest Critical Maintenance)</span>
-                    </button>
-                    <button
-                      onClick={() => setSelectedPlanKey('baseline_fcfs')}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        selectedPlanKey === 'baseline_fcfs'
-                          ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-md shadow-red-500/25 ring-1 ring-red-400/40'
-                          : 'text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700/60'
-                      }`}
-                    >
-                      <span className={`w-2 h-2 rounded-full ${selectedPlanKey === 'baseline_fcfs' ? 'bg-white' : 'bg-red-400'}`}></span>
-                      <span>Current Reality (FCFS Baseline)</span>
-                    </button>
-                  </div>
-
-                  <div className="text-xs text-slate-400 font-mono hidden lg:block bg-slate-900/60 px-3 py-1 rounded-lg border border-slate-800">
-                    Corridor: Kanpur Central (CNB) ➔ New Delhi (NDLS) Main Line
-                  </div>
-                </div>
-
-                <MareyDiagram
-                  selectedPlan={selectedPlanKey}
-                  blocks={activeCandidateBlocks}
-                  trainSchedules={optimizerResults?.train_schedules}
-                  onTogglePlan={(plan) => setSelectedPlanKey(plan as any)}
-                  language={language}
-                />
-                <GanttTimeline
-                  selectedPlan={selectedPlanKey}
-                  blocks={activeCandidateBlocks}
-                  language={language}
-                />
-              </div>
-            )}
-
-            {/* Tab 2: Data-Quality Center */}
-            {activeTab === 'gateway' && (
-              <DataQualityCenter report={dataReport} onRefresh={fetchDataQuality} />
-            )}
-
-            {/* Tab 3: Look-Ahead Bundling */}
-            {activeTab === 'opportunities' && (
-              <OpportunityPanel opportunities={opportunities} />
-            )}
-
-            {/* Tab 4: Plan Comparison */}
-            {activeTab === 'comparison' && (
-              <PlanComparison
-                planA={planA}
-                planB={planB}
-                baseline={baseline}
-                onApprove={handleApprovePlan}
+        <AnimatePresence mode="wait">
+          {viewMode === 'story' ? (
+            /* Story Flow View with smooth motion transition */
+            <motion.div
+              key="story-flow"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
+              <StoryFlow
+                language={language}
+                onLaunchDemo={() => setIsDemoModalOpen(true)}
+                onOpenConsole={(tab) => {
+                  if (tab) setActiveTab(tab);
+                  setViewMode('console');
+                }}
+                onOpenGlossary={() => setIsGlossaryOpen(true)}
               />
-            )}
+            </motion.div>
+          ) : (
+            /* Full Engineering Console View */
+            <motion.div
+              key={`console-${activeTab}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="space-y-6"
+            >
+              {/* Top KPI Telemetry Cards (Clean layout, sans-serif typography, no badge clutter) */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                {/* Block Utilization */}
+                <div className="cr-card p-4 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Block Utilization</span>
+                    <div className="p-1 rounded bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)]">
+                      <TrendingUp className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-1">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[var(--cr-text-primary)] tracking-tight">
+                      {selectedPlanKey === 'baseline_fcfs' ? '42%' : (selectedPlanKey === 'plan_b' ? '82%' : '88%')}
+                    </span>
+                    <span className={selectedPlanKey === 'baseline_fcfs' ? 'cr-badge-red' : 'cr-badge-green'}>
+                      {selectedPlanKey === 'baseline_fcfs' ? '-46% vs Plan A' : '+46% vs Baseline'}
+                    </span>
+                  </div>
+                </div>
 
-            {/* Tab 5: Emergency Disruption Simulator */}
-            {activeTab === 'emergency' && (
-              <DisruptionSimulator onInject={handleInjectDisruption} />
-            )}
+                {/* Passenger Train Delays */}
+                <div className="cr-card p-4 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Passenger Delays</span>
+                    <div className="p-1 rounded bg-[var(--cr-status-blue-bg)] text-[var(--cr-status-blue)]">
+                      <Clock className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-1">
+                    <span className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${selectedPlanKey === 'baseline_fcfs' ? 'text-[var(--cr-status-red)]' : 'text-[var(--cr-status-green)]'}`}>
+                      {selectedPlanKey === 'baseline_fcfs' ? `${baseline?.passenger_trains_delayed || 4} Trains` : '0 min'}
+                    </span>
+                    <span className={selectedPlanKey === 'baseline_fcfs' ? 'cr-badge-red' : 'cr-badge-green'}>
+                      {selectedPlanKey === 'baseline_fcfs' ? 'Detentions' : '100% Punctual'}
+                    </span>
+                  </div>
+                </div>
 
-            {/* Tab 6: Audit Log & Approval Records */}
-            {activeTab === 'audit' && (
-              <AuditLogViewer logs={auditLogs} />
-            )}
-          </div>
-        )}
+                {/* Track Availability Index */}
+                <div className="cr-card p-4 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Track Availability</span>
+                    <div className="p-1 rounded bg-[var(--cr-status-blue-bg)] text-[var(--cr-status-blue)]">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-1">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[var(--cr-text-primary)] tracking-tight">
+                      {selectedPlanKey === 'baseline_fcfs' ? '71.5%' : (selectedPlanKey === 'plan_b' ? '91.0%' : '94.2%')}
+                    </span>
+                    <span className={selectedPlanKey === 'baseline_fcfs' ? 'cr-badge-amber' : 'cr-badge-green'}>
+                      {selectedPlanKey === 'baseline_fcfs' ? 'Bottlenecks' : 'Max Capacity'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Multi-Dept Synergy */}
+                <div className="cr-card p-4 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Multi-Dept Synergy</span>
+                    <div className="p-1 rounded bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)]">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-1">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[var(--cr-text-primary)] tracking-tight">
+                      {selectedPlanKey === 'baseline_fcfs' ? '0%' : (currentPlan?.bundled_blocks_ratio || '83.3%')}
+                    </span>
+                    <span className={selectedPlanKey === 'baseline_fcfs' ? 'cr-badge-red' : 'cr-badge-green'}>
+                      {selectedPlanKey === 'baseline_fcfs' ? 'Silos' : '3-in-1 Bundled'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tab 1: Planning Cockpit (Marey & Gantt) */}
+              {activeTab === 'cockpit' && (
+                <div className="space-y-6">
+                  {/* Plan Selection Bar (Tactile segmented controls) */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 cr-panel p-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-bold text-[var(--cr-text-secondary)] px-1">Display Plan:</span>
+                      <div className="cr-segmented-container">
+                        <button
+                          onClick={() => setSelectedPlanKey('plan_a')}
+                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                            selectedPlanKey === 'plan_a'
+                              ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border-active)] shadow-xs'
+                              : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
+                          }`}
+                        >
+                          <span className="w-2 h-2 rounded-full bg-[var(--cr-status-green)]"></span>
+                          <span>Plan A (Least Disruption - Recommended)</span>
+                        </button>
+                        <button
+                          onClick={() => setSelectedPlanKey('plan_b')}
+                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                            selectedPlanKey === 'plan_b'
+                              ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border-active)] shadow-xs'
+                              : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
+                          }`}
+                        >
+                          <span className="w-2 h-2 rounded-full bg-[var(--cr-status-amber)]"></span>
+                          <span>Plan B (Fastest Critical Maintenance)</span>
+                        </button>
+                        <button
+                          onClick={() => setSelectedPlanKey('baseline_fcfs')}
+                          className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                            selectedPlanKey === 'baseline_fcfs'
+                              ? 'bg-[var(--cr-surface)] text-[var(--cr-text-primary)] border border-[var(--cr-border-active)] shadow-xs'
+                              : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)]'
+                          }`}
+                        >
+                          <span className="w-2 h-2 rounded-full bg-[var(--cr-status-red)]"></span>
+                          <span>Current Reality (FCFS Baseline)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-[var(--cr-text-secondary)] hidden lg:block bg-[var(--cr-surface-subtle)] px-3 py-1.5 rounded-lg border border-[var(--cr-border)] font-medium">
+                      Corridor: <span className="font-bold text-[var(--cr-text-primary)]">Kanpur Central (CNB) ➔ New Delhi (NDLS) Main Line</span>
+                    </div>
+                  </div>
+
+                  <MareyDiagram
+                    selectedPlan={selectedPlanKey}
+                    blocks={activeCandidateBlocks}
+                    trainSchedules={optimizerResults?.train_schedules}
+                    onTogglePlan={(plan) => setSelectedPlanKey(plan as any)}
+                    language={language}
+                  />
+                  <GanttTimeline
+                    selectedPlan={selectedPlanKey}
+                    blocks={activeCandidateBlocks}
+                    language={language}
+                  />
+                </div>
+              )}
+
+              {/* Tab 2: Data-Quality Center */}
+              {activeTab === 'gateway' && (
+                <DataQualityCenter report={dataReport} onRefresh={fetchDataQuality} />
+              )}
+
+              {/* Tab 3: Look-Ahead Bundling */}
+              {activeTab === 'opportunities' && (
+                <OpportunityPanel opportunities={opportunities} />
+              )}
+
+              {/* Tab 4: Plan Comparison */}
+              {activeTab === 'comparison' && (
+                <PlanComparison
+                  planA={planA}
+                  planB={planB}
+                  baseline={baseline}
+                  onApprove={handleApprovePlan}
+                />
+              )}
+
+              {/* Tab 5: Emergency Disruption Simulator */}
+              {activeTab === 'emergency' && (
+                <DisruptionSimulator onInject={handleInjectDisruption} />
+              )}
+
+              {/* Tab 6: Audit Log & Approval Records */}
+              {activeTab === 'audit' && (
+                <AuditLogViewer logs={auditLogs} />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       {/* Slide-out Railway Jargon Glossary Drawer */}
@@ -381,15 +415,17 @@ export function App() {
       />
 
       {/* Global Institutional Footer */}
-      <footer className="bg-[#0b132b] border-t border-slate-800 py-3.5 px-6 text-center text-xs text-slate-400 flex flex-wrap justify-between items-center gap-3">
+      <footer className="bg-[var(--cr-surface)] border-t border-[var(--cr-border)] py-3 px-6 text-center text-xs text-[var(--cr-text-secondary)] flex flex-wrap justify-between items-center gap-3 transition-colors">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span>RAILSYNC-ABP v1.0 • Smart India Hackathon 2026 • Ministry of Railways (SIH26027)</span>
+          <span className="w-2 h-2 rounded-full bg-[var(--cr-status-green)]"></span>
+          <span className="font-semibold text-[var(--cr-text-primary)]">
+            RAILSYNC v1.0 • Smart India Hackathon 2026 • Ministry of Railways (SIH26027)
+          </span>
         </div>
-        <div className="flex items-center gap-4 text-slate-500 font-mono text-[11px]">
+        <div className="flex items-center gap-4 text-[var(--cr-text-secondary)] text-[11px] font-medium">
           <span>Decision-Support Layer</span>
-          <span>•</span>
-          <span>General & Subsidiary Rules (G&SR) Verified</span>
+          <span className="text-[var(--cr-border)]">•</span>
+          <span className="text-[var(--cr-status-green)] font-bold">G&SR Safety Rules Verified</span>
         </div>
       </footer>
     </div>

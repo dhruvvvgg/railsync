@@ -10,13 +10,12 @@ import {
   TrendingUp,
   CheckCircle2,
   BookOpen,
-  Train,
-  Sparkles,
   FileCheck,
   Zap,
   Radio,
   Hammer
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import type { Language } from '../i18n/translations';
 import { TRANSLATIONS } from '../i18n/translations';
 
@@ -36,273 +35,267 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
 
   return (
-    <div className="space-y-10 max-w-6xl mx-auto py-4">
+    <div className="space-y-8 max-w-6xl mx-auto py-2">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#0b132b] via-[#070b19] to-[#080d1e] border border-cyan-500/20 p-8 md:p-10 shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-          <div className="space-y-4 max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="bg-cyan-500/20 text-cyan-300 text-xs px-3 py-1 rounded-full border border-cyan-500/40 font-mono font-semibold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                SIH 2026 • Problem Statement SIH26027
-              </span>
-              <span className="bg-red-500/20 text-red-300 text-xs px-3 py-1 rounded-full border border-red-500/40 font-semibold">
-                Ministry of Railways
-              </span>
-              <span className="bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-full border border-emerald-500/40 font-mono font-medium">
-                North Central Railway (CNB–TDL–NDLS)
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className="cr-panel p-6 sm:p-8 relative transition-colors"
+      >
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="space-y-3.5 max-w-2xl">
+            {/* Single authoritative indicator, no badge cluster */}
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--cr-primary-interactive)]"></span>
+              <span className="text-xs font-bold text-[var(--cr-primary-interactive)] uppercase tracking-wider">
+                North Central Railway • Corridor CNB–TDL–NDLS
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[var(--cr-text-primary)] tracking-tight leading-tight">
               {t.headline}
             </h1>
 
-            <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+            <p className="text-[var(--cr-text-secondary)] text-xs sm:text-sm leading-relaxed">
               {language === 'hi'
-                ? 'पारंपरिक फोन-आधारित ब्लॉक बुकिंग को हटाकर 0.031 सेकंड में गणितीय रूप से 3 विभागों के कार्यों को रात के खाली समय में बंडल करता है — ताकि वंदे भारत और राजधानी ट्रेनें 0 मिनट लेट हों।'
+                ? 'पारंपरिक फोन-आधारित ब्लॉक बुकिंग को हटाकर गणितीय रूप से 3 विभागों के कार्यों को रात के खाली समय में बंडल करता है — ताकि वंदे भारत और राजधानी ट्रेनें 0 मिनट लेट हों।'
                 : (language === 'ta'
                 ? 'தொலைபேசி அழைப்பு முறைக்கு பதிலாக கணித நிரலாக்க உகப்பாக்கம் மூலம் சிவில், எலக்ட்ரிக்கல், சிக்னல் பணிகளை இரவு நேர சரக்கு ரயில் இடைவெளியில் ஒருங்கிணைக்கிறது — ரயில்களின் தாமதத்தை முற்றிலும் தவிர்க்கிறது.'
                 : 'Replacing disjointed phone calls with mathematical constraint programming. Bundles Civil, Electrical, and Signal maintenance into natural overnight freight valleys, ensuring zero express train delays.')}
             </p>
 
             {/* Quick Action CTAs */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
               <button
                 onClick={onLaunchDemo}
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-cyan-500/25 flex items-center gap-2.5 transition-all transform hover:-translate-y-0.5"
+                className="cr-btn-primary"
               >
-                <Play className="w-4 h-4 fill-current" />
+                <Play className="w-3.5 h-3.5 fill-current" />
                 <span>{t.runDemoButton}</span>
               </button>
 
               <button
                 onClick={() => onOpenConsole('cockpit')}
-                className="bg-slate-900/90 hover:bg-slate-800 text-white border border-slate-700 hover:border-slate-600 px-5 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2"
+                className="cr-btn-secondary font-semibold"
               >
                 <span>{t.exploreConsoleButton}</span>
-                <ArrowRight className="w-4 h-4 text-cyan-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
               </button>
 
               <button
                 onClick={onOpenGlossary}
-                className="bg-slate-900/70 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 px-4 py-3 rounded-xl text-sm transition-all flex items-center gap-2"
+                className="cr-btn-secondary"
               >
-                <BookOpen className="w-4 h-4 text-amber-400" />
+                <BookOpen className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" />
                 <span>{t.glossaryButton}</span>
               </button>
             </div>
           </div>
 
-          {/* Quick Stat Pill */}
-          <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl md:w-72 flex-shrink-0 space-y-4 shadow-xl">
-            <div className="border-b border-slate-800 pb-3">
-              <span className="text-xs text-slate-400 font-medium block">
-                {language === 'hi' ? 'सॉल्वर गति' : (language === 'ta' ? 'சால்வர் வேகம்' : 'CP-SAT Solver Latency')}
+          {/* Key Metric Card (Clean, sans-serif, high contrast) */}
+          <div className="cr-card p-5 md:w-72 flex-shrink-0 space-y-3.5">
+            <div className="border-b border-[var(--cr-border-subtle)] pb-2.5">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
+                {language === 'hi' ? 'सॉल्वर गति' : (language === 'ta' ? 'சால்வர் வேகம்' : 'CP-SAT Latency')}
               </span>
-              <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-2xl font-bold font-mono text-cyan-300">0.031s</span>
-                <span className="text-xs text-emerald-400 font-semibold">⚡ Instant</span>
+              <div className="flex items-baseline justify-between mt-1">
+                <span className="text-2xl font-extrabold text-[var(--cr-primary-interactive)]">0.031s</span>
+                <span className="text-xs font-semibold text-[var(--cr-status-green)]">Optimal</span>
               </div>
             </div>
 
-            <div className="border-b border-slate-800 pb-3">
-              <span className="text-xs text-slate-400 font-medium block">
-                {language === 'hi' ? 'डेटा गेटवे स्क्रीनिंग' : (language === 'ta' ? 'தரவு வடிகட்டுதல்' : 'Dirty Data Filter')}
+            <div className="border-b border-[var(--cr-border-subtle)] pb-2.5">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
+                {language === 'hi' ? 'डेटा गेटवे स्क्रीनिंग' : (language === 'ta' ? 'தரவு வடிகட்டுதல்' : 'Dirty Data Screened')}
               </span>
-              <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-2xl font-bold font-mono text-amber-300">29 / 29</span>
-                <span className="text-xs text-amber-400 font-semibold">Quarantined</span>
+              <div className="flex items-baseline justify-between mt-1">
+                <span className="text-2xl font-extrabold text-[var(--cr-text-primary)]">29 / 29</span>
+                <span className="text-xs font-semibold text-[var(--cr-status-amber)]">Quarantined</span>
               </div>
             </div>
 
             <div>
-              <span className="text-xs text-slate-400 font-medium block">
-                {language === 'hi' ? 'सुरक्षा नियम अनुपालन' : (language === 'ta' ? 'சட்டப்பூர்வ பாதுகாப்பு விதிகள்' : 'Statutory Safety Rules')}
+              <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
+                {language === 'hi' ? 'सुरक्षा नियम अनुपालन' : (language === 'ta' ? 'சட்டப்பூர்வ பாதுகாப்பு விதிகள்' : 'Safety Rules')}
               </span>
-              <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-2xl font-bold font-mono text-emerald-300">100%</span>
-                <span className="text-xs text-emerald-400 font-semibold">G&SR Compliant</span>
+              <div className="flex items-baseline justify-between mt-1">
+                <span className="text-2xl font-extrabold text-[var(--cr-status-green)]">100%</span>
+                <span className="text-xs font-semibold text-[var(--cr-status-green)]">G&SR Compliant</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Live Before / After Metrics Comparison */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-cyan-400" />
+          <h2 className="text-xs font-bold text-[var(--cr-text-secondary)] uppercase tracking-wider flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-[var(--cr-primary-interactive)]" />
             <span>{t.compareTitle}</span>
           </h2>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-[var(--cr-text-muted)]">
             {language === 'hi' ? 'पारंपरिक बनाम AI का सीधा असर' : (language === 'ta' ? 'பழைய முறை vs AI இன் நேரடி தாக்கம்' : 'Measurable Impact on Indian Railways Operations')}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           {/* Card 1: Express Delays */}
-          <div className="bg-[#0b132b] border border-slate-800 p-5 rounded-2xl relative overflow-hidden shadow-lg group hover:border-slate-700 transition-all">
-            <div className="text-xs text-slate-400 font-medium mb-2 flex items-center justify-between">
-              <span>{t.kpiDetentions}</span>
-              <Clock className="w-4 h-4 text-cyan-400" />
+          <div className="cr-card p-4 relative overflow-hidden">
+            <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-wider">{t.kpiDetentions}</span>
+              <Clock className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
             </div>
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-2xl font-black font-mono text-slate-400 line-through">4 Trains</span>
-              <ArrowRight className="w-4 h-4 text-emerald-400" />
-              <span className="text-2xl font-black font-mono text-cyan-300">0 min</span>
+            <div className="flex items-baseline gap-2 mb-1.5">
+              <span className="text-lg font-bold text-[var(--cr-text-muted)] line-through">4 Trains</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
+              <span className="text-2xl font-extrabold text-[var(--cr-status-green)]">0 min</span>
             </div>
-            <p className="text-xs text-emerald-400 font-medium">
+            <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? 'शून्य एक्सप्रेस विलंब (100% समयबद्धता)' : (language === 'ta' ? 'பூஜ்ஜிய பயணிகள் ரயில் தாமதம் (100% சரியான நேரம்)' : 'Zero passenger detentions')}
             </p>
-            <span className="text-[10px] text-slate-400 block mt-1">{t.kpiDetentionsSub}</span>
+            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiDetentionsSub}</span>
           </div>
 
           {/* Card 2: Track Downtime */}
-          <div className="bg-[#0b132b] border border-slate-800 p-5 rounded-2xl relative overflow-hidden shadow-lg group hover:border-slate-700 transition-all">
-            <div className="text-xs text-slate-400 font-medium mb-2 flex items-center justify-between">
-              <span>{t.kpiDowntime}</span>
-              <Layers className="w-4 h-4 text-emerald-400" />
+          <div className="cr-card p-4 relative overflow-hidden">
+            <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-wider">{t.kpiDowntime}</span>
+              <Layers className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
             </div>
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-2xl font-black font-mono text-slate-400 line-through">6.5 hrs</span>
-              <ArrowRight className="w-4 h-4 text-emerald-400" />
-              <span className="text-2xl font-black font-mono text-emerald-300">3.25 hrs</span>
+            <div className="flex items-baseline gap-2 mb-1.5">
+              <span className="text-lg font-bold text-[var(--cr-text-muted)] line-through">6.5 hrs</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
+              <span className="text-2xl font-extrabold text-[var(--cr-status-green)]">3.25 hrs</span>
             </div>
-            <p className="text-xs text-emerald-400 font-medium">
+            <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? '50% कम लाइन बंदी' : (language === 'ta' ? '50% குறைவான பாதை முடக்கம்' : '50% reduction in track closures')}
             </p>
-            <span className="text-[10px] text-slate-400 block mt-1">{t.kpiDowntimeSub}</span>
+            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiDowntimeSub}</span>
           </div>
 
           {/* Card 3: Multi-Dept Bundling */}
-          <div className="bg-[#0b132b] border border-slate-800 p-5 rounded-2xl relative overflow-hidden shadow-lg group hover:border-slate-700 transition-all">
-            <div className="text-xs text-slate-400 font-medium mb-2 flex items-center justify-between">
-              <span>{t.kpiBundling}</span>
-              <CheckCircle2 className="w-4 h-4 text-purple-400" />
+          <div className="cr-card p-4 relative overflow-hidden">
+            <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-wider">{t.kpiBundling}</span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
             </div>
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-2xl font-black font-mono text-slate-400 line-through">0%</span>
-              <ArrowRight className="w-4 h-4 text-emerald-400" />
-              <span className="text-2xl font-black font-mono text-purple-300">83.3%</span>
+            <div className="flex items-baseline gap-2 mb-1.5">
+              <span className="text-lg font-bold text-[var(--cr-text-muted)] line-through">0%</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
+              <span className="text-2xl font-extrabold text-[var(--cr-text-primary)]">83.3%</span>
             </div>
-            <p className="text-xs text-emerald-400 font-medium">
+            <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? '3-इन-1 संयुक्त कॉरिडोर ब्लॉक' : (language === 'ta' ? '3-இன்-1 ஒரே நேரத்தில் செயல்படுத்தல்' : 'Co-located simultaneous execution')}
             </p>
-            <span className="text-[10px] text-slate-400 block mt-1">{t.kpiBundlingSub}</span>
+            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiBundlingSub}</span>
           </div>
 
           {/* Card 4: Safety SLA */}
-          <div className="bg-[#0b132b] border border-slate-800 p-5 rounded-2xl relative overflow-hidden shadow-lg group hover:border-slate-700 transition-all">
-            <div className="text-xs text-slate-400 font-medium mb-2 flex items-center justify-between">
-              <span>{t.kpiSafety}</span>
-              <ShieldCheck className="w-4 h-4 text-blue-400" />
+          <div className="cr-card p-4 relative overflow-hidden">
+            <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-wider">{t.kpiSafety}</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
             </div>
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-2xl font-black font-mono text-slate-400 line-through">Phone</span>
-              <ArrowRight className="w-4 h-4 text-emerald-400" />
-              <span className="text-2xl font-black font-mono text-blue-300">100%</span>
+            <div className="flex items-baseline gap-2 mb-1.5">
+              <span className="text-lg font-bold text-[var(--cr-text-muted)] line-through">Phone</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
+              <span className="text-2xl font-extrabold text-[var(--cr-status-green)]">100%</span>
             </div>
-            <p className="text-xs text-emerald-400 font-medium">
+            <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? 'शून्य सुरक्षा उल्लंघन' : (language === 'ta' ? 'பூஜ்ஜிய பாதுகாப்பு மீறல்கள்' : 'Zero manual safety oversights')}
             </p>
-            <span className="text-[10px] text-slate-400 block mt-1">{t.kpiSafetySub}</span>
+            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiSafetySub}</span>
           </div>
         </div>
       </div>
 
       {/* The 3-Act Story Cards */}
       <div className="space-y-6">
-        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+        <h2 className="text-base font-bold text-[var(--cr-text-primary)] flex items-center gap-2">
           <span>{language === 'hi' ? 'सिस्टम की 3-चरणीय कार्यप्रणाली' : (language === 'ta' ? 'கணினியின் 3-படி செயல்முறை' : 'The 3-Act System Architecture')}</span>
-          <span className="bg-cyan-500/20 text-cyan-300 text-xs px-2.5 py-0.5 rounded-full font-mono">
-            End-to-End
-          </span>
         </h2>
 
         {/* Act 1 Card: The Chaos */}
-        <div className="bg-[#0b132b] border border-red-500/30 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5 mb-5">
+        <div className="cr-panel border-l-4 border-l-[var(--cr-status-red)] p-6 md:p-8 relative">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--cr-border-subtle)] pb-4 mb-4">
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="bg-red-500/20 text-red-400 text-xs px-2.5 py-1 rounded-lg font-mono font-bold">
+                <span className="cr-badge-red text-xs">
                   {t.act1Title}
                 </span>
-                <h3 className="text-xl font-bold text-white">{t.act1Subtitle}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-[var(--cr-text-primary)]">{t.act1Subtitle}</h3>
               </div>
-              <p className="text-xs text-slate-400 mt-1">{t.act1Desc}</p>
+              <p className="text-xs text-[var(--cr-text-secondary)] mt-1">{t.act1Desc}</p>
             </div>
-            <span className="bg-red-500/10 text-red-300 text-xs font-mono font-semibold px-3 py-1.5 rounded-xl border border-red-500/30 flex-shrink-0">
+            <span className="cr-badge-neutral text-xs">
               {t.act1Badge}
             </span>
           </div>
 
-          {/* Chaos Illustration: Departmental Silos calling controller */}
+          {/* Chaos Illustration: Departmental Silos */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs mb-1.5">
+            <div className="cr-card p-4 rounded-xl">
+              <div className="flex items-center gap-2 text-[var(--cr-primary-interactive)] font-bold text-xs mb-1.5">
                 <Hammer className="w-4 h-4" />
                 <span>Civil Track (TMS)</span>
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-[var(--cr-text-secondary)]">
                 {language === 'hi'
                   ? 'सुबह 09:00 से 12:00 तक ट्रैक टैम्पिंग का ब्लॉक मांगता है।'
                   : (language === 'ta'
                   ? 'காலை 09:00 முதல் 12:00 வரை தண்டவாளம் சீரமைக்க தனி பிளாக் கேட்கிறது.'
                   : 'Demands exclusive block 09:00–12:00 for CSM-09 track tamping.')}
               </p>
-              <span className="text-[10px] text-red-400 font-mono mt-2 block">
+              <span className="text-[11px] text-[var(--cr-status-red)] font-semibold mt-2 block">
                 ❌ {language === 'hi' ? 'अलग से 3 घंटे लाइन बंद' : (language === 'ta' ? 'தனியாக 3 மணிநேரம் பாதை மூடல்' : 'Independent 3h shutdown')}
               </span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs mb-1.5">
+            <div className="cr-card p-4 rounded-xl">
+              <div className="flex items-center gap-2 text-[var(--cr-status-green)] font-bold text-xs mb-1.5">
                 <Zap className="w-4 h-4" />
                 <span>Electrical TRD (TDMS)</span>
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-[var(--cr-text-secondary)]">
                 {language === 'hi'
                   ? 'दोपहर 13:00 से 15:30 तक 25 kV ओएचई निरीक्षण मांगता है।'
                   : (language === 'ta'
                   ? 'பிற்பகல் 13:00 முதல் 15:30 வரை 25 kV கம்பி ஆய்வுக்கு மின் நிறுத்தம் கேட்கிறது.'
                   : 'Requests 25 kV power shutdown 13:00–15:30 for cantilever work.')}
               </p>
-              <span className="text-[10px] text-red-400 font-mono mt-2 block">
+              <span className="text-[11px] text-[var(--cr-status-red)] font-semibold mt-2 block">
                 ❌ {language === 'hi' ? 'दोबारा 2.5 घंटे लाइन बंद' : (language === 'ta' ? 'மீண்டும் 2.5 மணிநேரம் பாதை மூடல்' : 'Repeated 2.5h shutdown')}
               </span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-purple-400 font-bold text-xs mb-1.5">
+            <div className="cr-card p-4 rounded-xl">
+              <div className="flex items-center gap-2 text-[var(--cr-primary-interactive)] font-bold text-xs mb-1.5">
                 <Radio className="w-4 h-4" />
                 <span>Signal S&T (SMMS)</span>
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-[var(--cr-text-secondary)]">
                 {language === 'hi'
                   ? 'शाम 16:00 से 18:30 तक पॉइंट मोटर टेस्टिंग की मांग करता है।'
                   : (language === 'ta'
                   ? 'மாலை 16:00 முதல் 18:30 வரை சிக்னல் மோட்டார் சோதனைக்கு பிளாக் கோருகிறது.'
                   : 'Books 16:00–18:30 for 143mm point motor calibration.')}
               </p>
-              <span className="text-[10px] text-red-400 font-mono mt-2 block">
+              <span className="text-[11px] text-[var(--cr-status-red)] font-semibold mt-2 block">
                 ❌ {language === 'hi' ? 'तीसरी बार 2.5 घंटे लाइन बंद' : (language === 'ta' ? '3-வது முறையாக 2.5 மணிநேர மூடல்' : 'Third separate shutdown')}
               </span>
             </div>
           </div>
 
           {/* The Real Train 12582 Conflict Alert */}
-          <div className="bg-red-950/40 border border-red-500/40 p-4 rounded-xl flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="bg-[var(--cr-status-red-bg)] border border-[var(--cr-status-red-border)] p-4 rounded-xl flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-[var(--cr-status-red)] flex-shrink-0 mt-0.5" />
             <div className="space-y-1 text-xs">
-              <span className="font-bold text-red-300 uppercase tracking-wide block">
+              <span className="font-bold text-[var(--cr-status-red)] uppercase tracking-wide block">
                 {language === 'hi' ? 'वास्तविक टकराव: ट्रेन 12582 बनाम सिविल ब्लॉक' : (language === 'ta' ? 'உண்மை மோதல்: ரயில் 12582 vs திட்டமிடப்படாத சிவில் பிளாக்' : 'Real Schedule Clash: Train 12582 vs Uncoordinated Block')}
               </span>
-              <p className="text-slate-300">
+              <p className="text-[var(--cr-text-primary)] leading-relaxed">
                 {language === 'hi'
                   ? 'सेक्शन COR-005 (शिकोहाबाद-टुंडला) पर सिविल विभाग का ब्लॉक ट्रेन 12582 (बीएसबीएस-नई दिल्ली एक्सप्रेस) के मार्ग से रात 01:50 बजे टकराता है। इसके कारण ट्रेन को 48 मिनट लाल सिग्नल पर रोका जाता है।'
                   : (language === 'ta'
@@ -314,29 +307,29 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
         </div>
 
         {/* Act 2 Card: The Engine */}
-        <div className="bg-[#0b132b] border border-blue-500/30 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5 mb-5">
+        <div className="cr-panel border-l-4 border-l-[var(--cr-primary-interactive)] p-6 md:p-8 relative">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--cr-border-subtle)] pb-4 mb-4">
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="bg-blue-500/20 text-blue-400 text-xs px-2.5 py-1 rounded-lg font-mono font-bold">
+                <span className="cr-badge-blue text-xs">
                   {t.act2Title}
                 </span>
-                <h3 className="text-xl font-bold text-white">{t.act2Subtitle}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-[var(--cr-text-primary)]">{t.act2Subtitle}</h3>
               </div>
-              <p className="text-xs text-slate-400 mt-1">{t.act2Desc}</p>
+              <p className="text-xs text-[var(--cr-text-secondary)] mt-1">{t.act2Desc}</p>
             </div>
-            <span className="bg-blue-500/10 text-blue-300 text-xs font-mono font-semibold px-3 py-1.5 rounded-xl border border-blue-500/30 flex-shrink-0">
+            <span className="cr-badge-neutral text-xs">
               {t.act2Badge}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs mb-1">
-                <Layers className="w-4 h-4 text-cyan-400" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div className="cr-card p-4">
+              <div className="flex items-center gap-2 text-[var(--cr-primary-interactive)] font-bold text-xs mb-1">
+                <Layers className="w-4 h-4 text-[var(--cr-primary-interactive)]" />
                 <span>14-Day Lookahead</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-[var(--cr-text-secondary)] leading-relaxed">
                 {language === 'hi'
                   ? 'आगामी 14 दिनों के सिविल, ट्रैक्शन और सिग्नल कार्यों को एक साथ स्कैन करता है।'
                   : (language === 'ta'
@@ -345,12 +338,12 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               </p>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-amber-300 font-bold text-xs mb-1">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <div className="cr-card p-4">
+              <div className="flex items-center gap-2 text-[var(--cr-status-amber)] font-bold text-xs mb-1">
+                <AlertTriangle className="w-4 h-4 text-[var(--cr-status-amber)]" />
                 <span>Data-Quality Gateway</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-[var(--cr-text-secondary)] leading-relaxed">
                 {language === 'hi'
                   ? 'अमान्य किमी और उलटे समय वाले 29 खराब रिकॉर्ड्स को अलग करके सॉल्वर क्रैश रोकता है।'
                   : (language === 'ta'
@@ -359,12 +352,12 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               </p>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-emerald-300 font-bold text-xs mb-1">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="cr-card p-4">
+              <div className="flex items-center gap-2 text-[var(--cr-status-green)] font-bold text-xs mb-1">
+                <ShieldCheck className="w-4 h-4 text-[var(--cr-status-green)]" />
                 <span>Deterministic Rules</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-[var(--cr-text-secondary)] leading-relaxed">
                 {language === 'hi'
                   ? '25 kV बिजली कटौती और 1 किमी टैम्पिंग-स्विच दूरी जैसे नियम कभी नहीं तोड़े जा सकते।'
                   : (language === 'ta'
@@ -373,12 +366,12 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               </p>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-purple-300 font-bold text-xs mb-1">
-                <Cpu className="w-4 h-4 text-purple-400" />
+            <div className="cr-card p-4">
+              <div className="flex items-center gap-2 text-[var(--cr-primary-interactive)] font-bold text-xs mb-1">
+                <Cpu className="w-4 h-4 text-[var(--cr-primary-interactive)]" />
                 <span>Freight Valley Solving</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-[var(--cr-text-secondary)] leading-relaxed">
                 {language === 'hi'
                   ? 'ब्लॉक को रात 01:00–04:25 के खाली समय में शिफ्ट करके पैसेंजर ट्रेनों को सुरक्षित करता है।'
                   : (language === 'ta'
@@ -390,66 +383,66 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
         </div>
 
         {/* Act 3 Card: The Proof */}
-        <div className="bg-[#0b132b] border border-emerald-500/30 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5 mb-5">
+        <div className="cr-panel border-l-4 border-l-[var(--cr-status-green)] p-6 md:p-8 relative">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--cr-border-subtle)] pb-4 mb-4">
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="bg-emerald-500/20 text-emerald-400 text-xs px-2.5 py-1 rounded-lg font-mono font-bold">
+                <span className="cr-badge-green text-xs">
                   {t.act3Title}
                 </span>
-                <h3 className="text-xl font-bold text-white">{t.act3Subtitle}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-[var(--cr-text-primary)]">{t.act3Subtitle}</h3>
               </div>
-              <p className="text-xs text-slate-400 mt-1">{t.act3Desc}</p>
+              <p className="text-xs text-[var(--cr-text-secondary)] mt-1">{t.act3Desc}</p>
             </div>
-            <span className="bg-emerald-500/10 text-emerald-300 text-xs font-mono font-semibold px-3 py-1.5 rounded-xl border border-emerald-500/30 flex-shrink-0">
+            <span className="cr-badge-neutral text-xs">
               {t.act3Badge}
             </span>
           </div>
 
           {/* Synchronized Corridor Strip */}
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-3 mb-5">
+          <div className="cr-card p-4 space-y-3 mb-5">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-white flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <span className="font-bold text-[var(--cr-text-primary)] flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[var(--cr-status-green)]"></span>
                 <span>Corridor Block B-101 (Kanpur–Etawah)</span>
               </span>
-              <span className="font-mono text-emerald-400 font-bold bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-500/30">
+              <span className="cr-badge-green text-xs font-bold">
                 01:00 – 04:25 Night Window (3.25 hrs)
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-              <div className="bg-cyan-950/30 border border-cyan-500/30 p-3 rounded-lg text-xs">
-                <span className="text-cyan-300 font-bold block">1. Civil Track Tamping</span>
-                <span className="text-slate-400 text-[11px]">CSM-09 Tamper (KM 44–83)</span>
+              <div className="cr-card-subtle p-3 rounded-lg text-xs">
+                <span className="text-[var(--cr-primary-interactive)] font-bold block">1. Civil Track Tamping</span>
+                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">CSM-09 Tamper (KM 44–83)</span>
               </div>
-              <div className="bg-emerald-950/30 border border-emerald-500/30 p-3 rounded-lg text-xs">
-                <span className="text-emerald-300 font-bold block">2. 25 kV OHE Isolation</span>
-                <span className="text-slate-400 text-[11px]">TRD Overhaul (KM 44–83)</span>
+              <div className="cr-card-subtle p-3 rounded-lg text-xs">
+                <span className="text-[var(--cr-status-green)] font-bold block">2. 25 kV OHE Isolation</span>
+                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">TRD Overhaul (KM 44–83)</span>
               </div>
-              <div className="bg-purple-950/30 border border-purple-500/30 p-3 rounded-lg text-xs">
-                <span className="text-purple-300 font-bold block">3. MSDAC & Points</span>
-                <span className="text-slate-400 text-[11px]">Signal Sensor Check</span>
+              <div className="cr-card-subtle p-3 rounded-lg text-xs">
+                <span className="text-[var(--cr-primary-interactive)] font-bold block">3. MSDAC & Points</span>
+                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">Signal Sensor Check</span>
               </div>
             </div>
           </div>
 
           {/* Official Controller Authorization Memo Box */}
-          <div className="bg-slate-900/90 border border-slate-700/80 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="cr-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 flex-shrink-0">
+              <div className="p-2 rounded-lg bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)] border border-[var(--cr-status-green-border)] flex-shrink-0">
                 <FileCheck className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-white block">
+                <span className="text-xs font-bold text-[var(--cr-text-primary)] block">
                   {language === 'hi'
                     ? 'अनुभाग नियंत्रक डिजिटल लाइन क्लीयरेंस मेमो (सत्यापित)'
                     : (language === 'ta'
                     ? 'பிரிவு கட்டுப்பாட்டாளர் டிஜிட்டல் பாதை அனுமதி மெமோ (சரிபார்க்கப்பட்டது)'
                     : 'Section Controller Digital Line Clearance Memo (Verified)')}
                 </span>
-                <p className="text-[11px] text-slate-400 mt-0.5">{t.authFooter}</p>
-                <span className="text-[10px] text-slate-400 font-mono block mt-1">
+                <p className="text-[11px] text-[var(--cr-text-secondary)] mt-0.5">{t.authFooter}</p>
+                <span className="text-[10px] text-[var(--cr-text-muted)] font-medium block mt-1">
                   {t.authorizedBy} • Timestamp: 2026-09-04 23:45 IST
                 </span>
               </div>
@@ -457,22 +450,22 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
 
             <button
               onClick={() => onOpenConsole('audit')}
-              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5 flex-shrink-0"
+              className="cr-btn-secondary flex-shrink-0 font-semibold"
             >
               <span>{language === 'hi' ? 'ऑडिट लॉग देखें' : (language === 'ta' ? 'தணிக்கை பதிவு பார்க்க' : 'View Audit Trail')}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+              <ArrowRight className="w-3.5 h-3.5 text-[var(--cr-text-secondary)]" />
             </button>
           </div>
         </div>
       </div>
 
       {/* Deep-Dive Console Navigation Bar */}
-      <div className="bg-[#0b132b] border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="cr-panel p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h3 className="text-base font-bold text-white">
+          <h3 className="text-base font-bold text-[var(--cr-text-primary)]">
             {language === 'hi' ? 'विशेषज्ञ इंजीनियरिंग कंसोल' : (language === 'ta' ? 'முழு பொறியியல் கன்சோல்' : 'Explore The Deep Engineering Console')}
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-[var(--cr-text-secondary)] mt-0.5">
             {language === 'hi'
               ? 'जजों और तकनीकी विशेषज्ञों के लिए सभी 6 लाइव डेटा और सिमुलेशन टूल्स उपलब्ध हैं।'
               : (language === 'ta'
@@ -484,30 +477,29 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => onOpenConsole('cockpit')}
-            className="px-3.5 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-all flex items-center gap-1.5"
+            className="cr-btn-secondary"
           >
-            <Train className="w-3.5 h-3.5" />
             <span>Marey & Gantt</span>
           </button>
           <button
             onClick={() => onOpenConsole('gateway')}
-            className="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold transition-all flex items-center gap-1.5"
+            className="cr-btn-secondary"
           >
-            <AlertTriangle className="w-3.5 h-3.5" />
+            <AlertTriangle className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" />
             <span>Data Gateway</span>
           </button>
           <button
             onClick={() => onOpenConsole('opportunities')}
-            className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition-all flex items-center gap-1.5"
+            className="cr-btn-secondary"
           >
-            <Layers className="w-3.5 h-3.5" />
+            <Layers className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
             <span>Look-Ahead</span>
           </button>
           <button
             onClick={() => onOpenConsole('emergency')}
-            className="px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300 text-xs font-semibold transition-all flex items-center gap-1.5"
+            className="cr-btn-secondary"
           >
-            <Zap className="w-3.5 h-3.5" />
+            <Zap className="w-3.5 h-3.5 text-[var(--cr-status-red)]" />
             <span>Disruption Sandbox</span>
           </button>
         </div>

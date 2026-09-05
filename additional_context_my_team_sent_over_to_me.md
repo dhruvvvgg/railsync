@@ -1,4 +1,4 @@
-# RAILSYNC-ABP — Dataset Sourcing & Synthetic Data Generation Guide
+# RAILSYNC — Dataset Sourcing & Synthetic Data Generation Guide
 
 ## 1. Overview: What's Real vs. What's Synthetic
 

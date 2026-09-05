@@ -308,7 +308,7 @@ def build_dataset():
         "metadata": {
             "generated_at": datetime.now().isoformat(),
             "section": "Kanpur Central (CNB) - Ghaziabad (GZB) Corridor Network",
-            "spec_version": "RAILSYNC-ABP v1.0",
+            "spec_version": "RAILSYNC v1.0",
             "total_corridors": len(corridors),
             "total_assets": len(assets),
             "total_resources": len(resources),

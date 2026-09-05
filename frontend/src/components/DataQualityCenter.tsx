@@ -1,5 +1,5 @@
-import React from 'react';
-import { AlertTriangle, ShieldAlert, Database, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { AlertTriangle, ShieldAlert, Database, RefreshCw, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
 import type { DataQualityReport } from '../types';
 
 interface DataQualityCenterProps {
@@ -8,9 +8,12 @@ interface DataQualityCenterProps {
 }
 
 export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, onRefresh }) => {
+  const [selectedSystem, setSelectedSystem] = useState<string>('ALL');
+  const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+
   if (!report) {
     return (
-      <div className="bg-[#0b132b] rounded-2xl border border-slate-800 p-8 text-center text-slate-400">
+      <div className="cr-panel p-8 text-center text-[var(--cr-text-secondary)] text-sm">
         Loading Data-Quality Validation Report...
       </div>
     );
@@ -18,118 +21,228 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
 
   const { summary } = report;
 
+  const toggleExpand = (id: string) => {
+    setExpandedIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleExpandAll = () => {
+    const allExpanded = filteredIssues.every((_, idx) => expandedIds[`issue-${idx}`]);
+    const newState: Record<string, boolean> = {};
+    if (!allExpanded) {
+      filteredIssues.forEach((_, idx) => {
+        newState[`issue-${idx}`] = true;
+      });
+    }
+    setExpandedIds(newState);
+  };
+
+  const filteredIssues = selectedSystem === 'ALL'
+    ? summary.issues
+    : summary.issues.filter(issue => issue.source_system.toUpperCase() === selectedSystem.toUpperCase());
+
   return (
     <div className="space-y-6">
-      <div className="bg-[#0b132b] border border-amber-500/30 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      {/* Header Banner & Telemetry */}
+      <div className="cr-panel p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <ShieldAlert className="w-6 h-6 text-amber-400" />
-              <h2 className="text-lg font-bold text-white">Data-Quality & Canonical Ingestion Gateway</h2>
-              <span className="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-0.5 rounded-full font-bold">
-                Section 6 & 21 Red-Team Safeguard Active
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+              <ShieldAlert className="w-5 h-5 text-[var(--cr-status-amber)]" />
+              <h2 className="text-base sm:text-lg font-extrabold text-[var(--cr-text-primary)]">Data-Quality & Canonical Ingestion Gateway</h2>
+              <span className="cr-badge-amber text-[10.5px]">
+                Red-Team Quarantine Active
               </span>
             </div>
-            <p className="text-xs text-slate-400 max-w-2xl">
-              Real railway feeds contain missing fields, duplicates, and stale inputs. RAILSYNC-ABP never silently drops or modifies dirty records. It flags them with actionable diagnostic reasons for Section Controllers.
+            <p className="text-xs text-[var(--cr-text-secondary)] max-w-2xl leading-relaxed">
+              Real railway feeds contain missing fields, duplicates, and stale inputs. RAILSYNC never silently drops or modifies dirty records. It flags them with actionable diagnostic reasons for Section Controllers.
             </p>
           </div>
           <button
             onClick={onRefresh}
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700 transition-colors"
+            className="cr-btn-secondary"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
             <span>Re-Scan Feeds</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-            <span className="text-xs text-slate-400 block mb-1">Total Records Screened</span>
-            <span className="text-2xl font-bold font-mono text-white">{summary.total_records_screened}</span>
+        {/* 4 Telemetry Metrics */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+          <div className="cr-card p-3.5">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block mb-1">Screened</span>
+            <span className="text-2xl font-extrabold text-[var(--cr-text-primary)]">{summary.total_records_screened}</span>
           </div>
-          <div className="bg-slate-900/80 border border-emerald-500/30 p-4 rounded-xl">
-            <span className="text-xs text-emerald-400 block mb-1">Canonical & Valid</span>
-            <span className="text-2xl font-bold font-mono text-emerald-400">{summary.valid_records}</span>
+          <div className="cr-card p-3.5 border-l-2 border-l-[var(--cr-status-green)]">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-status-green)] font-bold block mb-1">Canonical & Valid</span>
+            <span className="text-2xl font-extrabold text-[var(--cr-status-green)]">{summary.valid_records}</span>
           </div>
-          <div className="bg-slate-900/80 border border-amber-500/30 p-4 rounded-xl">
-            <span className="text-xs text-amber-400 block mb-1">Flagged Anomalies</span>
-            <span className="text-2xl font-bold font-mono text-amber-400">{summary.anomalies_detected}</span>
+          <div className="cr-card p-3.5 border-l-2 border-l-[var(--cr-status-amber)]">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-status-amber)] font-bold block mb-1">Flagged Anomalies</span>
+            <span className="text-2xl font-extrabold text-[var(--cr-status-amber)]">{summary.anomalies_detected}</span>
           </div>
-          <div className="bg-slate-900/80 border border-cyan-500/30 p-4 rounded-xl">
-            <span className="text-xs text-cyan-400 block mb-1">Gateway SLA Status</span>
-            <span className="text-xl font-bold font-mono text-cyan-300">PROTECTED</span>
+          <div className="cr-card p-3.5 border-l-2 border-l-[var(--cr-status-blue)]">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-status-blue)] font-bold block mb-1">Gateway SLA</span>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="w-2 h-2 rounded-full bg-[var(--cr-status-blue)]"></span>
+              <span className="text-base font-bold text-[var(--cr-status-blue)]">PROTECTED</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#0b132b] border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
-          <Database className="w-4 h-4 text-cyan-400" />
-          <span>Source System Feed Health</span>
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      {/* Source System Feed Health */}
+      <div className="cr-panel p-5">
+        <div className="flex items-center justify-between mb-3.5">
+          <h3 className="text-sm font-bold text-[var(--cr-text-primary)] flex items-center gap-2">
+            <Database className="w-4 h-4 text-[var(--cr-primary-interactive)]" />
+            <span>Source System Ingestion Health</span>
+          </h3>
+          <span className="text-[11px] font-semibold text-[var(--cr-text-secondary)]">
+            {Object.keys(summary.source_system_health).length} Integrated Feeds
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {Object.entries(summary.source_system_health).map(([sys, counts]) => (
-            <div key={sys} className="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-              <span className="text-xs font-bold text-slate-200 block">{sys}</span>
-              <div className="flex items-center justify-between mt-2 text-xs">
-                <span className="text-slate-400">Total: {counts.total}</span>
-                {counts.issues > 0 ? (
-                  <span className="text-amber-400 font-semibold font-mono">⚠️ {counts.issues} flags</span>
-                ) : (
-                  <span className="text-emerald-400 font-semibold font-mono">✓ Clean</span>
+            <button
+              key={sys}
+              onClick={() => setSelectedSystem(selectedSystem === sys ? 'ALL' : sys)}
+              className={`cr-card p-3 text-left transition-all cursor-pointer ${
+                selectedSystem === sys
+                  ? 'border-[var(--cr-primary-interactive)] bg-[var(--cr-surface-subtle)] shadow-xs'
+                  : 'hover:border-[var(--cr-border-active)]'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[var(--cr-text-primary)]">{sys}</span>
+                {selectedSystem === sys && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-primary-interactive)]"></span>
                 )}
               </div>
-            </div>
+              <div className="flex items-center justify-between mt-2 text-xs">
+                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">Tot: {counts.total}</span>
+                {counts.issues > 0 ? (
+                  <span className="cr-badge-amber text-[10px] py-0 px-1">
+                    {counts.issues} flags
+                  </span>
+                ) : (
+                  <span className="cr-badge-green text-[10px] py-0 px-1">
+                    Clean
+                  </span>
+                )}
+              </div>
+            </button>
           ))}
         </div>
       </div>
 
-      <div className="bg-[#0b132b] border border-slate-800 rounded-2xl p-5 shadow-xl overflow-hidden">
-        <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-400" />
-          <span>Active Flagged Anomalies (Actionable Diagnoses)</span>
-        </h3>
+      {/* Active Flagged Anomalies: Hierarchical & Expandable */}
+      <div className="cr-panel p-5">
+        <div className="flex flex-wrap items-center justify-between pb-3.5 mb-3 border-b border-[var(--cr-border-subtle)] gap-3">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-[var(--cr-status-amber)]" />
+            <h3 className="text-sm font-bold text-[var(--cr-text-primary)]">
+              Active Flagged Anomalies ({filteredIssues.length})
+            </h3>
+            {selectedSystem !== 'ALL' && (
+              <span className="cr-badge-blue text-[10px]">
+                Filtered: {selectedSystem}
+              </span>
+            )}
+          </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-mono border-b border-slate-800">
-              <tr>
-                <th className="py-2.5 px-3">Record ID</th>
-                <th className="py-2.5 px-3">Source System</th>
-                <th className="py-2.5 px-3">Entity Type</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3">Diagnostic Reason</th>
-                <th className="py-2.5 px-3">Recommended Operational Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800">
-              {summary.issues.map((issue, idx) => (
-                <tr key={idx} className="hover:bg-slate-900/50 transition-colors">
-                  <td className="py-3 px-3 font-mono text-cyan-300 font-semibold">{issue.record_id}</td>
-                  <td className="py-3 px-3">
-                    <span className="bg-slate-800 px-2 py-0.5 rounded text-[10px] font-mono text-slate-300">
+          <div className="flex items-center gap-2">
+            {selectedSystem !== 'ALL' && (
+              <button
+                onClick={() => setSelectedSystem('ALL')}
+                className="text-xs text-[var(--cr-text-secondary)] hover:underline cursor-pointer font-medium"
+              >
+                Clear Filter
+              </button>
+            )}
+            <button
+              onClick={toggleExpandAll}
+              className="cr-btn-secondary text-xs"
+            >
+              {filteredIssues.every((_, idx) => expandedIds[`issue-${idx}`]) ? 'Collapse All' : 'Expand All Details'}
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-2.5">
+          {filteredIssues.map((issue, idx) => {
+            const key = `issue-${idx}`;
+            const isExpanded = !!expandedIds[key];
+
+            return (
+              <div
+                key={key}
+                className={`cr-card transition-colors ${
+                  isExpanded ? 'border-[var(--cr-status-amber-border)] bg-[var(--cr-surface-subtle)]' : 'hover:border-[var(--cr-border-active)]'
+                }`}
+              >
+                {/* Compact Primary Row */}
+                <div
+                  onClick={() => toggleExpand(key)}
+                  className="p-3.5 flex flex-wrap items-center justify-between gap-3 cursor-pointer select-none"
+                >
+                  <div className="flex flex-wrap items-center gap-2.5 min-w-0">
+                    <span className="text-xs font-extrabold text-[var(--cr-primary-interactive)]">
+                      {issue.record_id}
+                    </span>
+                    <span className="cr-badge-neutral text-[10px] py-0 px-1.5">
                       {issue.source_system}
                     </span>
-                  </td>
-                  <td className="py-3 px-3 text-slate-400">{issue.entity_type}</td>
-                  <td className="py-3 px-3">
-                    <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded text-[10px] font-semibold">
+                    <span className="text-xs text-[var(--cr-text-primary)] font-semibold">
+                      {issue.entity_type}
+                    </span>
+                    <span className="cr-badge-amber text-[10px] py-0 px-1.5">
                       {issue.status}
                     </span>
-                  </td>
-                  <td className="py-3 px-3 text-amber-200">
-                    <ul className="list-disc list-inside space-y-0.5">
-                      {issue.reasons.map((r, rIdx) => (
-                        <li key={rIdx}>{r}</li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td className="py-3 px-3 text-slate-400 italic">{issue.recommended_action}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <span className="text-xs text-[var(--cr-text-secondary)] truncate max-w-xs md:max-w-md hidden sm:inline-block">
+                      {issue.reasons[0] || 'Anomaly detected'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-[var(--cr-primary-interactive)] font-bold flex items-center gap-1">
+                      {isExpanded ? 'Hide Details' : 'View Action'}
+                      {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Expanded High-Contrast Diagnostic & Action Breakdown */}
+                {isExpanded && (
+                  <div className="px-4 pb-4 pt-1 border-t border-[var(--cr-border-subtle)] space-y-3">
+                    <div>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--cr-status-amber)] block mb-1">
+                        Diagnostic Reasons:
+                      </span>
+                      <ul className="space-y-1 bg-[var(--cr-surface)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-primary)]">
+                        {issue.reasons.map((r, rIdx) => (
+                          <li key={rIdx} className="flex items-start gap-2">
+                            <span className="text-[var(--cr-status-amber)] mt-0.5 font-bold">•</span>
+                            <span>{r}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--cr-primary-interactive)] block mb-1">
+                        Recommended Operational Action:
+                      </span>
+                      <div className="bg-[var(--cr-surface)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-primary)] flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-[var(--cr-status-green)] mt-0.5 flex-shrink-0" />
+                        <span className="leading-relaxed font-semibold">{issue.recommended_action}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

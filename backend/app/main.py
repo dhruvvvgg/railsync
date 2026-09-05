@@ -23,7 +23,7 @@ from app.models import (
 )
 
 app = FastAPI(
-    title="RAILSYNC-ABP Backend API",
+    title="RAILSYNC Backend API",
     description="Explainable AI-Assisted Automatic Block Planning for Coordinated Railway Maintenance",
     version="1.0.0"
 )
@@ -73,7 +73,7 @@ def get_system_status():
     data = load_canonical_data()
     return {
         "status": "OPERATIONAL",
-        "system": "RAILSYNC-ABP v1.0",
+        "system": "RAILSYNC v1.0",
         "tagline": "One corridor. One coordinated plan. Maximum maintenance with minimum disruption.",
         "section": data["metadata"]["section"],
         "statistics": data["metadata"],

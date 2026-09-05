@@ -296,7 +296,7 @@ export const TRANSLATIONS = {
     act2Desc: 'In 31 milliseconds, mathematical constraint programming scans 14 days of pending tasks, screens 29 dirty records, enforces 25 kV AC power isolation, and shifts blocks into overnight freight lull valleys.',
     
     act3Title: 'Act 3: The Proof',
-    act3Subtitle: 'RAILSYNC-ABP Synchronized Plan A',
+    act3Subtitle: 'RAILSYNC Synchronized Plan A',
     act3Badge: '✅ 0 Conflicts · 0m Express Train Delay · 3.25h Unified Window',
     act3Desc: 'All 3 departments perform track tamping, overhead wire inspection, and signal testing in the exact same 3.25-hour overnight window. Vande Bharat and Rajdhani express trains maintain 100% punctuality.',
 
@@ -311,7 +311,7 @@ export const TRANSLATIONS = {
 
     compareTitle: 'Side-by-Side Reality Check',
     manualReality: 'Manual Booking (Current Reality)',
-    railsyncOptimized: 'RAILSYNC-ABP (AI Optimized)',
+    railsyncOptimized: 'RAILSYNC (AI Optimized)',
     
     mareyCaption: 'Railway Time-Distance Graph: Horizontal axis shows Time (00:00 to 24:00), vertical axis shows Stations along the corridor. Where a train line intersects a maintenance block rectangle, trains are colliding or delayed.',
     conflictDetected: '⚠️ Manual Booking Collision: Overnight train path intersects track closure window here!',

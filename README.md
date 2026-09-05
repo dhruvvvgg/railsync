@@ -1,4 +1,4 @@
-# 🚆 RAILSYNC-ABP: Autonomous Railway Block Planning System
+# 🚆 RAILSYNC: Autonomous Railway Block Planning System
 ### **Explainable AI-Assisted Automatic Block Planning for Coordinated Railway Maintenance**
 *Ministry of Railways | Smart India Hackathon 2026 | Problem Statement ID: SIH26027*
 
@@ -24,8 +24,8 @@ Infrastructure maintenance across **Civil Engineering (TMS)**, **Electrical Trac
 * **45% Heavy Track Machinery Idling** (CSM tampers, BCM ballast cleaners) waiting for traffic block sanctions.
 * **Fragmented Corridor Closures:** 3 separate daytime disconnections for the same corridor stretch.
 
-### The RAILSYNC-ABP Solution:
-RAILSYNC-ABP provides an **Explainable Decision-Support Cockpit** that:
+### The RAILSYNC Solution:
+RAILSYNC provides an **Explainable Decision-Support Cockpit** that:
 1. **Scans Future Work (Look-Ahead Bundling):** Proactively pairs compatible Engineering, Traction, and S&T tasks into unified **3-in-1 Shadow Corridor Blocks**.
 2. **Deterministic Safety Rules:** Enforces hard-coded 25 kV AC electrical isolation and train safety headways using **Google OR-Tools CP-SAT** (never delegates safety to black-box ML).
 3. **Data-Quality Gateway:** Automatically flags real-world dirty data (duplicate requests, missing Km markers, stale feeds) without crashing.
@@ -144,7 +144,7 @@ sih_rail/
 ---
 
 ## ⚖️ Indian Railways Statutory Compliance Disclaimer
-* **RAILSYNC-ABP is an advisory decision-support system.** It generates candidate plans for review by authorized Section Controllers.
+* **RAILSYNC is an advisory decision-support system.** It generates candidate plans for review by authorized Section Controllers.
 * It does **not** grant railway blocks, issue movement authority, operate signalling, control traction power, or certify track fitness.
 * All statutory safety procedures remain governed by the **Indian Railways General & Subsidiary Rules (G&SR)**.
 
