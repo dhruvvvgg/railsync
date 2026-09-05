@@ -191,7 +191,7 @@ export function App() {
         onToggleTheme={toggleTheme}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 relative z-10">
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-6 space-y-6 relative z-10">
         <AnimatePresence mode="wait">
           {viewMode === 'story' ? (
             /* Story Flow View with smooth motion transition */
@@ -220,16 +220,16 @@ export function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-6"
+              className="space-y-6 w-full"
             >
-              {/* Top KPI Telemetry Cards (Clean layout, sans-serif typography, no badge clutter) */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {/* Top KPI Telemetry Cards (Clean layout, sans-serif typography, WCAG legible) */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Block Utilization */}
-                <div className="cr-card p-4 flex flex-col justify-between">
+                <div className="cr-card p-4 sm:p-5 flex flex-col justify-between">
                   <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Block Utilization</span>
-                    <div className="p-1 rounded bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)]">
-                      <TrendingUp className="w-3.5 h-3.5" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Block Utilization</span>
+                    <div className="p-1.5 rounded bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)]">
+                      <TrendingUp className="w-4 h-4" />
                     </div>
                   </div>
                   <div className="flex items-baseline justify-between mt-1">
@@ -243,11 +243,11 @@ export function App() {
                 </div>
 
                 {/* Passenger Train Delays */}
-                <div className="cr-card p-4 flex flex-col justify-between">
+                <div className="cr-card p-4 sm:p-5 flex flex-col justify-between">
                   <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Passenger Delays</span>
-                    <div className="p-1 rounded bg-[var(--cr-status-blue-bg)] text-[var(--cr-status-blue)]">
-                      <Clock className="w-3.5 h-3.5" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Passenger Delays</span>
+                    <div className="p-1.5 rounded bg-[var(--cr-status-blue-bg)] text-[var(--cr-status-blue)]">
+                      <Clock className="w-4 h-4" />
                     </div>
                   </div>
                   <div className="flex items-baseline justify-between mt-1">
@@ -261,11 +261,11 @@ export function App() {
                 </div>
 
                 {/* Track Availability Index */}
-                <div className="cr-card p-4 flex flex-col justify-between">
+                <div className="cr-card p-4 sm:p-5 flex flex-col justify-between">
                   <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Track Availability</span>
-                    <div className="p-1 rounded bg-[var(--cr-status-blue-bg)] text-[var(--cr-status-blue)]">
-                      <ShieldCheck className="w-3.5 h-3.5" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Track Availability</span>
+                    <div className="p-1.5 rounded bg-[var(--cr-status-blue-bg)] text-[var(--cr-status-blue)]">
+                      <ShieldCheck className="w-4 h-4" />
                     </div>
                   </div>
                   <div className="flex items-baseline justify-between mt-1">
@@ -279,11 +279,11 @@ export function App() {
                 </div>
 
                 {/* Multi-Dept Synergy */}
-                <div className="cr-card p-4 flex flex-col justify-between">
+                <div className="cr-card p-4 sm:p-5 flex flex-col justify-between">
                   <div className="flex items-center justify-between text-xs text-[var(--cr-text-secondary)] mb-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Multi-Dept Synergy</span>
-                    <div className="p-1 rounded bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)]">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Multi-Dept Synergy</span>
+                    <div className="p-1.5 rounded bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)]">
+                      <CheckCircle2 className="w-4 h-4" />
                     </div>
                   </div>
                   <div className="flex items-baseline justify-between mt-1">
@@ -422,7 +422,7 @@ export function App() {
             RAILSYNC v1.0 • Smart India Hackathon 2026 • Ministry of Railways (SIH26027)
           </span>
         </div>
-        <div className="flex items-center gap-4 text-[var(--cr-text-secondary)] text-[11px] font-medium">
+        <div className="flex items-center gap-4 text-[var(--cr-text-secondary)] text-xs font-medium">
           <span>Decision-Support Layer</span>
           <span className="text-[var(--cr-border)]">•</span>
           <span className="text-[var(--cr-status-green)] font-bold">G&SR Safety Rules Verified</span>

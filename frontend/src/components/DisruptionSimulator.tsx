@@ -28,11 +28,11 @@ export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ onInje
         <div className="flex flex-wrap items-center gap-2 mb-1.5">
           <AlertCircle className="w-5 h-5 text-[var(--cr-status-red)]" />
           <h2 className="text-base sm:text-lg font-extrabold text-[var(--cr-text-primary)]">Live Disruption & Emergency Re-Dispatching Sandbox</h2>
-          <span className="cr-badge-red text-[10.5px]">
+          <span className="cr-badge-red text-xs">
             Dynamic CP-SAT Re-dispatch
           </span>
         </div>
-        <p className="text-xs text-[var(--cr-text-secondary)] max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[var(--cr-text-secondary)] max-w-3xl leading-relaxed">
           Demonstrates how the Google OR-Tools CP-SAT engine dynamically repairs schedules in sub-second latency when unexpected incidents occur, rerouting flexible freight rakes while safeguarding high-priority express passenger paths.
         </p>
 
@@ -67,7 +67,7 @@ export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ onInje
             </div>
 
             <div className="bg-[var(--cr-surface-subtle)] border border-[var(--cr-border)] px-3.5 py-2 rounded-lg text-right">
-              <span className="text-[10px] text-[var(--cr-text-secondary)] block uppercase font-bold">CP-SAT Solve Latency</span>
+              <span className="text-xs text-[var(--cr-text-secondary)] block uppercase font-bold">CP-SAT Solve Latency</span>
               <span className="text-lg font-extrabold text-[var(--cr-primary-interactive)]">{result.solver_latency_seconds}s</span>
             </div>
           </div>
@@ -84,13 +84,13 @@ export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ onInje
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)]">
                   <span className="text-[var(--cr-text-primary)] font-medium">Train 20104 (Vande Bharat):</span>
-                  <span className="cr-badge-green text-[10.5px]">
+                  <span className="cr-badge-green text-xs">
                     {result.operational_impact?.vande_bharat_20104}
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)]">
                   <span className="text-[var(--cr-text-primary)] font-medium">Train 12302 (Howrah Rajdhani):</span>
-                  <span className="cr-badge-green text-[10.5px]">
+                  <span className="cr-badge-green text-xs">
                     {result.operational_impact?.howrah_rajdhani_12302}
                   </span>
                 </div>
@@ -107,19 +107,19 @@ export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ onInje
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)]">
                   <span className="text-[var(--cr-text-primary)] font-medium">Emergency Slot:</span>
-                  <span className="cr-badge-blue text-[10.5px]">
+                  <span className="cr-badge-blue text-xs">
                     {result.operational_impact?.emergency_block_allocated}
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)]">
                   <span className="text-[var(--cr-text-primary)] font-medium">Goods Train 70021:</span>
-                  <span className="text-[var(--cr-status-amber)] font-bold text-[11px]">
+                  <span className="text-[var(--cr-status-amber)] font-bold text-xs">
                     {result.operational_impact?.goods_train_70021}
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)]">
                   <span className="text-[var(--cr-text-primary)] font-medium">Assigned Gang:</span>
-                  <span className="text-[var(--cr-text-secondary)] font-medium text-[11px]">
+                  <span className="text-[var(--cr-text-secondary)] font-medium text-xs">
                     {result.operational_impact?.repair_gang_deployed}
                   </span>
                 </div>
@@ -128,7 +128,7 @@ export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ onInje
           </div>
 
           {/* Audit Trace */}
-          <div className="mt-4 pt-3 border-t border-[var(--cr-border-subtle)] text-xs text-[var(--cr-text-secondary)] bg-[var(--cr-surface-subtle)] p-3 rounded-lg border border-[var(--cr-border)] text-[11px] leading-relaxed">
+          <div className="mt-4 pt-3 border-t border-[var(--cr-border-subtle)] text-xs text-[var(--cr-text-secondary)] bg-[var(--cr-surface-subtle)] p-3 rounded-lg border border-[var(--cr-border)] leading-relaxed">
             <strong className="text-[var(--cr-status-green)] font-bold">Audit Trace:</strong> {result.audit_trail}
           </div>
         </div>

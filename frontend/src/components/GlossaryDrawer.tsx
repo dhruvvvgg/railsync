@@ -46,11 +46,11 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
                     ? 'இந்திய ரயில்வே கலைச்சொல் அகராதி'
                     : 'Indian Railways Domain Glossary')}
                 </span>
-                <span className="cr-badge-blue text-[10px]">
+                <span className="cr-badge-blue text-xs">
                   {GLOSSARY_TERMS.length} Terms
                 </span>
               </h2>
-              <p className="text-xs text-[var(--cr-text-muted)] mt-0.5">
+              <p className="text-xs text-[var(--cr-text-secondary)] mt-0.5">
                 {language === 'hi'
                   ? 'तकनीकी रेलवे शब्दों की सरल हिंदी व्याख्या'
                   : (language === 'ta'
@@ -61,7 +61,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
+            className="p-1.5 text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] hover:bg-[var(--cr-border)]/50 rounded-lg transition-colors cursor-pointer border border-[var(--cr-border)]"
           >
             <X className="w-5 h-5" />
           </button>
@@ -70,7 +70,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
         {/* Search & Category Filters */}
         <div className="p-4 border-b border-[var(--cr-border)] space-y-3 bg-[var(--cr-bg)]">
           <div className="relative">
-            <Search className="w-4 h-4 text-[var(--cr-text-muted)] absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-[var(--cr-text-secondary)] absolute left-3 top-2.5" />
             <input
               type="text"
               value={searchQuery}
@@ -82,7 +82,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
                   ? 'தேடுக (எ.கா. TMS, OHE, MSDAC, Tamper)...'
                   : 'Search acronym (e.g. TMS, OHE, MSDAC, Tamper)...')
               }
-              className="w-full bg-[var(--cr-surface)] border border-[var(--cr-border)] rounded-lg pl-9 pr-4 py-1.5 text-xs text-[var(--cr-text-primary)] placeholder-[var(--cr-text-muted)] focus:outline-none focus:border-[var(--cr-primary)]"
+              className="w-full bg-[var(--cr-surface)] border border-[var(--cr-border)] rounded-lg pl-9 pr-4 py-1.5 text-xs text-[var(--cr-text-primary)] placeholder-[var(--cr-text-secondary)] focus:outline-none focus:border-[var(--cr-primary-interactive)]"
             />
           </div>
 
@@ -91,10 +91,10 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`text-[11px] px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
                   selectedCategory === cat
-                    ? 'bg-[var(--cr-primary)] text-white font-semibold shadow-sm'
-                    : 'text-[var(--cr-text-muted)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] border border-[var(--cr-border)]'
+                    ? 'bg-[var(--cr-primary-interactive)] text-white font-bold shadow-sm'
+                    : 'text-[var(--cr-text-secondary)] hover:text-[var(--cr-text-primary)] bg-[var(--cr-surface)] border border-[var(--cr-border)]'
                 }`}
               >
                 {cat}
@@ -106,7 +106,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
         {/* Glossary Terms List */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3 divide-y divide-[var(--cr-border)]">
           {filteredTerms.length === 0 ? (
-            <div className="text-center py-12 text-[var(--cr-text-muted)] text-xs italic">
+            <div className="text-center py-12 text-[var(--cr-text-secondary)] text-xs italic">
               {language === 'hi'
                 ? 'कोई मेल नहीं मिला।'
                 : (language === 'ta'
@@ -118,22 +118,22 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
               const getCategoryBadge = () => {
                 switch (term.category) {
                   case 'Track':
-                    return <span className="cr-badge-blue text-[10px]"><Hammer className="w-3 h-3" /> Track / Civil</span>;
+                    return <span className="cr-badge-blue text-xs"><Hammer className="w-3 h-3" /> Track / Civil</span>;
                   case 'Traction':
-                    return <span className="cr-badge-green text-[10px]"><Zap className="w-3 h-3" /> 25 kV Electrical</span>;
+                    return <span className="cr-badge-green text-xs"><Zap className="w-3 h-3" /> 25 kV Electrical</span>;
                   case 'Signal':
-                    return <span className="cr-badge-blue text-[10px]"><Radio className="w-3 h-3" /> S&T / Signal</span>;
+                    return <span className="cr-badge-blue text-xs"><Radio className="w-3 h-3" /> S&T / Signal</span>;
                   case 'Rules':
-                    return <span className="cr-badge-red text-[10px]"><ShieldCheck className="w-3 h-3" /> Safety Rules</span>;
+                    return <span className="cr-badge-red text-xs"><ShieldCheck className="w-3 h-3" /> Safety Rules</span>;
                   default:
-                    return <span className="cr-badge-neutral text-[10px]">Operations</span>;
+                    return <span className="cr-badge-neutral text-xs">Operations</span>;
                 }
               };
 
               return (
                 <div key={term.acronym} className="pt-3 first:pt-0 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-[var(--cr-primary)] text-xs bg-[var(--cr-bg)] px-2 py-0.5 rounded border border-[var(--cr-border)]">
+                    <span className="font-bold text-[var(--cr-primary-interactive)] text-xs bg-[var(--cr-bg)] px-2 py-0.5 rounded border border-[var(--cr-border)]">
                       {term.acronym}
                     </span>
                     {getCategoryBadge()}
@@ -145,7 +145,7 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
 
                   <div className="bg-[var(--cr-bg)] p-2.5 rounded-xl border border-[var(--cr-border)] space-y-1.5">
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-[var(--cr-text-muted)] block tracking-wider">
+                      <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block tracking-wider">
                         {language === 'hi'
                           ? 'सरल व्याख्या'
                           : (language === 'ta'
@@ -158,14 +158,14 @@ export const GlossaryDrawer: React.FC<GlossaryDrawerProps> = ({ isOpen, onClose,
                     </div>
 
                     <div className="pt-1 border-t border-[var(--cr-border)]">
-                      <span className="text-[10px] uppercase font-bold text-[var(--cr-status-green)] block tracking-wider">
+                      <span className="text-xs uppercase font-bold text-[var(--cr-status-green)] block tracking-wider">
                         {language === 'hi'
                           ? 'रेलसिंक में इसका महत्व'
                           : (language === 'ta'
                           ? 'ரயில்சிங்கில் இதன் முக்கியத்துவம்'
                           : 'Why It Matters In RAILSYNC')}
                       </span>
-                      <p className="text-[11px] text-[var(--cr-text-muted)] leading-relaxed">
+                      <p className="text-xs text-[var(--cr-text-secondary)] leading-relaxed">
                         {term.whyItMatters[language] || term.whyItMatters.en}
                       </p>
                     </div>

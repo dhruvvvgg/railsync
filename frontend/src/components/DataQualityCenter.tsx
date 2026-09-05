@@ -49,11 +49,11 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
               <ShieldAlert className="w-5 h-5 text-[var(--cr-status-amber)]" />
               <h2 className="text-base sm:text-lg font-extrabold text-[var(--cr-text-primary)]">Data-Quality & Canonical Ingestion Gateway</h2>
-              <span className="cr-badge-amber text-[10.5px]">
+              <span className="cr-badge-amber text-xs">
                 Red-Team Quarantine Active
               </span>
             </div>
-            <p className="text-xs text-[var(--cr-text-secondary)] max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[var(--cr-text-secondary)] max-w-2xl leading-relaxed">
               Real railway feeds contain missing fields, duplicates, and stale inputs. RAILSYNC never silently drops or modifies dirty records. It flags them with actionable diagnostic reasons for Section Controllers.
             </p>
           </div>
@@ -69,19 +69,19 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
         {/* 4 Telemetry Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
           <div className="cr-card p-3.5">
-            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block mb-1">Screened</span>
+            <span className="text-xs uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block mb-1">Screened</span>
             <span className="text-2xl font-extrabold text-[var(--cr-text-primary)]">{summary.total_records_screened}</span>
           </div>
           <div className="cr-card p-3.5 border-l-2 border-l-[var(--cr-status-green)]">
-            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-status-green)] font-bold block mb-1">Canonical & Valid</span>
+            <span className="text-xs uppercase tracking-wider text-[var(--cr-status-green)] font-bold block mb-1">Canonical & Valid</span>
             <span className="text-2xl font-extrabold text-[var(--cr-status-green)]">{summary.valid_records}</span>
           </div>
           <div className="cr-card p-3.5 border-l-2 border-l-[var(--cr-status-amber)]">
-            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-status-amber)] font-bold block mb-1">Flagged Anomalies</span>
+            <span className="text-xs uppercase tracking-wider text-[var(--cr-status-amber)] font-bold block mb-1">Flagged Anomalies</span>
             <span className="text-2xl font-extrabold text-[var(--cr-status-amber)]">{summary.anomalies_detected}</span>
           </div>
           <div className="cr-card p-3.5 border-l-2 border-l-[var(--cr-status-blue)]">
-            <span className="text-[11px] uppercase tracking-wider text-[var(--cr-status-blue)] font-bold block mb-1">Gateway SLA</span>
+            <span className="text-xs uppercase tracking-wider text-[var(--cr-status-blue)] font-bold block mb-1">Gateway SLA</span>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="w-2 h-2 rounded-full bg-[var(--cr-status-blue)]"></span>
               <span className="text-base font-bold text-[var(--cr-status-blue)]">PROTECTED</span>
@@ -97,7 +97,7 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
             <Database className="w-4 h-4 text-[var(--cr-primary-interactive)]" />
             <span>Source System Ingestion Health</span>
           </h3>
-          <span className="text-[11px] font-semibold text-[var(--cr-text-secondary)]">
+          <span className="text-xs font-semibold text-[var(--cr-text-secondary)]">
             {Object.keys(summary.source_system_health).length} Integrated Feeds
           </span>
         </div>
@@ -120,13 +120,13 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
                 )}
               </div>
               <div className="flex items-center justify-between mt-2 text-xs">
-                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">Tot: {counts.total}</span>
+                <span className="text-[var(--cr-text-secondary)] text-xs font-medium">Tot: {counts.total}</span>
                 {counts.issues > 0 ? (
-                  <span className="cr-badge-amber text-[10px] py-0 px-1">
+                  <span className="cr-badge-amber text-xs py-0 px-1">
                     {counts.issues} flags
                   </span>
                 ) : (
-                  <span className="cr-badge-green text-[10px] py-0 px-1">
+                  <span className="cr-badge-green text-xs py-0 px-1">
                     Clean
                   </span>
                 )}
@@ -145,7 +145,7 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
               Active Flagged Anomalies ({filteredIssues.length})
             </h3>
             {selectedSystem !== 'ALL' && (
-              <span className="cr-badge-blue text-[10px]">
+              <span className="cr-badge-blue text-xs">
                 Filtered: {selectedSystem}
               </span>
             )}
@@ -160,18 +160,21 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
                 Clear Filter
               </button>
             )}
+            <span className="text-xs text-[var(--cr-text-muted)]">
+              Click an entry to inspect diagnostic reasons
+            </span>
             <button
               onClick={toggleExpandAll}
               className="cr-btn-secondary text-xs"
             >
-              {filteredIssues.every((_, idx) => expandedIds[`issue-${idx}`]) ? 'Collapse All' : 'Expand All Details'}
+              {filteredIssues.every((issue) => expandedIds[`${issue.record_id}-${issue.source_system}`]) ? 'Collapse All' : 'Expand All Details'}
             </button>
           </div>
         </div>
 
         <div className="space-y-2.5">
-          {filteredIssues.map((issue, idx) => {
-            const key = `issue-${idx}`;
+          {filteredIssues.map((issue) => {
+            const key = `${issue.record_id}-${issue.source_system}`;
             const isExpanded = !!expandedIds[key];
 
             return (
@@ -190,13 +193,13 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
                     <span className="text-xs font-extrabold text-[var(--cr-primary-interactive)]">
                       {issue.record_id}
                     </span>
-                    <span className="cr-badge-neutral text-[10px] py-0 px-1.5">
+                    <span className="cr-badge-neutral text-xs py-0 px-1.5">
                       {issue.source_system}
                     </span>
                     <span className="text-xs text-[var(--cr-text-primary)] font-semibold">
                       {issue.entity_type}
                     </span>
-                    <span className="cr-badge-amber text-[10px] py-0 px-1.5">
+                    <span className="cr-badge-amber text-xs py-0 px-1.5">
                       {issue.status}
                     </span>
                     <span className="text-xs text-[var(--cr-text-secondary)] truncate max-w-xs md:max-w-md hidden sm:inline-block">
@@ -216,7 +219,7 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
                 {isExpanded && (
                   <div className="px-4 pb-4 pt-1 border-t border-[var(--cr-border-subtle)] space-y-3">
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--cr-status-amber)] block mb-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[var(--cr-status-amber)] block mb-1">
                         Diagnostic Reasons:
                       </span>
                       <ul className="space-y-1 bg-[var(--cr-surface)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-primary)]">
@@ -230,7 +233,7 @@ export const DataQualityCenter: React.FC<DataQualityCenterProps> = ({ report, on
                     </div>
 
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--cr-primary-interactive)] block mb-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[var(--cr-primary-interactive)] block mb-1">
                         Recommended Operational Action:
                       </span>
                       <div className="bg-[var(--cr-surface)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-primary)] flex items-start gap-2">

@@ -35,7 +35,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto py-2">
+    <div className="space-y-8 w-full py-2">
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -57,7 +57,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
               {t.headline}
             </h1>
 
-            <p className="text-[var(--cr-text-secondary)] text-xs sm:text-sm leading-relaxed">
+            <p className="text-[var(--cr-text-secondary)] text-sm sm:text-base leading-relaxed">
               {language === 'hi'
                 ? 'पारंपरिक फोन-आधारित ब्लॉक बुकिंग को हटाकर गणितीय रूप से 3 विभागों के कार्यों को रात के खाली समय में बंडल करता है — ताकि वंदे भारत और राजधानी ट्रेनें 0 मिनट लेट हों।'
                 : (language === 'ta'
@@ -96,7 +96,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
           {/* Key Metric Card (Clean, sans-serif, high contrast) */}
           <div className="cr-card p-5 md:w-72 flex-shrink-0 space-y-3.5">
             <div className="border-b border-[var(--cr-border-subtle)] pb-2.5">
-              <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
+              <span className="text-xs uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
                 {language === 'hi' ? 'सॉल्वर गति' : (language === 'ta' ? 'சால்வர் வேகம்' : 'CP-SAT Latency')}
               </span>
               <div className="flex items-baseline justify-between mt-1">
@@ -106,7 +106,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             </div>
 
             <div className="border-b border-[var(--cr-border-subtle)] pb-2.5">
-              <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
+              <span className="text-xs uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
                 {language === 'hi' ? 'डेटा गेटवे स्क्रीनिंग' : (language === 'ta' ? 'தரவு வடிகட்டுதல்' : 'Dirty Data Screened')}
               </span>
               <div className="flex items-baseline justify-between mt-1">
@@ -116,7 +116,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             </div>
 
             <div>
-              <span className="text-[11px] uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
+              <span className="text-xs uppercase tracking-wider text-[var(--cr-text-secondary)] font-bold block">
                 {language === 'hi' ? 'सुरक्षा नियम अनुपालन' : (language === 'ta' ? 'சட்டப்பூர்வ பாதுகாப்பு விதிகள்' : 'Safety Rules')}
               </span>
               <div className="flex items-baseline justify-between mt-1">
@@ -144,7 +144,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
           {/* Card 1: Express Delays */}
           <div className="cr-card p-4 relative overflow-hidden">
             <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
-              <span className="text-[11px] uppercase tracking-wider">{t.kpiDetentions}</span>
+              <span className="text-xs uppercase tracking-wider">{t.kpiDetentions}</span>
               <Clock className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
             </div>
             <div className="flex items-baseline gap-2 mb-1.5">
@@ -155,13 +155,13 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? 'शून्य एक्सप्रेस विलंब (100% समयबद्धता)' : (language === 'ta' ? 'பூஜ்ஜிய பயணிகள் ரயில் தாமதம் (100% சரியான நேரம்)' : 'Zero passenger detentions')}
             </p>
-            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiDetentionsSub}</span>
+            <span className="text-xs text-[var(--cr-text-muted)] block mt-1">{t.kpiDetentionsSub}</span>
           </div>
 
           {/* Card 2: Track Downtime */}
           <div className="cr-card p-4 relative overflow-hidden">
             <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
-              <span className="text-[11px] uppercase tracking-wider">{t.kpiDowntime}</span>
+              <span className="text-xs uppercase tracking-wider">{t.kpiDowntime}</span>
               <Layers className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
             </div>
             <div className="flex items-baseline gap-2 mb-1.5">
@@ -172,13 +172,13 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? '50% कम लाइन बंदी' : (language === 'ta' ? '50% குறைவான பாதை முடக்கம்' : '50% reduction in track closures')}
             </p>
-            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiDowntimeSub}</span>
+            <span className="text-xs text-[var(--cr-text-muted)] block mt-1">{t.kpiDowntimeSub}</span>
           </div>
 
           {/* Card 3: Multi-Dept Bundling */}
           <div className="cr-card p-4 relative overflow-hidden">
             <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
-              <span className="text-[11px] uppercase tracking-wider">{t.kpiBundling}</span>
+              <span className="text-xs uppercase tracking-wider">{t.kpiBundling}</span>
               <CheckCircle2 className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
             </div>
             <div className="flex items-baseline gap-2 mb-1.5">
@@ -189,13 +189,13 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? '3-इन-1 संयुक्त कॉरिडोर ब्लॉक' : (language === 'ta' ? '3-இன்-1 ஒரே நேரத்தில் செயல்படுத்தல்' : 'Co-located simultaneous execution')}
             </p>
-            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiBundlingSub}</span>
+            <span className="text-xs text-[var(--cr-text-muted)] block mt-1">{t.kpiBundlingSub}</span>
           </div>
 
           {/* Card 4: Safety SLA */}
           <div className="cr-card p-4 relative overflow-hidden">
             <div className="text-xs text-[var(--cr-text-secondary)] font-bold mb-2 flex items-center justify-between">
-              <span className="text-[11px] uppercase tracking-wider">{t.kpiSafety}</span>
+              <span className="text-xs uppercase tracking-wider">{t.kpiSafety}</span>
               <ShieldCheck className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
             </div>
             <div className="flex items-baseline gap-2 mb-1.5">
@@ -206,7 +206,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <p className="text-xs text-[var(--cr-status-green)] font-bold">
               ✓ {language === 'hi' ? 'शून्य सुरक्षा उल्लंघन' : (language === 'ta' ? 'பூஜ்ஜிய பாதுகாப்பு மீறல்கள்' : 'Zero manual safety oversights')}
             </p>
-            <span className="text-[11px] text-[var(--cr-text-muted)] block mt-1">{t.kpiSafetySub}</span>
+            <span className="text-xs text-[var(--cr-text-muted)] block mt-1">{t.kpiSafetySub}</span>
           </div>
         </div>
       </div>
@@ -248,7 +248,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
                   ? 'காலை 09:00 முதல் 12:00 வரை தண்டவாளம் சீரமைக்க தனி பிளாக் கேட்கிறது.'
                   : 'Demands exclusive block 09:00–12:00 for CSM-09 track tamping.')}
               </p>
-              <span className="text-[11px] text-[var(--cr-status-red)] font-semibold mt-2 block">
+              <span className="text-xs text-[var(--cr-status-red)] font-semibold mt-2 block">
                 ❌ {language === 'hi' ? 'अलग से 3 घंटे लाइन बंद' : (language === 'ta' ? 'தனியாக 3 மணிநேரம் பாதை மூடல்' : 'Independent 3h shutdown')}
               </span>
             </div>
@@ -265,7 +265,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
                   ? 'பிற்பகல் 13:00 முதல் 15:30 வரை 25 kV கம்பி ஆய்வுக்கு மின் நிறுத்தம் கேட்கிறது.'
                   : 'Requests 25 kV power shutdown 13:00–15:30 for cantilever work.')}
               </p>
-              <span className="text-[11px] text-[var(--cr-status-red)] font-semibold mt-2 block">
+              <span className="text-xs text-[var(--cr-status-red)] font-semibold mt-2 block">
                 ❌ {language === 'hi' ? 'दोबारा 2.5 घंटे लाइन बंद' : (language === 'ta' ? 'மீண்டும் 2.5 மணிநேரம் பாதை மூடல்' : 'Repeated 2.5h shutdown')}
               </span>
             </div>
@@ -282,7 +282,7 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
                   ? 'மாலை 16:00 முதல் 18:30 வரை சிக்னல் மோட்டார் சோதனைக்கு பிளாக் கோருகிறது.'
                   : 'Books 16:00–18:30 for 143mm point motor calibration.')}
               </p>
-              <span className="text-[11px] text-[var(--cr-status-red)] font-semibold mt-2 block">
+              <span className="text-xs text-[var(--cr-status-red)] font-semibold mt-2 block">
                 ❌ {language === 'hi' ? 'तीसरी बार 2.5 घंटे लाइन बंद' : (language === 'ta' ? '3-வது முறையாக 2.5 மணிநேர மூடல்' : 'Third separate shutdown')}
               </span>
             </div>
@@ -414,15 +414,15 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
               <div className="cr-card-subtle p-3 rounded-lg text-xs">
                 <span className="text-[var(--cr-primary-interactive)] font-bold block">1. Civil Track Tamping</span>
-                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">CSM-09 Tamper (KM 44–83)</span>
+                <span className="text-[var(--cr-text-secondary)] text-xs font-medium">CSM-09 Tamper (KM 44–83)</span>
               </div>
               <div className="cr-card-subtle p-3 rounded-lg text-xs">
                 <span className="text-[var(--cr-status-green)] font-bold block">2. 25 kV OHE Isolation</span>
-                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">TRD Overhaul (KM 44–83)</span>
+                <span className="text-[var(--cr-text-secondary)] text-xs font-medium">TRD Overhaul (KM 44–83)</span>
               </div>
               <div className="cr-card-subtle p-3 rounded-lg text-xs">
                 <span className="text-[var(--cr-primary-interactive)] font-bold block">3. MSDAC & Points</span>
-                <span className="text-[var(--cr-text-secondary)] text-[11px] font-medium">Signal Sensor Check</span>
+                <span className="text-[var(--cr-text-secondary)] text-xs font-medium">Signal Sensor Check</span>
               </div>
             </div>
           </div>
@@ -434,15 +434,15 @@ export const StoryFlow: React.FC<StoryFlowProps> = ({
                 <FileCheck className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-[var(--cr-text-primary)] block">
+                <span className="text-xs sm:text-sm font-bold text-[var(--cr-text-primary)] block">
                   {language === 'hi'
                     ? 'अनुभाग नियंत्रक डिजिटल लाइन क्लीयरेंस मेमो (सत्यापित)'
                     : (language === 'ta'
                     ? 'பிரிவு கட்டுப்பாட்டாளர் டிஜிட்டல் பாதை அனுமதி மெமோ (சரிபார்க்கப்பட்டது)'
                     : 'Section Controller Digital Line Clearance Memo (Verified)')}
                 </span>
-                <p className="text-[11px] text-[var(--cr-text-secondary)] mt-0.5">{t.authFooter}</p>
-                <span className="text-[10px] text-[var(--cr-text-muted)] font-medium block mt-1">
+                <p className="text-xs text-[var(--cr-text-secondary)] mt-0.5">{t.authFooter}</p>
+                <span className="text-xs text-[var(--cr-text-muted)] font-medium block mt-1">
                   {t.authorizedBy} • Timestamp: 2026-09-04 23:45 IST
                 </span>
               </div>

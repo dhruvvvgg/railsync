@@ -27,20 +27,20 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ logs }) => {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
-              <FileCheck className="w-5 h-5 text-[var(--cr-primary)]" />
+              <FileCheck className="w-5 h-5 text-[var(--cr-primary-interactive)]" />
               <h2 className="text-base sm:text-lg font-bold text-[var(--cr-text-primary)]">Official Ledger & Approval Audit Trail</h2>
-              <span className="cr-badge-neutral text-[10.5px]">
+              <span className="cr-badge-neutral text-xs">
                 CRIS Statutory Compliance
               </span>
             </div>
-            <p className="text-xs text-[var(--cr-text-muted)] max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[var(--cr-text-secondary)] max-w-3xl leading-relaxed">
               Every candidate plan approval, override, and emergency re-dispatch action is immutably logged with authorized user credentials, role, timestamp, and justification reason.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-[var(--cr-bg)] px-3.5 py-2 rounded-lg border border-[var(--cr-border)]">
+          <div className="flex items-center gap-2 bg-[var(--cr-surface-subtle)] px-3.5 py-2 rounded-lg border border-[var(--cr-border)]">
             <ShieldCheck className="w-4 h-4 text-[var(--cr-status-green)]" />
-            <span className="text-xs text-[var(--cr-text-muted)]">
+            <span className="text-xs text-[var(--cr-text-secondary)]">
               <strong className="text-[var(--cr-text-primary)] font-bold">{logs.length}</strong> Immutable Records
             </span>
           </div>
@@ -58,11 +58,11 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ logs }) => {
               placeholder="Search audit records by controller, plan, or action..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-[var(--cr-bg)] border border-[var(--cr-border)] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[var(--cr-text-primary)] placeholder-[var(--cr-text-muted)] focus:outline-none focus:border-[var(--cr-primary)]"
+              className="w-full bg-[var(--cr-bg)] border border-[var(--cr-border)] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[var(--cr-text-primary)] placeholder-[var(--cr-text-muted)] focus:outline-none focus:border-[var(--cr-primary-interactive)]"
             />
           </div>
 
-          <span className="text-xs text-[var(--cr-text-muted)] tabular-nums">
+          <span className="text-xs text-[var(--cr-text-secondary)] tabular-nums">
             Showing {filteredLogs.length} of {logs.length}
           </span>
         </div>
@@ -70,7 +70,7 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ logs }) => {
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-[var(--cr-text-primary)]">
-            <thead className="bg-[var(--cr-bg)] text-[var(--cr-text-muted)] uppercase text-[10px] font-semibold border-b border-[var(--cr-border)]">
+            <thead className="bg-[var(--cr-surface-subtle)] text-[var(--cr-text-secondary)] uppercase text-xs font-bold border-b border-[var(--cr-border)]">
               <tr>
                 <th className="py-2.5 px-3">Timestamp</th>
                 <th className="py-2.5 px-3">Action</th>
@@ -96,8 +96,8 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ logs }) => {
                   const isLongReason = reasonText.length > 55;
 
                   return (
-                    <tr key={i} className="hover:bg-[var(--cr-bg)]/50 transition-colors">
-                      <td className="py-3 px-3 tabular-nums text-[var(--cr-text-muted)] whitespace-nowrap">
+                    <tr key={i} className="hover:bg-[var(--cr-surface-subtle)] transition-colors">
+                      <td className="py-3 px-3 tabular-nums text-[var(--cr-text-secondary)] whitespace-nowrap font-medium">
                         {log.timestamp?.slice(0, 19).replace('T', ' ')}
                       </td>
                       <td className="py-3 px-3 whitespace-nowrap">
@@ -108,13 +108,13 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ logs }) => {
                       <td className="py-3 px-3 text-[var(--cr-text-primary)] font-semibold whitespace-nowrap">
                         {log.plan_name || log.incident || 'System Event'}
                       </td>
-                      <td className="py-3 px-3 text-[var(--cr-primary)] font-medium whitespace-nowrap">
+                      <td className="py-3 px-3 text-[var(--cr-primary-interactive)] font-semibold whitespace-nowrap">
                         <span className="flex items-center gap-1.5">
-                          <UserCheck className="w-3.5 h-3.5 text-[var(--cr-primary)]" />
+                          <UserCheck className="w-3.5 h-3.5 text-[var(--cr-primary-interactive)]" />
                           <span>{log.approved_by || 'Control Office Engine'}</span>
                         </span>
                       </td>
-                      <td className="py-3 px-3 text-[var(--cr-text-muted)] whitespace-nowrap">
+                      <td className="py-3 px-3 text-[var(--cr-text-secondary)] whitespace-nowrap font-medium">
                         {log.role || 'System'}
                       </td>
                       <td className="py-3 px-3 text-[var(--cr-text-primary)]">
@@ -125,7 +125,7 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ logs }) => {
                           {isLongReason && (
                             <button
                               onClick={() => toggleRow(i)}
-                              className="ml-2 text-[var(--cr-primary)] hover:underline text-xs inline-flex items-center cursor-pointer"
+                              className="ml-2 text-[var(--cr-primary-interactive)] hover:underline text-xs inline-flex items-center cursor-pointer font-bold"
                             >
                               {isExpanded ? 'Less' : 'More'}
                             </button>

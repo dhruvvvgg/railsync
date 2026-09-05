@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="w-full max-w-full bg-[var(--cr-surface)] border-b border-[var(--cr-border)] text-[var(--cr-text-primary)] sticky top-0 z-40 transition-colors shadow-xs">
       {/* Top Banner */}
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-2.5 flex flex-wrap items-center justify-between gap-3">
         {/* Left: Brand & Operational Subtitle (Clean, zero badge clutter, no train icon) */}
         <div className="flex items-center gap-3">
           <div
@@ -66,11 +66,11 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="text-base sm:text-lg font-extrabold tracking-tight text-[var(--cr-text-primary)] group-hover:text-[var(--cr-primary-interactive)] transition-colors">
                   RAILSYNC
                 </span>
-                <span className="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded bg-[var(--cr-surface-subtle)] text-[var(--cr-text-secondary)] border border-[var(--cr-border)]">
+                <span className="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded bg-[var(--cr-surface-subtle)] text-[var(--cr-text-secondary)] border border-[var(--cr-border)]">
                   Live Dispatch • CNB Division
                 </span>
               </div>
-              <p className="text-[11px] text-[var(--cr-text-secondary)] mt-0.5 hidden lg:block leading-none">
+              <p className="text-xs text-[var(--cr-text-secondary)] mt-0.5 hidden lg:block leading-none">
                 {language === 'hi'
                   ? 'भारतीय रेल स्वचालित ब्लॉक नियोजन • उत्तर मध्य रेलवे'
                   : (language === 'ta'
@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden md:inline">
               {language === 'hi' ? 'शब्दावली' : (language === 'ta' ? 'கலைச்சொற்கள்' : 'Glossary')}
             </span>
-            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[var(--cr-status-amber-bg)] text-[var(--cr-status-amber)]">
+            <span className="text-xs font-bold px-1.5 py-0.2 rounded bg-[var(--cr-status-amber-bg)] text-[var(--cr-status-amber)]">
               14
             </span>
           </button>
@@ -208,7 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Navigation Tabs Sub-bar (Full Console mode) */}
       {viewMode === 'console' ? (
         <div className="border-t border-[var(--cr-border-subtle)] bg-[var(--cr-surface-subtle)]">
-          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 flex items-center gap-1 overflow-x-auto py-1 text-xs sm:text-sm font-medium">
+          <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center gap-1.5 overflow-x-auto py-1 text-xs sm:text-sm font-medium">
             <button
               onClick={() => setActiveTab('cockpit')}
               className={`relative px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
@@ -231,7 +231,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <AlertTriangle className="w-3.5 h-3.5 text-[var(--cr-status-amber)]" />
               <span>{t.tabGateway}</span>
-              <span className="cr-badge-amber text-[10px] py-0 px-1.5">
+              <span className="cr-badge-amber text-xs py-0 px-1.5">
                 {anomaliesCount}
               </span>
             </button>
@@ -246,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Layers className="w-3.5 h-3.5 text-[var(--cr-status-green)]" />
               <span>{t.tabOpportunities}</span>
-              <span className="cr-badge-green text-[10px] py-0 px-1.5">
+              <span className="cr-badge-green text-xs py-0 px-1.5">
                 {opportunitiesCount}
               </span>
             </button>
@@ -290,7 +290,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       ) : (
         <div className="border-t border-[var(--cr-border-subtle)] bg-[var(--cr-surface-subtle)]">
-          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-1.5 flex items-center justify-between text-xs text-[var(--cr-text-secondary)]">
+          <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-2 flex items-center justify-between text-xs sm:text-sm text-[var(--cr-text-secondary)]">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--cr-primary-interactive)]"></span>
               <span className="font-semibold text-[var(--cr-text-primary)]">

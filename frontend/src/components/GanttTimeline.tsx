@@ -296,7 +296,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
                       width: `${toPct(205)}%`
                     }}
                   >
-                    <span className="text-[9px] font-bold text-[var(--cr-status-green)] tracking-tight px-1 truncate">
+                    <span className="text-xs font-bold text-[var(--cr-status-green)] tracking-tight px-1 truncate">
                       ✦ {language === 'hi' ? 'रात्रि ब्लॉक (01:00–04:25)' : (language === 'ta' ? 'இரவு பிளாக் (01:00–04:25)' : 'Night Window (01:00–04:25)')}
                     </span>
                   </div>
@@ -311,7 +311,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
                   return (
                     <div
                       key={hour}
-                      className="absolute -translate-x-1/2 text-[10px] text-[var(--cr-text-muted)] tabular-nums font-medium flex flex-col items-center pointer-events-none"
+                      className="absolute -translate-x-1/2 text-xs text-[var(--cr-text-secondary)] tabular-nums font-semibold flex flex-col items-center pointer-events-none"
                       style={{ left: `${pct}%` }}
                     >
                       <span>{hourStr}</span>
@@ -389,12 +389,12 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
                         onMouseLeave={() => setHoveredTask(null)}
                       >
                         {/* Task Title */}
-                        <span className="text-[10px] font-bold text-white truncate pr-2 select-none">
+                        <span className="text-xs font-bold text-white truncate pr-2 select-none">
                           {task.widthPct < 8 ? task.shortName : task.name}
                         </span>
 
                         {/* Time Badge */}
-                        <span className={`text-[8.5px] tabular-nums font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${task.badgeBg} ${task.badgeText} select-none`}>
+                        <span className={`text-xs tabular-nums font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${task.badgeBg} ${task.badgeText} select-none`}>
                           {task.start}–{task.end}
                         </span>
                       </div>
@@ -412,7 +412,7 @@ export const GanttTimeline: React.FC<GanttTimelineProps> = ({ selectedPlan, bloc
         <div className="absolute top-16 right-8 cr-panel p-4 shadow-2xl backdrop-blur-md text-xs max-w-md z-30 pointer-events-none transition-all">
           <div className="flex items-center justify-between gap-2 border-b border-[var(--cr-border)] pb-2 mb-2">
             <span className="font-bold text-[var(--cr-text-primary)] text-sm">{hoveredTask.name}</span>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold tabular-nums ${hoveredTask.badgeBg} ${hoveredTask.badgeText}`}>
+            <span className={`px-2 py-0.5 rounded text-xs font-bold tabular-nums ${hoveredTask.badgeBg} ${hoveredTask.badgeText}`}>
               {hoveredTask.start} to {hoveredTask.end}
             </span>
           </div>

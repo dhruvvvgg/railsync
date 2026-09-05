@@ -41,11 +41,11 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
         <div className="flex flex-wrap items-center gap-2 mb-1.5">
           <GitCompare className="w-5 h-5 text-[var(--cr-primary-interactive)]" />
           <h2 className="text-base sm:text-lg font-extrabold text-[var(--cr-text-primary)]">Dual Candidate Plan Comparison & Trade-Offs</h2>
-          <span className="cr-badge-neutral text-[10.5px]">
+          <span className="cr-badge-neutral text-xs">
             No Universal Optimum Claimed
           </span>
         </div>
-        <p className="text-xs text-[var(--cr-text-secondary)] max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[var(--cr-text-secondary)] max-w-3xl leading-relaxed">
           A safety-critical railway system does not claim one single "best" plan. We present candidate plans with mathematically explicit trade-offs for human review and authorization by the Section Controller.
         </p>
       </div>
@@ -56,8 +56,8 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
         <div className="cr-card p-4 sm:p-5 flex flex-col justify-between border-l-4 border-l-[var(--cr-status-red)]">
           <div>
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--cr-border-subtle)]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--cr-text-secondary)]">Current Reality</span>
-              <span className="cr-badge-red text-[10px]">Uncoordinated</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--cr-text-secondary)]">Current Reality</span>
+              <span className="cr-badge-red text-xs">Uncoordinated</span>
             </div>
             <h3 className="text-base font-bold text-[var(--cr-text-primary)] mb-1">Honest FCFS Baseline</h3>
             <p className="text-xs text-[var(--cr-text-secondary)] mb-4">Department-wise separate block booking via BDMS.</p>
@@ -65,23 +65,23 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
             {/* 3 Key Hero Metrics */}
             <div className="grid grid-cols-3 gap-2 py-3 px-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)] mb-4 text-center">
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Pax Delay</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Pax Delay</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-red)]">
                   {baseline?.passenger_trains_delayed || 4}
                 </span>
-                <span className="text-[9px] text-[var(--cr-status-red)] block font-medium">trains</span>
+                <span className="text-xs text-[var(--cr-status-red)] block font-medium">trains</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Bundled</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Bundled</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-red)]">0%</span>
-                <span className="text-[9px] text-[var(--cr-text-secondary)] block font-medium">silos</span>
+                <span className="text-xs text-[var(--cr-text-secondary)] block font-medium">silos</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Impact</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Impact</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-red)]">
                   {baseline?.average_operational_impact || 72}
                 </span>
-                <span className="text-[9px] text-[var(--cr-status-red)] block font-medium">Severe</span>
+                <span className="text-xs text-[var(--cr-status-red)] block font-medium">Severe</span>
               </div>
             </div>
 
@@ -109,34 +109,34 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
 
         {/* Plan A (Recommended) */}
         <div className="cr-card p-4 sm:p-5 flex flex-col justify-between border-l-4 border-l-[var(--cr-primary-interactive)] relative">
-          <div className="absolute -top-2.5 right-4 bg-[var(--cr-primary-interactive)] text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs">
+          <div className="absolute -top-2.5 right-4 bg-[var(--cr-primary-interactive)] text-white text-xs font-bold px-2 py-0.5 rounded shadow-xs">
             RECOMMENDED
           </div>
           <div>
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--cr-border-subtle)]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--cr-primary-interactive)]">Candidate Option 1</span>
-              <span className="cr-badge-blue text-[10px]">Punctuality First</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--cr-primary-interactive)]">Candidate Option 1</span>
+              <span className="cr-badge-blue text-xs">Punctuality First</span>
             </div>
             <h3 className="text-base font-bold text-[var(--cr-text-primary)] mb-1">Plan A (Least Disruption)</h3>
             
             {/* 3 Key Hero Metrics */}
             <div className="grid grid-cols-3 gap-2 py-3 px-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)] mb-4 text-center">
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Pax Delay</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Pax Delay</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-green)]">0 min</span>
-                <span className="text-[9px] text-[var(--cr-status-green)] block font-medium">0 trains</span>
+                <span className="text-xs text-[var(--cr-status-green)] block font-medium">0 trains</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Bundled</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Bundled</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-green)]">100%</span>
-                <span className="text-[9px] text-[var(--cr-status-green)] block font-medium">multi-dept</span>
+                <span className="text-xs text-[var(--cr-status-green)] block font-medium">multi-dept</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Impact</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Impact</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-green)]">
                   {planA?.average_operational_impact || 18}
                 </span>
-                <span className="text-[9px] text-[var(--cr-status-green)] block font-medium">Optimal</span>
+                <span className="text-xs text-[var(--cr-status-green)] block font-medium">Optimal</span>
               </div>
             </div>
 
@@ -168,14 +168,14 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
 
               <button
                 onClick={() => toggleDetails('planA')}
-                className="text-[11px] text-[var(--cr-primary-interactive)] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                className="text-xs text-[var(--cr-primary-interactive)] hover:underline font-bold flex items-center gap-1 cursor-pointer"
               >
                 <span>{expandedDetails.planA ? 'Hide Constraints Detail' : 'View Safety & Headway Diagnostics'}</span>
                 {expandedDetails.planA ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
 
               {expandedDetails.planA && (
-                <div className="bg-[var(--cr-surface-subtle)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-secondary)] space-y-1.5 text-[11px]">
+                <div className="bg-[var(--cr-surface-subtle)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-secondary)] space-y-1.5">
                   <div className="flex items-center gap-1 text-[var(--cr-status-green)] font-semibold">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Headway: 15-min safety clearance before Train 20104</span>
@@ -192,29 +192,29 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
         <div className="cr-card p-4 sm:p-5 flex flex-col justify-between border-l-4 border-l-[var(--cr-status-amber)]">
           <div>
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--cr-border-subtle)]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--cr-status-amber)]">Candidate Option 2</span>
-              <span className="cr-badge-amber text-[10px]">Safety First</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--cr-status-amber)]">Candidate Option 2</span>
+              <span className="cr-badge-amber text-xs">Safety First</span>
             </div>
             <h3 className="text-base font-bold text-[var(--cr-text-primary)] mb-1">Plan B (Fastest Critical Work)</h3>
 
             {/* 3 Key Hero Metrics */}
             <div className="grid grid-cols-3 gap-2 py-3 px-2.5 rounded-lg bg-[var(--cr-surface-subtle)] border border-[var(--cr-border-subtle)] mb-4 text-center">
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Pax Delay</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Pax Delay</span>
                 <span className="text-lg font-extrabold text-[var(--cr-text-primary)]">0 min</span>
-                <span className="text-[9px] text-[var(--cr-text-secondary)] block font-medium">0 trains</span>
+                <span className="text-xs text-[var(--cr-text-secondary)] block font-medium">0 trains</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">P0 Cleared</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">P0 Cleared</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-amber)]">100%</span>
-                <span className="text-[9px] text-[var(--cr-status-amber)] block font-medium">in 48 hrs</span>
+                <span className="text-xs text-[var(--cr-status-amber)] block font-medium">in 48 hrs</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-[var(--cr-text-secondary)] block">Impact</span>
+                <span className="text-xs uppercase font-bold text-[var(--cr-text-secondary)] block">Impact</span>
                 <span className="text-lg font-extrabold text-[var(--cr-status-amber)]">
                   {planB?.average_operational_impact || 34}
                 </span>
-                <span className="text-[9px] text-[var(--cr-status-amber)] block font-medium">Moderate</span>
+                <span className="text-xs text-[var(--cr-status-amber)] block font-medium">Moderate</span>
               </div>
             </div>
 
@@ -246,14 +246,14 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
 
               <button
                 onClick={() => toggleDetails('planB')}
-                className="text-[11px] text-[var(--cr-status-amber)] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                className="text-xs text-[var(--cr-status-amber)] hover:underline font-bold flex items-center gap-1 cursor-pointer"
               >
                 <span>{expandedDetails.planB ? 'Hide Constraints Detail' : 'View Safety & Headway Diagnostics'}</span>
                 {expandedDetails.planB ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
 
               {expandedDetails.planB && (
-                <div className="bg-[var(--cr-surface-subtle)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-secondary)] space-y-1.5 text-[11px]">
+                <div className="bg-[var(--cr-surface-subtle)] p-3 rounded-lg border border-[var(--cr-border)] text-xs text-[var(--cr-text-secondary)] space-y-1.5">
                   <div>• Speed Restrictions: Lifts 20 km/h temporary restriction at KM 180</div>
                   <div>• Backlog Clearance: 8 critical IMR rail weld defects renewed</div>
                   <div>• Freight Delay Trade-off: Additional 2 rakes detained on loop line</div>
@@ -269,9 +269,9 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
         <div className="flex items-center gap-2 mb-1.5">
           <FileCheck className="w-5 h-5 text-[var(--cr-primary-interactive)]" />
           <h3 className="text-base font-bold text-[var(--cr-text-primary)]">Section Controller Authorization Gate</h3>
-          <span className="cr-badge-neutral text-[10.5px]">Human-in-the-Loop Audit</span>
+          <span className="cr-badge-neutral text-xs">Human-in-the-Loop Audit</span>
         </div>
-        <p className="text-xs text-[var(--cr-text-secondary)] mb-5 leading-relaxed">
+        <p className="text-xs sm:text-sm text-[var(--cr-text-secondary)] mb-5 leading-relaxed">
           In accordance with Indian Railways General Rules, candidate plans generated by AI require human confirmation. Approving a candidate plan generates an immutable timestamped audit record.
         </p>
 
@@ -301,7 +301,7 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-          <span className="text-[11px] text-[var(--cr-text-secondary)] font-medium">
+          <span className="text-xs text-[var(--cr-text-secondary)] font-medium">
             * Synced directly to Section Controller Master Ledger (CRIS COA / BDMS).
           </span>
 

@@ -50,17 +50,17 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs bg-[var(--cr-surface)] p-3 rounded-xl border border-[var(--cr-border)]">
             <div>
-              <span className="text-[var(--cr-text-muted)] block text-[10px] uppercase">Passenger Movement:</span>
+              <span className="text-[var(--cr-text-secondary)] block text-xs uppercase font-bold">Passenger Movement:</span>
               <strong className="text-[var(--cr-text-primary)] text-sm">Train 12582 BSBS-NDLS Express</strong>
-              <span className="text-[var(--cr-status-amber)] block text-[11px] mt-0.5 tabular-nums">Scheduled at COR-005: 01:20 – 02:30</span>
+              <span className="text-[var(--cr-status-amber)] block text-xs mt-0.5 tabular-nums font-semibold">Scheduled at COR-005: 01:20 – 02:30</span>
             </div>
             <div className="border-l border-[var(--cr-border)] pl-3">
-              <span className="text-[var(--cr-text-muted)] block text-[10px] uppercase">Manual Block Window:</span>
+              <span className="text-[var(--cr-text-secondary)] block text-xs uppercase font-bold">Manual Block Window:</span>
               <strong className="text-[var(--cr-status-red)] text-sm">Civil Track Tamping (Separate)</strong>
-              <span className="text-[var(--cr-status-red)] block text-[11px] mt-0.5 tabular-nums">Booked Window: 01:00 – 04:00 (Direct Overlap!)</span>
+              <span className="text-[var(--cr-status-red)] block text-xs mt-0.5 tabular-nums font-semibold">Booked Window: 01:00 – 04:00 (Direct Overlap!)</span>
             </div>
           </div>
-          <p className="text-[11px] text-[var(--cr-status-red)] font-medium">
+          <p className="text-xs text-[var(--cr-status-red)] font-semibold">
             ⚠ Result under manual FCFS: Passenger express train stopped at home signal; cascading delays across 3 divisions.
           </p>
         </div>
@@ -99,7 +99,7 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
               <span className="text-[var(--cr-text-muted)] tabular-nums">2.0h Possession · Evening</span>
             </div>
           </div>
-          <div className="text-[11px] text-[var(--cr-status-amber)] font-medium bg-[var(--cr-status-amber)]/10 border border-[var(--cr-status-amber)]/30 p-2 rounded-lg">
+          <div className="text-xs text-[var(--cr-status-amber)] font-semibold bg-[var(--cr-status-amber-bg)] border border-[var(--cr-status-amber-border)] p-2 rounded-lg">
             Total disruption: 6.5 hours of track closure when all 3 jobs could be done in 1 shared 3.25-hour window.
           </div>
         </div>
@@ -122,32 +122,32 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         hi: 'रेलसिंक का CP-SAT सॉल्वर 14 दिनों के सभी कार्यों को स्कैन करता है, 29 खराब डेटा रिकॉर्ड्स को अलग करता है, और ट्रेन 12582 के समय को सुरक्षित रखते हुए ब्लॉक को रात 01:00–04:25 के खाली समय में शिफ्ट कर देता है।'
       },
       visual: (
-        <div className="bg-[var(--cr-status-green)]/10 border border-[var(--cr-status-green)]/40 rounded-2xl p-4 space-y-3">
+        <div className="bg-[var(--cr-status-green-bg)] border border-[var(--cr-status-green-border)] rounded-2xl p-4 space-y-3">
           <div className="flex items-center justify-between text-xs">
             <span className="text-[var(--cr-status-green)] font-bold flex items-center gap-1.5">
               <Cpu className="w-4 h-4 text-[var(--cr-status-green)]" />
               CP-SAT LEXICOGRAPHIC MULTI-OBJECTIVE RESULT
             </span>
-            <span className="bg-[var(--cr-status-green)]/20 text-[var(--cr-status-green)] px-2 py-0.5 rounded font-bold text-[10px]">OPTIMAL FOUND (31ms)</span>
+            <span className="cr-badge-green text-xs font-bold">OPTIMAL FOUND (31ms)</span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center bg-[var(--cr-surface)] p-3 rounded-xl border border-[var(--cr-border)]">
             <div>
-              <span className="text-[var(--cr-text-muted)] block text-[10px]">Conflicts</span>
+              <span className="text-[var(--cr-text-secondary)] block text-xs font-semibold">Conflicts</span>
               <span className="text-xl font-bold tabular-nums text-[var(--cr-status-green)]">0</span>
-              <span className="text-[10px] text-[var(--cr-text-muted)] block">was 4</span>
+              <span className="text-xs text-[var(--cr-text-muted)] block">was 4</span>
             </div>
             <div className="border-x border-[var(--cr-border)]">
-              <span className="text-[var(--cr-text-muted)] block text-[10px]">Vande Bharat / Rajdhani</span>
-              <span className="text-xl font-bold tabular-nums text-[var(--cr-primary)]">0 min</span>
-              <span className="text-[10px] text-[var(--cr-text-muted)] block">100% Punctual</span>
+              <span className="text-[var(--cr-text-secondary)] block text-xs font-semibold">Vande Bharat / Rajdhani</span>
+              <span className="text-xl font-bold tabular-nums text-[var(--cr-primary-interactive)]">0 min</span>
+              <span className="text-xs text-[var(--cr-text-muted)] block">100% Punctual</span>
             </div>
             <div>
-              <span className="text-[var(--cr-text-muted)] block text-[10px]">Total Downtime</span>
+              <span className="text-[var(--cr-text-secondary)] block text-xs font-semibold">Total Downtime</span>
               <span className="text-xl font-bold tabular-nums text-[var(--cr-status-green)]">3.25h</span>
-              <span className="text-[10px] text-[var(--cr-status-green)] block font-medium">-50% line downtime</span>
+              <span className="text-xs text-[var(--cr-status-green)] block font-bold">-50% line downtime</span>
             </div>
           </div>
-          <p className="text-[11px] text-[var(--cr-status-green)] font-medium">
+          <p className="text-xs text-[var(--cr-status-green)] font-semibold">
             ✓ 3-in-1 Coordinated Possession: Civil track tamping, 25 kV wire inspection, and signal testing execute in 1 shared block.
           </p>
         </div>
@@ -179,18 +179,18 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
               <ShieldCheck className="w-4 h-4 text-[var(--cr-status-green)]" />
               Deterministic Safety Invariants Verified
             </span>
-            <span className="bg-[var(--cr-primary)]/15 text-[var(--cr-primary)] text-[10px] font-semibold px-2 py-0.5 rounded">G&SR Chapter XV</span>
+            <span className="bg-[var(--cr-primary-interactive)]/15 text-[var(--cr-primary-interactive)] text-xs font-semibold px-2 py-0.5 rounded">G&SR Chapter XV</span>
           </div>
           <div className="space-y-1.5 text-[var(--cr-text-primary)]">
-            <div className="flex items-center gap-2 text-[var(--cr-status-green)]">
+            <div className="flex items-center gap-2 text-[var(--cr-status-green)] font-medium">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span><strong>Rule 1:</strong> 25 kV Traction Power Isolation mandatory before any human track access.</span>
             </div>
-            <div className="flex items-center gap-2 text-[var(--cr-status-green)]">
+            <div className="flex items-center gap-2 text-[var(--cr-status-green)] font-medium">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span><strong>Rule 2:</strong> Worksite span constrained to ≤ 15.0 km (under 1 Section Controller jurisdiction).</span>
             </div>
-            <div className="flex items-center gap-2 text-[var(--cr-status-green)]">
+            <div className="flex items-center gap-2 text-[var(--cr-status-green)] font-medium">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span><strong>Rule 3:</strong> CSM Tamper ground vibration isolated from electronic point switches (&gt;1.0 km buffer).</span>
             </div>
@@ -221,20 +221,20 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
         <div className="bg-[var(--cr-surface)] border border-[var(--cr-border)] rounded-2xl p-4 space-y-3">
           <div className="flex items-center justify-between border-b border-[var(--cr-border)] pb-2">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[var(--cr-primary)]" />
+              <FileText className="w-4 h-4 text-[var(--cr-primary-interactive)]" />
               <span className="text-xs font-bold text-[var(--cr-text-primary)]">MEMO #AUTH-REC-104</span>
             </div>
-            <span className="bg-[var(--cr-status-green)]/15 text-[var(--cr-status-green)] text-[10px] font-bold px-2 py-0.5 rounded">
+            <span className="bg-[var(--cr-status-green-bg)] text-[var(--cr-status-green)] text-xs font-bold px-2 py-0.5 rounded border border-[var(--cr-status-green-border)]">
               DIGITALLY AUTHORIZED
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-2 text-[11px] text-[var(--cr-text-muted)]">
+          <div className="grid grid-cols-2 gap-2 text-xs text-[var(--cr-text-secondary)]">
             <div>Officer: <strong className="text-[var(--cr-text-primary)]">Senior Section Controller</strong></div>
             <div>Division: <strong className="text-[var(--cr-text-primary)]">Kanpur Central (CNB)</strong></div>
             <div>Granted Window: <strong className="text-[var(--cr-text-primary)] tabular-nums">Day 1 01:00 – 04:25 (3h 25m)</strong></div>
-            <div>Express Detention: <strong className="text-[var(--cr-status-green)]">0 Minutes (100% Punctual)</strong></div>
+            <div>Express Detention: <strong className="text-[var(--cr-status-green)] font-bold">0 Minutes (100% Punctual)</strong></div>
           </div>
-          <p className="text-[10px] text-[var(--cr-text-muted)] italic pt-1 border-t border-[var(--cr-border)]">
+          <p className="text-xs text-[var(--cr-text-muted)] italic pt-1 border-t border-[var(--cr-border)]">
             Recorded under Indian Railways General & Subsidiary Rules. Pilot-ready for deployment on Kanpur–New Delhi HDN trunk line.
           </p>
         </div>
@@ -304,10 +304,10 @@ export const GuidedDemoModal: React.FC<GuidedDemoModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[var(--cr-primary)] uppercase tracking-wider">
+                <span className="text-xs font-bold text-[var(--cr-primary-interactive)] uppercase tracking-wider">
                   {language === 'hi' ? '90-सेकंड जज डेमो वॉकथ्रू' : (language === 'ta' ? '90 வினாடி நடுவர் டெமோ உலா' : '90-Second Judge Demo Tour')}
                 </span>
-                <span className="cr-badge-blue text-[10px]">
+                <span className="cr-badge-blue text-xs">
                   Step {currentStep + 1} of {steps.length}
                 </span>
               </div>
